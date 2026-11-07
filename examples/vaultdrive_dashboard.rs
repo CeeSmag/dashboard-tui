@@ -28,8 +28,8 @@ use std::time::{Duration, Instant};
 
 use tui_rs::backend::{Backend, CrosstermBackend, TestBackend};
 use tui_rs::components::{
-    DualWaveform, GradientMeter, GraphSymbolMode, QrWidget, WaveScaler, WaveScalerConfig,
-    format_bytes, format_rate,
+    DualWaveform, GradientMeter, GraphSymbolMode, WaveScaler, WaveScalerConfig, format_bytes,
+    format_rate,
 };
 use tui_rs::core::{
     Buffer, Color, ColorPalette, PrioritySegment, Rect, Style, TerminalHeight, TerminalWidth,
@@ -641,34 +641,23 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
     registry.register_option(AddonOptionEntry::new(
         2,
         1,
-        OptionSpec::new(2, "Documentation (Clickable Link)", |_ctx| {
-            OptionOutcome::OpenModal(Box::new(NoticeModal::new(
-                "Documentation & Online Resources",
-                vec![
-                    "Official Documentation & Architecture Guides:".to_string(),
-                    "https://github.com/vaultdrive/tui-rs".to_string(),
-                    String::new(),
-                    "• Ctrl+Click (or Cmd+Click) the link above to open in browser".to_string(),
-                    "• Or scan the QR Code in the section below with your phone".to_string(),
-                    "• Full AI integration manual: AI_GUIDE.md".to_string(),
-                ],
-            )))
+        OptionSpec::new(2, "Documentation (Clickable Link & QR Code)", |_ctx| {
+            let url = "https://github.com/vaultdrive/tui-rs";
+            let lines = vec![
+                "Official Documentation & Architecture Guides:".to_string(),
+                url.to_string(),
+                String::new(),
+                "• Ctrl+Click (or Cmd+Click) the link above to open in browser".to_string(),
+                "• Or scan the QR Code below with your mobile phone:".to_string(),
+            ];
+            let modal = NoticeModal::new("Documentation & Mobile Pair", lines)
+                .with_qr_text(url)
+                .unwrap_or_else(|_| NoticeModal::new("Documentation", vec![url.to_string()]));
+
+            OptionOutcome::OpenModal(Box::new(modal))
         })
         .with_hyperlink("https://github.com/vaultdrive/tui-rs"),
     ));
-
-    if let Ok(qr) = QrWidget::from_text(
-        "Mobile Companion Pair",
-        "https://github.com/vaultdrive/tui-rs",
-    ) {
-        registry.register_section(AddonSectionEntry::new(
-            2,
-            2,
-            Section::display(Box::new(qr))
-                .with_heights(8, 14)
-                .with_selectable(false),
-        ));
-    }
 
     DashboardEngine::new(VaultDriveMockBackend::default(), registry.assemble_pages())
 }
@@ -688,6 +677,29 @@ fn run_headless_check() {
             engine.render(&mut buf, area);
             assert_eq!(buf.to_visual_lines().len(), usize::from(rows));
         }
+
+        // On Page 3 (F3 - Diagnostics), activate Option 2 (Documentation & QR code modal)
+        let _ = engine.handle_key(KeyPress::new(KeyCode::F(3)));
+        let _ = engine.handle_key(KeyPress::char('2'));
+        assert!(
+            engine.has_modal(),
+            "Documentation & QR modal must open when pressing '2' on Page 3"
+        );
+        engine.render(&mut buf, area);
+        let visual = buf.to_visual_lines();
+        assert!(
+            visual
+                .iter()
+                .any(|line| line.contains("Documentation & Mobile Pair")),
+            "Modal title must appear in visual buffer"
+        );
+        assert!(
+            visual.iter().any(|line| line.contains('▀')),
+            "Half-block QR code must appear in visual buffer inside the modal"
+        );
+        // Close modal with Esc
+        let _ = engine.handle_key(KeyPress::new(KeyCode::Esc));
+        assert!(!engine.has_modal(), "Modal must close on Esc");
     }
 }
 

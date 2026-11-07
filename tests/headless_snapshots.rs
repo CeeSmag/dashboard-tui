@@ -511,6 +511,59 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
 }
 
 #[test]
+fn notice_modal_embeds_qr_code_and_hyperlinks() -> Result<(), tui_rs::error::TuiError> {
+    use tui_rs::dashboard::splice_modal_overlay;
+    use tui_rs::universal::NoticeModal;
+
+    let url = "https://github.com/vaultdrive/tui-rs";
+    let modal = NoticeModal::new(
+        "Documentation & Mobile Pairing",
+        vec![
+            "Repo link:".to_string(),
+            url.to_string(),
+            "• Hold Ctrl and click link".to_string(),
+        ],
+    )
+    .with_qr_text(url)?;
+
+    assert!(modal.qr_matrix().is_some());
+
+    let viewport = Rect::from_size(TerminalWidth::new(80), TerminalHeight::new(24));
+    let mut buf = Buffer::empty(viewport);
+    splice_modal_overlay::<MockVaultBackend>(
+        &modal,
+        &mut buf,
+        viewport,
+        &ColorPalette::DEFAULT,
+        false,
+    );
+
+    let visual = buf.to_visual_lines();
+    assert!(
+        visual
+            .iter()
+            .any(|line| line.contains("Documentation & Mobile Pairing"))
+    );
+    assert!(
+        visual
+            .iter()
+            .any(|line| line.contains("https://github.com/vaultdrive/tui-rs"))
+    );
+    assert!(visual.iter().any(|line| line.contains('▀')));
+
+    let link_cell = buf
+        .as_cell_slice()
+        .iter()
+        .find(|c| c.hyperlink() == Some("https://github.com/vaultdrive/tui-rs"));
+    assert!(
+        link_cell.is_some(),
+        "Cell with OSC 8 hyperlink must exist inside the modal"
+    );
+
+    Ok(())
+}
+
+#[test]
 fn qr_code_generation_matrix_and_widget_rendering() -> Result<(), tui_rs::error::TuiError> {
     use tui_rs::components::{HalfBlockQr, QrCodeMatrix, QrWidget};
 
