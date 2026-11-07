@@ -1,8 +1,9 @@
 //! Composable structural TUI widgets (`TabPanel`, `LabeledDivider`, `SubCellScrollbar`,
-//! `WeightedTable`, `MenuList`, `ChoiceRow`, `TextInput`).
+//! `WeightedTable`, `MenuList`, `ChoiceRow`, `TextInput`, `Hyperlink`).
 
 pub mod choice_row;
 pub mod divider;
+pub mod hyperlink;
 pub mod menu_list;
 pub mod panel;
 pub mod scrollbar;
@@ -11,6 +12,7 @@ pub mod weighted_table;
 
 pub use choice_row::ChoiceRow;
 pub use divider::LabeledDivider;
+pub use hyperlink::Hyperlink;
 pub use menu_list::{MenuItem, MenuList};
 pub use panel::{TabPanel, format_superscript_number};
 pub use scrollbar::{SubCellScrollbar, VerticalScrollState};

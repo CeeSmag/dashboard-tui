@@ -509,3 +509,116 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
     assert_eq!(engine.handle_key(KeyPress::char('x')), EngineAction::Quit);
     Ok(())
 }
+
+#[test]
+fn qr_code_generation_matrix_and_widget_rendering() -> Result<(), tui_rs::error::TuiError> {
+    use tui_rs::components::{HalfBlockQr, QrCodeMatrix, QrWidget};
+
+    let text = "https://github.com/vaultdrive/tui-rs";
+    let matrix = QrCodeMatrix::from_text(text)?;
+    assert!(matrix.dimension() >= 21);
+    assert_eq!(matrix.quiet_zone(), 2);
+    let expected_w = u16::try_from(matrix.dimension().saturating_add(4)).map_err(|_| {
+        tui_rs::error::TuiError::InvalidDimensions {
+            width: 0,
+            height: 0,
+        }
+    })?;
+    assert_eq!(matrix.rendered_width(), expected_w);
+
+    let area = Rect::from_size(
+        TerminalWidth::new(matrix.rendered_width().saturating_add(4)),
+        TerminalHeight::new(matrix.rendered_height().saturating_add(2)),
+    );
+    let mut buf = Buffer::empty(area);
+    matrix.render(&mut buf, ColumnIndex::new(2), RowIndex::new(1));
+    let lines = buf.to_visual_lines();
+    assert!(lines.iter().any(|line| line.contains('▀')));
+
+    let hb = HalfBlockQr::from_matrix(&matrix);
+    assert_eq!(hb.dimension(), matrix.dimension());
+
+    let widget = QrWidget::from_text("MOBILE CONNECT", text)?;
+    assert_eq!(widget.title_str(), "MOBILE CONNECT");
+    Ok(())
+}
+
+#[test]
+fn osc8_hyperlinks_ansi_encoding_and_widgets() -> Result<(), tui_rs::error::TuiError> {
+    use tui_rs::backend::{AnsiFrameWriter, format_hyperlink, format_hyperlink_with_id};
+    use tui_rs::core::{ColorDepth, Line, Span};
+    use tui_rs::widgets::Hyperlink;
+
+    // 1. Standalone formatters
+    let formatted = format_hyperlink("https://github.com/vaultdrive", "VaultDrive");
+    assert_eq!(
+        formatted,
+        "\x1b]8;;https://github.com/vaultdrive\x1b\\VaultDrive\x1b]8;;\x1b\\"
+    );
+
+    let formatted_id = format_hyperlink_with_id("https://rust-lang.org", "Rust", "rust-link");
+    assert_eq!(
+        formatted_id,
+        "\x1b]8;id=rust-link;https://rust-lang.org\x1b\\Rust\x1b]8;;\x1b\\"
+    );
+
+    // 2. Span::hyperlink and Buffer::set_line
+    let rect = Rect::from_size(TerminalWidth::new(30), TerminalHeight::new(1));
+    let mut buf = Buffer::empty(rect);
+    let span = Span::hyperlink("GitHub", "https://github.com");
+    assert_eq!(span.hyperlink_url(), Some("https://github.com"));
+    let line = Line::from_spans([span]);
+    buf.set_line(
+        ColumnIndex::new(0),
+        RowIndex::new(0),
+        &line,
+        TerminalWidth::new(30),
+    );
+
+    let cell = buf.cell_at(ColumnIndex::new(0), RowIndex::new(0)).ok_or(
+        tui_rs::error::TuiError::OutOfBounds {
+            column: 0,
+            row: 0,
+            width: 30,
+            height: 1,
+        },
+    )?;
+    assert_eq!(cell.hyperlink(), Some("https://github.com"));
+    assert_eq!(cell.symbol(), "G");
+
+    // 3. AnsiFrameWriter emits OSC 8 open and close sequences
+    let empty_buf = Buffer::empty(rect);
+    let mut writer = AnsiFrameWriter::with_capacity(512, ColorDepth::TrueColor, false);
+    let bytes = writer.encode_frame(diff_buffers(&empty_buf, &buf));
+    let output = String::from_utf8_lossy(bytes);
+    assert!(output.contains("\x1b]8;;https://github.com\x1b\\"));
+    assert!(output.contains("\x1b]8;;\x1b\\"));
+    assert!(output.contains("GitHub"));
+
+    // 4. When hyperlinks disabled, no OSC 8 sequences emitted
+    let mut no_link_writer =
+        AnsiFrameWriter::with_capacity(512, ColorDepth::TrueColor, false).with_hyperlinks(false);
+    let plain_bytes = no_link_writer.encode_frame(diff_buffers(&empty_buf, &buf));
+    let plain_output = String::from_utf8_lossy(plain_bytes);
+    assert!(!plain_output.contains("\x1b]8;;"));
+    assert!(plain_output.contains("GitHub"));
+
+    // 5. Hyperlink widget rendering
+    let mut buf2 = Buffer::empty(rect);
+    let widget = Hyperlink::new("https://crates.io", "Crates");
+    assert_eq!(widget.url(), "https://crates.io");
+    assert_eq!(widget.text(), "Crates");
+    widget.render(&mut buf2, ColumnIndex::new(5), RowIndex::new(0), 15);
+    let cell2 = buf2.cell_at(ColumnIndex::new(5), RowIndex::new(0)).ok_or(
+        tui_rs::error::TuiError::OutOfBounds {
+            column: 5,
+            row: 0,
+            width: 30,
+            height: 1,
+        },
+    )?;
+    assert_eq!(cell2.hyperlink(), Some("https://crates.io"));
+    assert_eq!(cell2.symbol(), "C");
+
+    Ok(())
+}

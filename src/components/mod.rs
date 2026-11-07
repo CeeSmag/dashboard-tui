@@ -19,6 +19,7 @@ pub mod formatters;
 pub mod graph_symbols;
 pub mod meter;
 pub mod qr_code;
+pub mod qr_widget;
 pub mod single_waveform;
 pub mod slider;
 pub mod time_series;
@@ -31,7 +32,8 @@ pub use graph_symbols::{
     graph_up_cell, row_wave_dots, total_wave_dots,
 };
 pub use meter::GradientMeter;
-pub use qr_code::HalfBlockQr;
+pub use qr_code::{HalfBlockQr, QrCodeMatrix, QrErrorCorrection};
+pub use qr_widget::QrWidget;
 pub use single_waveform::SingleWaveform;
 pub use slider::SliderBar;
 pub use time_series::{TimeSeries, TimedSample, resample_slice_into, resample_slice_scaled_into};

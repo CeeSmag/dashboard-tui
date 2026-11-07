@@ -31,6 +31,7 @@ pub struct Cell {
     symbol: CompactString,
     style: Style,
     wide_continuation: bool,
+    hyperlink: Option<CompactString>,
 }
 
 impl Default for Cell {
@@ -45,6 +46,7 @@ impl Cell {
         symbol: CompactString::const_new(" "),
         style: Style::DEFAULT,
         wide_continuation: false,
+        hyperlink: None,
     };
 
     /// Creates a new `Cell` with the given grapheme symbol and [`Style`].
@@ -67,6 +69,7 @@ impl Cell {
             },
             style,
             wide_continuation: false,
+            hyperlink: None,
         }
     }
 
@@ -88,6 +91,7 @@ impl Cell {
             symbol: CompactString::new(encoded),
             style,
             wide_continuation: false,
+            hyperlink: None,
         }
     }
 
@@ -214,6 +218,41 @@ impl Cell {
         self.wide_continuation = is_continuation;
     }
 
+    /// Returns the target OSC 8 hyperlink URL attached to this cell, if any.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Cell;
+    ///
+    /// let mut c = Cell::EMPTY;
+    /// assert_eq!(c.hyperlink(), None);
+    /// c.set_hyperlink(Some("https://github.com/vaultdrive/tui-rs"));
+    /// assert_eq!(c.hyperlink(), Some("https://github.com/vaultdrive/tui-rs"));
+    /// ```
+    #[must_use]
+    pub fn hyperlink(&self) -> Option<&str> {
+        self.hyperlink.as_deref()
+    }
+
+    /// Attaches or clears the target OSC 8 hyperlink URL on this cell.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Cell;
+    ///
+    /// let mut c = Cell::EMPTY;
+    /// c.set_hyperlink(Some("https://example.com"));
+    /// assert_eq!(c.hyperlink(), Some("https://example.com"));
+    /// c.set_hyperlink(None);
+    /// assert_eq!(c.hyperlink(), None);
+    /// ```
+    pub fn set_hyperlink(&mut self, link: Option<&str>) -> &mut Self {
+        self.hyperlink = link.map(CompactString::new);
+        self
+    }
+
     /// Resets the cell back to a blank space with `Style::DEFAULT`.
     ///
     /// # Examples
@@ -229,5 +268,6 @@ impl Cell {
         self.symbol = CompactString::const_new(" ");
         self.style = Style::DEFAULT;
         self.wide_continuation = false;
+        self.hyperlink = None;
     }
 }

@@ -24,7 +24,8 @@
 //! 4. **Layer 2 ([`components`] & [`widgets`])**: `btop`-grade 5×5 sub-cell
 //!    [`components::SingleWaveform`] and [`components::DualWaveform`] graphs,
 //!    hysteresis [`components::WaveScaler`], [`components::GradientMeter`],
-//!    [`components::SliderBar`], [`components::HalfBlockQr`], [`widgets::TabPanel`],
+//!    [`components::SliderBar`], QR generator ([`components::QrCodeMatrix`], [`components::HalfBlockQr`],
+//!    [`components::QrWidget`]), [`widgets::TabPanel`], [`widgets::Hyperlink`],
 //!    [`widgets::MenuList`], [`widgets::WeightedTable`], and [`widgets::SubCellScrollbar`].
 //! 5. **Layer 3 — Tier 1 ([`dashboard`])**: Domain-agnostic [`dashboard::DashboardEngine`]
 //!    with 3-method [`dashboard::DashboardBackend`] contract, 4-layer [`dashboard::SpacingConfig`],

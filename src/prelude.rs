@@ -12,11 +12,12 @@
 
 pub use crate::backend::{
     Backend, CrosstermBackend, ProgressBarState, TerminalCapabilities, TestBackend,
+    format_hyperlink, format_hyperlink_with_id,
 };
 pub use crate::components::{
-    DualWaveform, GradientMeter, GraphSymbolMode, HalfBlockQr, SingleWaveform, SliderBar,
-    TimeSeries, WaveScaler, WaveScalerConfig, format_bytes, format_rate, format_rate_short,
-    resample_slice_into, resample_slice_scaled_into, spinner_frame,
+    DualWaveform, GradientMeter, GraphSymbolMode, HalfBlockQr, QrCodeMatrix, QrErrorCorrection,
+    QrWidget, SingleWaveform, SliderBar, TimeSeries, WaveScaler, WaveScalerConfig, format_bytes,
+    format_rate, format_rate_short, resample_slice_into, resample_slice_scaled_into, spinner_frame,
 };
 pub use crate::core::{
     Buffer, Cell, Color, ColorDepth, ColorPalette, ColumnIndex, Constraint, GradientLut, KeyHint,
@@ -40,6 +41,6 @@ pub use crate::universal::{
     color_theme_option, section_gap_option,
 };
 pub use crate::widgets::{
-    ChoiceRow, LabeledDivider, MenuItem, MenuList, SubCellScrollbar, TabPanel, TableColumn,
-    TextInput, TextInputState, VerticalScrollState, WeightedTable,
+    ChoiceRow, Hyperlink, LabeledDivider, MenuItem, MenuList, SubCellScrollbar, TabPanel,
+    TableColumn, TextInput, TextInputState, VerticalScrollState, WeightedTable,
 };

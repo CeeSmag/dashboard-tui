@@ -68,6 +68,7 @@ pub struct AnsiFrameWriter {
     buffer: Vec<u8>,
     color_depth: ColorDepth,
     synchronized_output: bool,
+    supports_hyperlinks: bool,
 }
 
 impl AnsiFrameWriter {
@@ -92,7 +93,25 @@ impl AnsiFrameWriter {
             buffer: Vec::with_capacity(capacity),
             color_depth,
             synchronized_output,
+            supports_hyperlinks: true,
         }
+    }
+
+    /// Enables or disables emission of OSC 8 terminal hyperlinks (default `true`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::backend::AnsiFrameWriter;
+    /// use tui_rs::core::ColorDepth;
+    ///
+    /// let writer = AnsiFrameWriter::with_capacity(64, ColorDepth::TrueColor, false)
+    ///     .with_hyperlinks(false);
+    /// ```
+    #[must_use]
+    pub const fn with_hyperlinks(mut self, enabled: bool) -> Self {
+        self.supports_hyperlinks = enabled;
+        self
     }
 
     /// Returns a read-only view of the currently encoded frame bytes (`C-CONV` `as_bytes`).
@@ -114,7 +133,8 @@ impl AnsiFrameWriter {
     /// Encodes an iterator of [`CellDiff`] items into the internal byte buffer and returns a slice.
     ///
     /// Skips redundant cursor movements when cells are horizontally contiguous and skips redundant
-    /// SGR sequences when consecutive cells share the same degraded [`Style`].
+    /// SGR sequences when consecutive cells share the same degraded [`Style`]. Also handles
+    /// emission of OSC 8 clickable terminal hyperlink escapes for cells with URLs.
     ///
     /// # Examples
     ///
@@ -142,6 +162,7 @@ impl AnsiFrameWriter {
 
         let mut last_cursor: Option<(ColumnIndex, RowIndex)> = None;
         let mut active_style: Option<Style> = None;
+        let mut active_hyperlink: Option<&str> = None;
 
         for diff in iter {
             let col = diff.column();
@@ -153,7 +174,26 @@ impl AnsiFrameWriter {
             });
 
             if needs_move {
+                if active_hyperlink.is_some() {
+                    self.buffer.extend_from_slice(b"\x1b]8;;\x1b\\");
+                    active_hyperlink = None;
+                }
                 push_cursor_move(&mut self.buffer, col, row);
+            }
+
+            let target_hyperlink = if self.supports_hyperlinks {
+                cell.hyperlink()
+            } else {
+                None
+            };
+            if active_hyperlink != target_hyperlink {
+                if active_hyperlink.is_some() {
+                    self.buffer.extend_from_slice(b"\x1b]8;;\x1b\\");
+                }
+                if let Some(url) = target_hyperlink {
+                    push_hyperlink_open(&mut self.buffer, url);
+                }
+                active_hyperlink = target_hyperlink;
             }
 
             let target_style = cell.style().degrade(self.color_depth);
@@ -169,6 +209,10 @@ impl AnsiFrameWriter {
             last_cursor = Some((col.saturating_add(step), row));
         }
 
+        if active_hyperlink.is_some() {
+            self.buffer.extend_from_slice(b"\x1b]8;;\x1b\\");
+        }
+
         // Always reset SGR attributes at the end of a frame diff batch
         self.buffer.extend_from_slice(b"\x1b[0m");
 
@@ -177,6 +221,28 @@ impl AnsiFrameWriter {
         }
 
         &self.buffer
+    }
+
+    /// Directly writes an OSC 8 clickable hyperlink to the internal buffer.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::backend::AnsiFrameWriter;
+    /// use tui_rs::core::ColorDepth;
+    ///
+    /// let mut w = AnsiFrameWriter::with_capacity(64, ColorDepth::TrueColor, false);
+    /// w.write_hyperlink("https://github.com", "GitHub");
+    /// assert!(w.as_bytes().contains(&b"GitHub"[0]));
+    /// ```
+    pub fn write_hyperlink(&mut self, url: &str, text: &str) {
+        if self.supports_hyperlinks {
+            push_hyperlink_open(&mut self.buffer, url);
+            self.buffer.extend_from_slice(text.as_bytes());
+            self.buffer.extend_from_slice(b"\x1b]8;;\x1b\\");
+        } else {
+            self.buffer.extend_from_slice(text.as_bytes());
+        }
     }
 
     /// Appends an OSC `2` window title update sequence (`\x1b]2;Title\x07`) to the buffer.
@@ -333,4 +399,77 @@ fn push_u16_decimal(buf: &mut Vec<u8>, mut value: u16) {
         len -= 1;
         buf.push(digits[len]);
     }
+}
+
+/// Sanitizes and appends an OSC 8 hyperlink open sequence `\x1b]8;;{url}\x1b\\` without heap allocation.
+fn push_hyperlink_open(buf: &mut Vec<u8>, url: &str) {
+    buf.extend_from_slice(b"\x1b]8;;");
+    for &b in url.as_bytes() {
+        // Exclude control characters, space, and DEL to guarantee strict escape sequence boundaries
+        if (0x21..0x7f).contains(&b) || b >= 0x80 {
+            buf.push(b);
+        }
+    }
+    buf.extend_from_slice(b"\x1b\\");
+}
+
+/// Formats `text` wrapped in an OSC 8 clickable terminal hyperlink pointing to `url`.
+///
+/// Standard terminals supporting OSC 8 (iTerm2, Alacritty, Kitty, `WezTerm`, VS Code, Windows Terminal)
+/// render this as clickable text opening the browser.
+///
+/// # Examples
+///
+/// ```
+/// use tui_rs::backend::format_hyperlink;
+///
+/// let link = format_hyperlink("https://github.com/vaultdrive/tui-rs", "VaultDrive");
+/// assert_eq!(link, "\x1b]8;;https://github.com/vaultdrive/tui-rs\x1b\\VaultDrive\x1b]8;;\x1b\\");
+/// ```
+#[must_use]
+pub fn format_hyperlink(url: &str, text: &str) -> String {
+    let mut buf = Vec::with_capacity(url.len().saturating_add(text.len()).saturating_add(16));
+    push_hyperlink_open(&mut buf, url);
+    buf.extend_from_slice(text.as_bytes());
+    buf.extend_from_slice(b"\x1b]8;;\x1b\\");
+    String::from_utf8(buf).unwrap_or_else(|_| text.to_string())
+}
+
+/// Formats `text` wrapped in an OSC 8 clickable terminal hyperlink with an explicit link `id`.
+///
+/// Multi-line or wrapped link text sharing the same `id` is grouped as a single clickable target
+/// by supporting terminal emulators.
+///
+/// # Examples
+///
+/// ```
+/// use tui_rs::backend::format_hyperlink_with_id;
+///
+/// let link = format_hyperlink_with_id("https://github.com", "GitHub", "link-1");
+/// assert_eq!(link, "\x1b]8;id=link-1;https://github.com\x1b\\GitHub\x1b]8;;\x1b\\");
+/// ```
+#[must_use]
+pub fn format_hyperlink_with_id(url: &str, text: &str, id: &str) -> String {
+    let mut buf = Vec::with_capacity(
+        url.len()
+            .saturating_add(text.len())
+            .saturating_add(id.len())
+            .saturating_add(20),
+    );
+    buf.extend_from_slice(b"\x1b]8;id=");
+    for &b in id.as_bytes() {
+        if (0x21..0x7f).contains(&b) && b != b';' {
+            buf.push(b);
+        }
+    }
+    buf.push(b';');
+    for &b in url.as_bytes() {
+        if (0x21..0x7f).contains(&b) || b >= 0x80 {
+            buf.push(b);
+        }
+    }
+    buf.extend_from_slice(b"\x1b\\");
+    buf.extend_from_slice(text.as_bytes());
+    buf.extend_from_slice(b"\x1b]8;;\x1b\\");
+    String::from_utf8(buf).unwrap_or_else(|_| text.to_string())
 }

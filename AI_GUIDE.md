@@ -28,6 +28,8 @@ Use this table to jump directly to the exact file in `src/` for any task without
 | **Store & resample time-windowed telemetry samples** | [`src/components/time_series.rs`](./src/components/time_series.rs) | `TimeSeries`, `TimedSample`, `resample_slice_scaled_into`, `resample_slice_into` |
 | **Format bytes (`1.25 GB`) or rates (`▲ 512 KB/s`) with 0 heap allocs** | [`src/components/formatters.rs`](./src/components/formatters.rs) | `format_bytes`, `format_rate`, `format_rate_short`, `spinner_frame`, `StackStr` |
 | **Render a gradient progress bar, slider, or half-block QR code** | [`src/components/meter.rs`](./src/components/meter.rs), [`src/components/slider.rs`](./src/components/slider.rs), [`src/components/qr_code.rs`](./src/components/qr_code.rs) | `GradientMeter`, `SliderBar`, `HalfBlockQr` |
+| **Generate QR codes from text/URLs & embed in dashboards** | [`src/components/qr_code.rs`](./src/components/qr_code.rs), [`src/components/qr_widget.rs`](./src/components/qr_widget.rs) | `QrCodeMatrix`, `QrErrorCorrection`, `QrWidget`, `HalfBlockQr` |
+| **Embed clickable terminal web-links (OSC 8 hyperlinks)** | [`src/widgets/hyperlink.rs`](./src/widgets/hyperlink.rs), [`src/backend/ansi_writer.rs`](./src/backend/ansi_writer.rs), [`src/core/text.rs`](./src/core/text.rs) | `Hyperlink`, `Span::hyperlink`, `format_hyperlink`, `format_hyperlink_with_id` |
 | **Render a `btop`-style notched border box or data table** | [`src/widgets/panel.rs`](./src/widgets/panel.rs), [`src/widgets/weighted_table.rs`](./src/widgets/weighted_table.rs) | `TabPanel`, `WeightedTable`, `TableColumn`, `TextAlignment` |
 | **Render a scrollable numbered menu, choice row, or text input** | [`src/widgets/menu_list.rs`](./src/widgets/menu_list.rs), [`src/widgets/choice_row.rs`](./src/widgets/choice_row.rs), [`src/widgets/text_input.rs`](./src/widgets/text_input.rs) | `MenuList`, `MenuItem`, `ChoiceRow`, `TextInput`, `TextInputState`, `SubCellScrollbar` |
 | **Write strings/cells to the 2D screen buffer or split rects** | [`src/core/buffer.rs`](./src/core/buffer.rs), [`src/core/rect.rs`](./src/core/rect.rs), [`src/core/layout.rs`](./src/core/layout.rs) | `Buffer`, `Rect`, `ColumnIndex`, `RowIndex`, `TerminalWidth`, `TerminalHeight`, `Layout`, `Constraint` |
@@ -91,13 +93,15 @@ Use this table to jump directly to the exact file in `src/` for any task without
     │   ├── dual_waveform.rs           # DualWaveform (mirrored top/bottom waveform + ▲/▼/[≤Scale] center axis)
     │   ├── meter.rs                   # GradientMeter ([■■■■□□□□] 75% smooth gradient bar)
     │   ├── slider.rs                  # SliderBar (interactive discrete/continuous value bar)
-    │   ├── qr_code.rs                 # HalfBlockQr (2x vertical density ▀/▄/█/space QR renderer)
+    │   ├── qr_code.rs                 # QrCodeMatrix, QrErrorCorrection, HalfBlockQr (QR matrix generation & 2x half-block packing)
+    │   ├── qr_widget.rs               # QrWidget (centered QR display widget implementing SectionWidget)
     │   └── formatters.rs              # format_bytes, format_rate, format_rate_short, spinner_frame (zero heap alloc)
     │
-    ├── widgets/                       # LAYER 5: Structural UI Widgets (Notched Panels, Menus, Tables, Inputs)
+    ├── widgets/                       # LAYER 5: Structural UI Widgets (Notched Panels, Menus, Tables, Inputs, Links)
     │   ├── mod.rs
     │   ├── panel.rs                   # TabPanel (btop-style ╭─┐ Title ┌─╮ with 4-step width degradation & TTY fallback)
     │   ├── divider.rs                 # LabeledDivider (── Label ───────)
+    │   ├── hyperlink.rs               # Hyperlink (OSC 8 clickable terminal web-link widget & Span conversion)
     │   ├── scrollbar.rs               # VerticalScrollState, SubCellScrollbar (8x vertical Braille/block thumb)
     │   ├── menu_list.rs               # MenuItem, MenuList (1-col & auto 2-col at width >= 100, 4D option_gap, scrollbar)
     │   ├── weighted_table.rs          # TableColumn, WeightedTable (proportional column solver with min_width)
@@ -663,4 +667,63 @@ cargo clippy --all-targets --all-features
 cargo test
 cargo doc --no-deps
 cargo run --example vaultdrive_dashboard -- --headless-check
+```
+
+---
+
+## 7. QR Code Generation & Clickable Terminal Web-Links (OSC 8)
+
+### 7.1 Generating & Rendering QR Codes
+`tui-rs` supports zero-dependency QR code generation and 2× half-block rendering directly within the library:
+
+```rust
+use tui_rs::prelude::*;
+
+// 1. Generate an owned QR matrix from text or a URL:
+let qr_matrix = QrCodeMatrix::from_text("https://github.com/vaultdrive/tui-rs")?;
+
+// 2. Adjust quiet zone or custom colors (optional):
+let qr_matrix = qr_matrix
+    .with_quiet_zone(2)
+    .with_colors(Color::Black, Color::White);
+
+// 3. Render directly into any Buffer:
+qr_matrix.render(&mut buffer, ColumnIndex::new(5), RowIndex::new(2));
+
+// 4. Or embed directly inside a dashboard page as a SectionWidget:
+let qr_section = Section::display(Box::new(
+    QrWidget::from_text("Mobile Companion Pairing", "https://vaultdrive.local/pair")?
+        .with_subtitle("Scan with mobile camera")
+))
+.with_heights(8, 14)
+.with_selectable(false);
+```
+
+### 7.2 Clickable Terminal Hyperlinks (OSC 8)
+Modern terminal emulators (iTerm2, Alacritty, Kitty, `WezTerm`, VS Code, Windows Terminal) support clickable web links using standard OSC 8 escape sequences. In `tui-rs`, hyperlinks are first-class primitives across `Cell`, `Span`, `Buffer`, and `AnsiFrameWriter`:
+
+```rust
+use tui_rs::prelude::*;
+
+// 1. In inline text runs (Span / Line):
+let link_span = Span::hyperlink("Open Documentation", "https://github.com/vaultdrive/tui-rs");
+let line = Line::from_spans([Span::raw("For help: "), link_span]);
+buffer.set_line(ColumnIndex::new(0), RowIndex::new(0), &line, TerminalWidth::new(40));
+
+// 2. Using the Hyperlink widget:
+let link_widget = Hyperlink::new("https://crates.io/crates/tui-rs", "View on Crates.io");
+link_widget.render(&mut buffer, ColumnIndex::new(0), RowIndex::new(1), 30);
+
+// 3. Directly in cell buffers:
+buffer.set_hyperlink(
+    ColumnIndex::new(0),
+    RowIndex::new(2),
+    "https://rust-lang.org",
+    "Rust Website",
+    Style::new().fg(Color::Cyan).underlined(),
+    30,
+);
+
+// 4. Standalone string formatters for toasts, modals, and notifications:
+let toast = format_hyperlink("https://github.com/vaultdrive/tui-rs", "Click to visit repo");
 ```

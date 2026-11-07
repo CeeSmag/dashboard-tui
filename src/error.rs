@@ -48,4 +48,9 @@ pub enum TuiError {
         /// Human-readable error message from the backend.
         message: String,
     },
+
+    /// A QR code could not be generated from the given payload.
+    #[cfg(feature = "qrcode")]
+    #[error("QR code encoding error: {0}")]
+    Qr(#[from] ::qrcode::types::QrError),
 }

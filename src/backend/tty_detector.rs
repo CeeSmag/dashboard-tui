@@ -19,12 +19,17 @@ use crate::core::color::ColorDepth;
 /// let _ = caps.is_tty_console();
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[expect(
+    clippy::struct_excessive_bools,
+    reason = "Terminal capability flags are independent boolean feature probes"
+)]
 #[non_exhaustive]
 pub struct TerminalCapabilities {
     color_depth: ColorDepth,
     is_tty_console: bool,
     supports_synchronized_output: bool,
     supports_grapheme_clustering: bool,
+    supports_hyperlinks: bool,
 }
 
 impl Default for TerminalCapabilities {
@@ -34,6 +39,7 @@ impl Default for TerminalCapabilities {
             is_tty_console: false,
             supports_synchronized_output: true,
             supports_grapheme_clustering: true,
+            supports_hyperlinks: true,
         }
     }
 }
@@ -62,7 +68,24 @@ impl TerminalCapabilities {
             is_tty_console,
             supports_synchronized_output,
             supports_grapheme_clustering,
+            supports_hyperlinks: !is_tty_console,
         }
+    }
+
+    /// Sets whether OSC 8 hyperlinks are supported.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::backend::TerminalCapabilities;
+    ///
+    /// let caps = TerminalCapabilities::default().with_hyperlinks(false);
+    /// assert!(!caps.supports_hyperlinks());
+    /// ```
+    #[must_use]
+    pub const fn with_hyperlinks(mut self, supports: bool) -> Self {
+        self.supports_hyperlinks = supports;
+        self
     }
 
     /// Probes the current OS environment variables and `/proc/self/fd` to determine capabilities.
@@ -84,6 +107,7 @@ impl TerminalCapabilities {
             is_tty_console: is_tty,
             supports_synchronized_output: !is_tty,
             supports_grapheme_clustering: !is_tty,
+            supports_hyperlinks: !is_tty,
         }
     }
 
@@ -140,6 +164,19 @@ impl TerminalCapabilities {
     #[must_use]
     pub const fn supports_grapheme_clustering(self) -> bool {
         self.supports_grapheme_clustering
+    }
+
+    /// Returns true if OSC 8 clickable terminal hyperlinks (`\x1b]8;;<URL>\x1b\\`) are supported.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::backend::TerminalCapabilities;
+    /// assert!(TerminalCapabilities::default().supports_hyperlinks());
+    /// ```
+    #[must_use]
+    pub const fn supports_hyperlinks(self) -> bool {
+        self.supports_hyperlinks
     }
 }
 

@@ -573,7 +573,56 @@ impl Buffer {
         span: &Span<'_>,
         max_column: ColumnIndex,
     ) -> ColumnIndex {
-        self.set_str_clipped(column, row, span.as_str(), max_column, span.style())
+        let end_col = self.set_str_clipped(column, row, span.as_str(), max_column, span.style());
+        if let Some(url) = span.hyperlink_url() {
+            let mut c = column.max(self.bounds.left());
+            while c < end_col {
+                if let Some(cell) = self.cell_at_mut(c, row) {
+                    cell.set_hyperlink(Some(url));
+                }
+                c = c.saturating_add(1);
+            }
+        }
+        end_col
+    }
+
+    /// Writes `text` with `style` and attaches a clickable OSC 8 `url` across all written cells.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style, TerminalHeight, TerminalWidth};
+    ///
+    /// let mut buf = Buffer::empty(Rect::from_size(TerminalWidth::new(20), TerminalHeight::new(1)));
+    /// buf.set_hyperlink(
+    ///     ColumnIndex::new(0),
+    ///     RowIndex::new(0),
+    ///     "https://github.com",
+    ///     "GitHub",
+    ///     Style::DEFAULT,
+    ///     10,
+    /// );
+    /// assert_eq!(buf.cell_at(ColumnIndex::new(0), RowIndex::new(0)).and_then(|c| c.hyperlink()), Some("https://github.com"));
+    /// ```
+    pub fn set_hyperlink(
+        &mut self,
+        column: ColumnIndex,
+        row: RowIndex,
+        url: &str,
+        text: &str,
+        style: Style,
+        max_width: u16,
+    ) -> ColumnIndex {
+        let max_col = column.saturating_add(max_width);
+        let end_col = self.set_str_clipped(column, row, text, max_col, style);
+        let mut c = column.max(self.bounds.left());
+        while c < end_col {
+            if let Some(cell) = self.cell_at_mut(c, row) {
+                cell.set_hyperlink(Some(url));
+            }
+            c = c.saturating_add(1);
+        }
+        end_col
     }
 
     /// Writes a [`Line`] inside `(column, row)` across `width` columns respecting [`TextAlignment`].
@@ -616,7 +665,17 @@ impl Buffer {
                 break;
             }
             let effective_style = line.base_style().patch(span.style());
-            cur = self.set_str_clipped(cur, row, span.as_str(), max_col, effective_style);
+            let next_cur = self.set_str_clipped(cur, row, span.as_str(), max_col, effective_style);
+            if let Some(url) = span.hyperlink_url() {
+                let mut c = cur.max(self.bounds.left());
+                while c < next_cur {
+                    if let Some(cell) = self.cell_at_mut(c, row) {
+                        cell.set_hyperlink(Some(url));
+                    }
+                    c = c.saturating_add(1);
+                }
+            }
+            cur = next_cur;
         }
         cur
     }

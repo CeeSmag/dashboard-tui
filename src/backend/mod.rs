@@ -11,6 +11,7 @@ pub mod tty_detector;
 pub use self::ansi_writer::{
     ALT_SCROLL_ENABLE, ALT_SCROLL_RESTORE, AnsiFrameWriter, GRAPHEME_CLUSTERING_DISABLE,
     GRAPHEME_CLUSTERING_ENABLE, ProgressBarState, SYNC_UPDATE_BEGIN, SYNC_UPDATE_END,
+    format_hyperlink, format_hyperlink_with_id,
 };
 pub use self::crossterm_backend::CrosstermBackend;
 pub use self::test_backend::TestBackend;

@@ -26,10 +26,10 @@
 
 use std::time::{Duration, Instant};
 
-use tui_rs::backend::{Backend, CrosstermBackend, TestBackend};
+use tui_rs::backend::{Backend, CrosstermBackend, TestBackend, format_hyperlink};
 use tui_rs::components::{
-    DualWaveform, GradientMeter, GraphSymbolMode, WaveScaler, WaveScalerConfig, format_bytes,
-    format_rate,
+    DualWaveform, GradientMeter, GraphSymbolMode, QrWidget, WaveScaler, WaveScalerConfig,
+    format_bytes, format_rate,
 };
 use tui_rs::core::{
     Buffer, Color, ColorPalette, PrioritySegment, Rect, Style, TerminalHeight, TerminalWidth,
@@ -627,7 +627,7 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
     registry.register_section(AddonSectionEntry::new(
         2,
         1,
-        Section::menu("Diagnostic Tools", "1 inspect", Vec::new())
+        Section::menu("Diagnostic Tools", "1-2 inspect", Vec::new())
             .with_heights(5, 8)
             .with_selectable(true),
     ));
@@ -638,6 +638,32 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
             OptionOutcome::PushSubView(Box::new(LiveJournalSubView))
         }),
     ));
+    registry.register_option(AddonOptionEntry::new(
+        2,
+        1,
+        OptionSpec::new(2, "Documentation (Clickable Link)", |_ctx| {
+            OptionOutcome::Toast {
+                message: format_hyperlink(
+                    "https://github.com/vaultdrive/tui-rs",
+                    "Click: https://github.com/vaultdrive/tui-rs",
+                ),
+                is_error: false,
+            }
+        }),
+    ));
+
+    if let Ok(qr) = QrWidget::from_text(
+        "Mobile Companion Pair",
+        "https://github.com/vaultdrive/tui-rs",
+    ) {
+        registry.register_section(AddonSectionEntry::new(
+            2,
+            2,
+            Section::display(Box::new(qr))
+                .with_heights(8, 14)
+                .with_selectable(false),
+        ));
+    }
 
     DashboardEngine::new(VaultDriveMockBackend::default(), registry.assemble_pages())
 }

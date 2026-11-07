@@ -45,6 +45,7 @@ pub enum TextAlignment {
 pub struct Span<'a> {
     content: Cow<'a, str>,
     style: Style,
+    hyperlink: Option<Cow<'a, str>>,
 }
 
 impl<'a> Span<'a> {
@@ -63,6 +64,7 @@ impl<'a> Span<'a> {
         Self {
             content: content.into(),
             style: Style::DEFAULT,
+            hyperlink: None,
         }
     }
 
@@ -81,7 +83,64 @@ impl<'a> Span<'a> {
         Self {
             content: content.into(),
             style,
+            hyperlink: None,
         }
+    }
+
+    /// Creates a clickable hyperlink [`Span`] with the given text and target URL.
+    ///
+    /// The span defaults to an underlined cyan visual style (`Modifiers::UNDERLINED` and `Color::Cyan`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Span;
+    ///
+    /// let link = Span::hyperlink("VaultDrive Home", "https://github.com/vaultdrive");
+    /// assert_eq!(link.as_str(), "VaultDrive Home");
+    /// assert_eq!(link.hyperlink_url(), Some("https://github.com/vaultdrive"));
+    /// ```
+    #[must_use]
+    pub fn hyperlink(content: impl Into<Cow<'a, str>>, url: impl Into<Cow<'a, str>>) -> Self {
+        Self {
+            content: content.into(),
+            style: Style::new().fg(crate::core::Color::Cyan).underlined(),
+            hyperlink: Some(url.into()),
+        }
+    }
+
+    /// Attaches or clears the target OSC 8 hyperlink URL on this [`Span`].
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Span;
+    ///
+    /// let span = Span::raw("GitHub").with_hyperlink("https://github.com");
+    /// assert_eq!(span.hyperlink_url(), Some("https://github.com"));
+    /// ```
+    #[must_use]
+    pub fn with_hyperlink(mut self, url: impl Into<Cow<'a, str>>) -> Self {
+        self.hyperlink = Some(url.into());
+        self
+    }
+
+    /// Returns the target OSC 8 hyperlink URL attached to this span, if any.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Span;
+    ///
+    /// let span = Span::raw("Plain");
+    /// assert_eq!(span.hyperlink_url(), None);
+    ///
+    /// let link = Span::hyperlink("GitHub", "https://github.com");
+    /// assert_eq!(link.hyperlink_url(), Some("https://github.com"));
+    /// ```
+    #[must_use]
+    pub fn hyperlink_url(&self) -> Option<&str> {
+        self.hyperlink.as_deref()
     }
 
     /// Returns a borrowed view of the span's text content (`C-CONV` `as_str`).
