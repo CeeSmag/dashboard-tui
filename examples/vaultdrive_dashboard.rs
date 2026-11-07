@@ -69,11 +69,13 @@ const TELEMETRY_WINDOW_SAMPLES: usize = 240;
 #[expect(clippy::cast_precision_loss, reason = "sample index is small")]
 fn sample_pair_at_tick(tick: u64) -> (f64, f64) {
     let t = (tick as f64) * 0.18;
-    let up_wave =
-        (t.sin() * 0.5 + 0.5) * 920_000.0 + ((t * 2.3).cos() * 0.5 + 0.5) * 480_000.0 + 120_000.0;
-    let down_wave = ((t * 0.85 + 1.2).sin() * 0.5 + 0.5) * 1_050_000.0
-        + ((t * 1.9).sin() * 0.5 + 0.5) * 520_000.0
-        + 150_000.0;
+    let up_a = t.sin().mul_add(0.5, 0.5);
+    let up_b = (t * 2.3).cos().mul_add(0.5, 0.5);
+    let up_wave = up_a.mul_add(920_000.0, up_b.mul_add(480_000.0, 120_000.0));
+
+    let dn_a = t.mul_add(0.85, 1.2).sin().mul_add(0.5, 0.5);
+    let dn_b = (t * 1.9).sin().mul_add(0.5, 0.5);
+    let down_wave = dn_a.mul_add(1_050_000.0, dn_b.mul_add(520_000.0, 150_000.0));
     (up_wave, down_wave)
 }
 
@@ -211,7 +213,7 @@ impl SectionWidget<VaultDriveMockBackend> for DriveStatusWidget {
                     y,
                     val,
                     Style::new().with_fg(color).bold(),
-                    inner.right().get() - val_x.get(),
+                    inner.right().get().saturating_sub(val_x.get()),
                 );
             }
             y = y.saturating_add(1);

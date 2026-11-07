@@ -264,7 +264,11 @@ proptest! {
             let sec = Section::menu(
                 format!("Sec{i}"),
                 "Enter",
-                vec![OptionSpec::new(i + 1, "Action", |_| OptionOutcome::None)],
+                vec![OptionSpec::new(
+                    i.saturating_add(1),
+                    "Action",
+                    |_| OptionOutcome::None,
+                )],
             )
             .with_heights(4, 10);
             page.push_section(sec);

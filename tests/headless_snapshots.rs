@@ -68,7 +68,7 @@ impl DashboardBackend for MockVaultBackend {
     }
 
     fn save_ui_prefs(&mut self) -> Result<(), tui_rs::error::TuiError> {
-        self.saved_count += 1;
+        self.saved_count = self.saved_count.saturating_add(1);
         Ok(())
     }
 }
