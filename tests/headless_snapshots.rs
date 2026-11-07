@@ -401,11 +401,11 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
     );
     assert!(!engine.backend().mounted);
 
-    // Pressing Tab on Page 1 must NOT select section 0 (`SyncTelemetryWidget`, which has
+    // Pressing Right arrow (section cycle) on Page 1 must NOT select section 0 (`SyncTelemetryWidget`, which has
     // `selectable = false`) — focus stays on section 1 (`Quick Actions`, `selectable = true`)
     // so pressing Enter still triggers the highlighted Quick Actions item ([1] Toggle Mount)!
     assert_eq!(
-        engine.handle_key(KeyPress::new(KeyCode::Tab)),
+        engine.handle_key(KeyPress::new(KeyCode::Right)),
         EngineAction::Continue
     );
     assert_eq!(
@@ -487,14 +487,24 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
     assert!(!engine.has_modal());
     assert_eq!(engine.backend().saved_count, 1);
 
-    // Press 'q' to quit
-    assert_eq!(engine.handle_key(KeyPress::char('q')), EngineAction::Quit);
+    // Press 'q' at root dashboard: cancels transient state, does NOT quit
+    assert_eq!(
+        engine.handle_key(KeyPress::char('q')),
+        EngineAction::Continue
+    );
 
-    // Verify custom KeyBindings (`quit('x')`, `page_cycle('<', '>')`, `activate("Space")`)
+    // Press ^Q (Ctrl+Q) to quit
+    assert_eq!(
+        engine.handle_key(KeyPress::char('q').with_ctrl(true)),
+        EngineAction::Quit
+    );
+
+    // Verify custom KeyBindings with ctrl+[key] (`quit("ctrl+x")`, `page_cycle('<', '>')`, `activate("Space")`)
     engine.set_keys(
         KeyBindings::default()
-            .quit('x')
+            .quit("ctrl+x")
             .page_cycle('<', '>')
+            .section_cycle("Right", "Left")
             .activate("Space"),
     );
     assert_eq!(
@@ -506,7 +516,15 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
         EngineAction::Continue
     );
     assert_eq!(engine.active_page(), 0);
-    assert_eq!(engine.handle_key(KeyPress::char('x')), EngineAction::Quit);
+    // Pressing 'x' alone does not quit; Ctrl+X quits
+    assert_eq!(
+        engine.handle_key(KeyPress::char('x')),
+        EngineAction::Continue
+    );
+    assert_eq!(
+        engine.handle_key(KeyPress::char('x').with_ctrl(true)),
+        EngineAction::Quit
+    );
     Ok(())
 }
 
@@ -674,4 +692,81 @@ fn osc8_hyperlinks_ansi_encoding_and_widgets() -> Result<(), tui_rs::error::TuiE
     assert_eq!(cell2.symbol(), "C");
 
     Ok(())
+}
+
+#[test]
+fn key_mapping_summary_and_ctrl_key_customization() {
+    use tui_rs::dashboard::{IntoKeyPress, KeyBindings, KeyCode, KeyPress};
+
+    // 1. Verify string parsing for any ctrl+[key] pattern
+    assert_eq!(
+        "ctrl+q".into_key_press(),
+        KeyPress::char('q').with_ctrl(true)
+    );
+    assert_eq!(
+        "Ctrl+Q".into_key_press(),
+        KeyPress::char('q').with_ctrl(true)
+    );
+    assert_eq!("^q".into_key_press(), KeyPress::char('q').with_ctrl(true));
+    assert_eq!("^Q".into_key_press(), KeyPress::char('q').with_ctrl(true));
+    assert_eq!(
+        "ctrl-x".into_key_press(),
+        KeyPress::char('x').with_ctrl(true)
+    );
+    assert_eq!(
+        "ctrl+w".into_key_press(),
+        KeyPress::char('w').with_ctrl(true)
+    );
+    assert_eq!(
+        "Shift+Tab".into_key_press(),
+        KeyPress::new(KeyCode::BackTab)
+    );
+    assert_eq!("Tab".into_key_press(), KeyPress::new(KeyCode::Tab));
+    assert_eq!("Right".into_key_press(), KeyPress::new(KeyCode::Right));
+    assert_eq!("→".into_key_press(), KeyPress::new(KeyCode::Right));
+    assert_eq!("Left".into_key_press(), KeyPress::new(KeyCode::Left));
+    assert_eq!("←".into_key_press(), KeyPress::new(KeyCode::Left));
+
+    // 2. Default KeyBindings match the requested specification
+    let default_keys = KeyBindings::default();
+    assert_eq!(
+        default_keys.quit_press(),
+        KeyPress::char('q').with_ctrl(true)
+    );
+    assert_eq!(default_keys.quit_press().short_label().as_str(), "^Q");
+    assert_eq!(
+        default_keys.next_section_press(),
+        KeyPress::new(KeyCode::Right)
+    );
+    assert_eq!(
+        default_keys.prev_section_press(),
+        KeyPress::new(KeyCode::Left)
+    );
+    assert_eq!(default_keys.next_page_press(), KeyPress::new(KeyCode::Tab));
+    assert_eq!(
+        default_keys.prev_page_press(),
+        KeyPress::new(KeyCode::BackTab)
+    );
+    assert_eq!(default_keys.cancel_press(), KeyPress::char('q'));
+    assert_eq!(default_keys.cursor_up_press(), KeyPress::new(KeyCode::Up));
+    assert_eq!(
+        default_keys.cursor_down_press(),
+        KeyPress::new(KeyCode::Down)
+    );
+    assert_eq!(default_keys.activate_press(), KeyPress::new(KeyCode::Enter));
+
+    // 3. Custom keybindings configured via developer method chaining in dashboard file
+    let custom_keys = KeyBindings::default()
+        .quit("ctrl+x")
+        .page_cycle("Shift+Tab", "Tab")
+        .section_cycle("Right", "Left")
+        .up_down("Up", "Down")
+        .vim_up_down('k', 'j')
+        .activate("Enter")
+        .cancel('q');
+    assert_eq!(
+        custom_keys.quit_press(),
+        KeyPress::char('x').with_ctrl(true)
+    );
+    assert_eq!(custom_keys.quit_press().short_label().as_str(), "^X");
 }

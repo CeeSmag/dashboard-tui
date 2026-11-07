@@ -562,13 +562,13 @@ pub fn run_dashboard(app: VaultDriveApp) -> Result<(), TuiError> {
         // ── 0. Configure Shortkeys (concise & readable, or omit for defaults) ──
         .with_keys(
             KeyBindings::default()
-                .quit('q')
-                .page_cycle('[', ']')
-                .section_cycle("Tab", "BackTab")
+                .quit("ctrl+q")
+                .page_cycle("Shift+Tab", "Tab")
+                .section_cycle("Right", "Left")
                 .up_down("Up", "Down")
                 .vim_up_down('k', 'j')
                 .activate("Enter")
-                .cancel("Esc"),
+                .cancel('q'),
         )
 
         // ── 1. Declare Pages (F1, F2, or any custom key hint like "m", "s") ──
@@ -613,20 +613,38 @@ pub fn run_dashboard(app: VaultDriveApp) -> Result<(), TuiError> {
 - **`SectionLayoutMode::OneTopTwoBottom`**: 1 full-width section on top, 2 side-by-side on the bottom.
 - **`SectionLayoutMode::Grid2x2`**: 2×2 quadrant grid for 4 sections.
 
-### 5.2 Customizable Shortkeys (`KeyBindings`) & `selectable` (`true` / `false`) Section Focus
-Every shortkey in the dashboard can be customized in `src/tui/dashboard.rs` via `.with_keys(KeyBindings::default()...)` using `'c'` (`char`), `"Tab"` / `"Enter"` / `"Esc"` / `"Space"` / `"F1"` (`&str`), or `KeyCode`:
-- **`.quit('q')`**: Key to exit the dashboard (`Ctrl+C` also always exits).
-- **`.page_cycle('[', ']')`**: Previous/Next page keys. In addition, the `key_hint` string passed to `.with_page(idx, title, key_hint, layout)` (e.g. `"F1"`, `"F2"`, or `"m"`) is automatically bound to jump directly to that page!
-- **`.section_cycle("Tab", "BackTab")`**: Cycle focus **only** among sections on the current page that have `selectable = true` (configured via `.with_display_section(..., selectable)`, `.with_menu_section(..., selectable)`, or `Section::with_selectable(bool)`).
-  - Purely informative visual sections with `selectable = false` are never highlighted or selected when pressing `Tab`.
-- **`.up_down("Up", "Down")` & `.vim_up_down('k', 'j')`** (or `.without_vim_keys()`): Move selection cursor inside the focused `Menu` section.
-- **`.activate("Enter")` & `.cancel("Esc")`**: Activate the highlighted option or cancel a pending prefix jump.
-- **`.numeric_jump(true)`**: Enable or disable `1`..`99` direct numeric option jumping (`450ms` prefix window when `max_option >= 10`).
+### 5.2 Key Mapping Summary & Shortkey Customization (`KeyBindings`)
+
+Every shortkey in the dashboard can be configured concisely in the dashboard project file using `KeyBindings::default()`:
+
+| Key | Action |
+|:---|:---|
+| `→ / ←` (Right / Left Arrows) | Move between sections on the active page |
+| `Tab / Shift+Tab` | Move between pages (F1 ↔ F2 ↔ F3) |
+| `q` | Cancel (closes modals, pops sub-views, clears inputs/toasts) |
+| `^Q` (`Ctrl+Q`) | Quit / Shutdown the app |
+| `↑ / ↓` (or `k / j`) | Move cursor between options inside the active section |
+| `Enter` | Activate selected option |
+
+Developers can enter any `ctrl+[key]` of their liking in the dashboard project file using intuitive strings (e.g. `"ctrl+q"`, `"^q"`, `"ctrl-x"`, `"ctrl+w"`), characters, or `KeyPress`:
+
+```rust
+KeyBindings::default()
+    .quit("ctrl+q")                  // Any ctrl+[key] e.g. "^q", "ctrl-x", "ctrl+w"
+    .page_cycle("Shift+Tab", "Tab")  // Backward / Forward page cycling
+    .section_cycle("Right", "Left")  // Next / Previous selectable section
+    .up_down("Up", "Down")           // Menu cursor movement
+    .vim_up_down('k', 'j')           // Vim-style secondary cursor movement
+    .activate("Enter")               // Option activation
+    .cancel('q')                     // Cancel modal / pop subview / clear toast
+```
+
+- **`selectable` (`true` / `false`) Section Focus**: Cycle focus (`→ / ←`) **only** among sections on the current page that have `selectable = true` (configured via `.with_display_section(..., selectable)`, `.with_menu_section(..., selectable)`, or `Section::with_selectable(bool)`). Purely informative visual sections with `selectable = false` are never selected.
 - **`1`..`99` Numeric Direct Jump**:
   - If the page's highest option number is `<= 9`: pressing `1`..`9` **immediately** executes that option.
   - If the page's highest option number is `>= 10` (e.g. `1`..`20`): pressing `1` or `2` opens a `450ms` prefix window (`#1_` or `#2_` shown in the footer bar). Pressing a second digit (`0`..`9`) immediately dispatches the 2-digit option (`10`..`20`), or pressing `Enter` / waiting `450ms` dispatches the single-digit option (`1` or `2`).
 - **`Enter`**: Executes the currently highlighted menu option.
-- **`q` / `Ctrl+C`**: Cleanly exits the dashboard and restores terminal state.
+- **`^Q` / `Ctrl+C`**: Cleanly exits the dashboard and restores terminal state.
 
 ---
 

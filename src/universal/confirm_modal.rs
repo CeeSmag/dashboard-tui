@@ -173,7 +173,7 @@ impl<B: DashboardBackend> Modal<B> for ConfirmModal<B> {
 
     fn on_key(&mut self, key: KeyPress, ctx: &mut ModalContext<'_, B>) -> ModalResult {
         match key.code() {
-            KeyCode::Esc | KeyCode::Char('n' | 'N') => ModalResult::Close,
+            KeyCode::Esc | KeyCode::Char('n' | 'N' | 'q' | 'Q') => ModalResult::Close,
             KeyCode::Char('y' | 'Y') => self.execute_confirm(ctx.backend),
             KeyCode::Left
             | KeyCode::Right

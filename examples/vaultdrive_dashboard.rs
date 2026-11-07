@@ -368,13 +368,14 @@ impl SubView<VaultDriveMockBackend> for LiveJournalSubView {
 fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
     let mut registry = AddonRegistry::<VaultDriveMockBackend>::new().with_keys(
         KeyBindings::default()
-            .quit('q')
-            .page_cycle('[', ']')
-            .section_cycle("Tab", "BackTab")
+            // Developers can configure any ctrl+[key] to their liking (e.g. "ctrl+q", "^q", "ctrl-x", "ctrl+w")
+            .quit("ctrl+q")
+            .page_cycle("Shift+Tab", "Tab")
+            .section_cycle("Right", "Left")
             .up_down("Up", "Down")
             .vim_up_down('k', 'j')
             .activate("Enter")
-            .cancel("Esc"),
+            .cancel('q'),
     );
 
     // Register 3 Pages (F1, F2, F3)

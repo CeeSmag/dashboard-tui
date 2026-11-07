@@ -377,7 +377,8 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         reason = "single central 4-tier key dispatcher"
     )]
     pub fn handle_key(&mut self, key: KeyPress) -> EngineAction {
-        if key.has_ctrl() && key.code() == KeyCode::Char('c') {
+        // Immediate hard quit: SIGINT (Ctrl+C) or configured quit (^Q / Ctrl+Q)
+        if (key.has_ctrl() && key.code() == KeyCode::Char('c')) || self.keys.matches_quit(key) {
             return EngineAction::Quit;
         }
 
@@ -395,7 +396,11 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             };
             match modal.on_key(key, &mut ctx) {
                 ModalResult::Continue => {
-                    self.modal = Some(modal);
+                    if self.keys.matches_cancel(key) {
+                        self.modal = None;
+                    } else {
+                        self.modal = Some(modal);
+                    }
                 }
                 ModalResult::Close => {}
                 ModalResult::CloseWithToast { message, is_error } => {
@@ -409,7 +414,11 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         if let Some(mut sub_view) = self.sub_views.pop() {
             match sub_view.on_key(&mut self.backend, key) {
                 SubViewResult::Continue => {
-                    self.sub_views.push(sub_view);
+                    if self.keys.matches_cancel(key) {
+                        // SubView dismissed via global cancel ('q' / Esc)
+                    } else {
+                        self.sub_views.push(sub_view);
+                    }
                 }
                 SubViewResult::Pop => {}
                 SubViewResult::PopWithToast { message, is_error } => {
@@ -421,17 +430,19 @@ impl<B: DashboardBackend> DashboardEngine<B> {
 
         // 3. Pending multi-digit jump handling
         if self.prefix_jump.has_pending() {
-            if key.code() == self.keys.cancel_key() {
+            if self.keys.matches_cancel(key) {
                 self.prefix_jump.clear();
                 return EngineAction::Continue;
             }
-            if key.code() == self.keys.activate_key() {
+            if self.keys.matches_activate(key) {
                 if let Some(num) = self.prefix_jump.commit_now() {
                     return self.execute_option_by_number(num);
                 }
                 return EngineAction::Continue;
             }
             if let KeyCode::Char(ch) = key.code()
+                && !key.has_ctrl()
+                && !key.has_alt()
                 && ch.is_ascii_digit()
             {
                 let digit = (ch as u16) - u16::from(b'0');
@@ -449,46 +460,51 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             }
         }
 
-        // 4. Page & Section global navigation (using customizable `self.keys`)
+        // 4. Cancel key at dashboard root level (clears transient toast/state)
+        if self.keys.matches_cancel(key) {
+            return EngineAction::Continue;
+        }
+
+        // 5. Page & Section global navigation (using customizable `self.keys`)
         let code = key.code();
-        if code == self.keys.quit_key() {
-            return EngineAction::Quit;
+        if !key.has_ctrl() && !key.has_alt() {
+            if let Some(page_idx) = self
+                .pages
+                .iter()
+                .position(|p| KeyCode::from_hint(p.key_hint()) == Some(code))
+            {
+                self.set_active_page(page_idx);
+                return EngineAction::Continue;
+            }
+            if let KeyCode::F(n) = code
+                && (1..=12).contains(&n)
+            {
+                let target = usize::from(n - 1);
+                self.set_active_page(target);
+                return EngineAction::Continue;
+            }
         }
-        // Check if `code` matches any page's configured `key_hint` (e.g., "F1", "F2", or custom page key)
-        if let Some(page_idx) = self
-            .pages
-            .iter()
-            .position(|p| KeyCode::from_hint(p.key_hint()) == Some(code))
-        {
-            self.set_active_page(page_idx);
-            return EngineAction::Continue;
-        }
-        if let KeyCode::F(n) = code
-            && (1..=12).contains(&n)
-        {
-            let target = usize::from(n - 1);
-            self.set_active_page(target);
-            return EngineAction::Continue;
-        }
-        if code == self.keys.prev_page_key() && !self.pages.is_empty() {
+        if self.keys.matches_prev_page(key) && !self.pages.is_empty() {
             let n = self.pages.len();
             self.set_active_page((self.active_page + n - 1) % n);
             return EngineAction::Continue;
         }
-        if code == self.keys.next_page_key() && !self.pages.is_empty() {
+        if self.keys.matches_next_page(key) && !self.pages.is_empty() {
             let n = self.pages.len();
             self.set_active_page((self.active_page + 1) % n);
             return EngineAction::Continue;
         }
-        if code == self.keys.next_section_key() {
+        if self.keys.matches_next_section(key) {
             self.cycle_section_focus(true);
             return EngineAction::Continue;
         }
-        if code == self.keys.prev_section_key() {
+        if self.keys.matches_prev_section(key) {
             self.cycle_section_focus(false);
             return EngineAction::Continue;
         }
         if self.keys.is_numeric_jump_enabled()
+            && !key.has_ctrl()
+            && !key.has_alt()
             && let KeyCode::Char(ch) = code
             && ch.is_ascii_digit()
         {
@@ -502,7 +518,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             return EngineAction::Continue;
         }
 
-        // 5. Focused section routing
+        // 6. Focused section routing
         self.route_to_focused_section(key)
     }
 
@@ -571,12 +587,11 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         }
 
         if sec.role() == SectionRole::Menu {
-            let code = key.code();
-            if self.keys.is_up(code) {
+            if self.keys.is_up(key) {
                 let _ = sec.cursor_up();
-            } else if self.keys.is_down(code) {
+            } else if self.keys.is_down(key) {
                 let _ = sec.cursor_down();
-            } else if code == self.keys.activate_key() {
+            } else if self.keys.matches_activate(key) {
                 let cursor_idx = sec.cursor();
                 if let Some(opt) = sec.options_mut().get_mut(cursor_idx) {
                     let outcome = {
@@ -669,36 +684,37 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         }
         let up_down_lbl = format!(
             "{}{}",
-            self.keys.cursor_up_key().short_label().as_str(),
-            self.keys.cursor_down_key().short_label().as_str()
+            self.keys.cursor_up_press().short_label().as_str(),
+            self.keys.cursor_down_press().short_label().as_str()
         );
         hints.push(KeyHint::new(up_down_lbl, "select", key_style, 80));
         hints.push(KeyHint::new(
-            self.keys.activate_key().short_label().as_str().to_string(),
+            self.keys
+                .activate_press()
+                .short_label()
+                .as_str()
+                .to_string(),
             "activate",
             key_style,
             85,
         ));
-        hints.push(KeyHint::new(
-            self.keys
-                .next_section_key()
+        let sec_lbl = format!(
+            "{}/{}",
+            self.keys.next_section_press().short_label().as_str(),
+            self.keys.prev_section_press().short_label().as_str()
+        );
+        hints.push(KeyHint::new(sec_lbl, "section", key_style, 60));
+        if self.pages.len() > 1 {
+            let page_lbl = self
+                .keys
+                .next_page_press()
                 .short_label()
                 .as_str()
-                .to_string(),
-            "section",
-            key_style,
-            60,
-        ));
-        if self.pages.len() > 1 {
-            let page_lbl = format!(
-                "{}{}",
-                self.keys.prev_page_key().short_label().as_str(),
-                self.keys.next_page_key().short_label().as_str()
-            );
+                .to_string();
             hints.push(KeyHint::new(page_lbl, "page", key_style, 50));
         }
         hints.push(KeyHint::new(
-            self.keys.quit_key().short_label().as_str().to_string(),
+            self.keys.quit_press().short_label().as_str().to_string(),
             "quit",
             key_style,
             100,

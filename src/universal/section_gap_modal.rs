@@ -121,7 +121,7 @@ impl<B: DashboardBackend> Modal<B> for SectionGapModal {
     fn on_key(&mut self, key: KeyPress, ctx: &mut ModalContext<'_, B>) -> ModalResult {
         let layer = SpacingLayer::ALL[self.cursor.min(3)];
         match key.code() {
-            KeyCode::Esc | KeyCode::Enter => {
+            KeyCode::Esc | KeyCode::Enter | KeyCode::Char('q') => {
                 let _ = ctx.backend.save_ui_prefs();
                 ModalResult::CloseWithToast {
                     message: format!(

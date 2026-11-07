@@ -147,7 +147,7 @@ impl<B: DashboardBackend> Modal<B> for ColorThemeModal {
     fn on_key(&mut self, key: KeyPress, ctx: &mut ModalContext<'_, B>) -> ModalResult {
         let count = ColorPalette::ALL_THEMES.len();
         match key.code() {
-            KeyCode::Esc => {
+            KeyCode::Esc | KeyCode::Char('q') => {
                 *ctx.theme_index = self.initial_index;
                 *ctx.palette = self.initial_palette;
                 ModalResult::Close

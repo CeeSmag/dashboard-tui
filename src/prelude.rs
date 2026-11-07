@@ -26,10 +26,10 @@ pub use crate::core::{
 };
 pub use crate::dashboard::{
     AddonOptionEntry, AddonPageEntry, AddonRegistry, AddonSectionEntry, DashboardBackend,
-    DashboardEngine, EngineAction, EventState, IntoKeyCode, KeyBindings, KeyCode, KeyPress, Modal,
-    ModalContext, ModalResult, OptionOutcome, OptionSpec, Page, Section, SectionFocusStyle,
-    SectionLayoutMode, SectionRole, SectionVisibility, SectionWidget, SpacingConfig, SpacingLayer,
-    SubView, SubViewResult,
+    DashboardEngine, EngineAction, EventState, IntoKeyCode, IntoKeyPress, KeyBindings, KeyCode,
+    KeyPress, Modal, ModalContext, ModalResult, OptionOutcome, OptionSpec, Page, Section,
+    SectionFocusStyle, SectionLayoutMode, SectionRole, SectionVisibility, SectionWidget,
+    SpacingConfig, SpacingLayer, SubView, SubViewResult,
 };
 pub use crate::error::TuiError;
 pub use crate::terminal::{
