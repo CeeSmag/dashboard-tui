@@ -95,7 +95,13 @@ impl<B: DashboardBackend> Modal<B> for NoticeModal {
             .enumerate()
         {
             let ry = inner.y().saturating_add(row_offset as u16);
-            let _ = buffer.set_string(inner.x(), ry, line, text_style, text_w);
+            let trimmed = line.trim();
+            if trimmed.starts_with("https://") || trimmed.starts_with("http://") {
+                let link_style = Style::new().with_fg(palette.accent).underlined();
+                let _ = buffer.set_hyperlink(inner.x(), ry, trimmed, line, link_style, text_w);
+            } else {
+                let _ = buffer.set_string(inner.x(), ry, line, text_style, text_w);
+            }
         }
 
         if sb.should_render() {

@@ -151,6 +151,7 @@ pub struct OptionSpec<B: DashboardBackend> {
     badge_fn: Option<BadgeFn<B>>,
     enabled_fn: Option<EnabledFn<B>>,
     action_fn: ActionFn<B>,
+    hyperlink: Option<String>,
 }
 
 impl<B: DashboardBackend> core::fmt::Debug for OptionSpec<B> {
@@ -192,7 +193,39 @@ impl<B: DashboardBackend> OptionSpec<B> {
             badge_fn: None,
             enabled_fn: None,
             action_fn: Box::new(action),
+            hyperlink: None,
         }
+    }
+
+    /// Attaches an optional OSC 8 clickable target URL to this menu option.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment<'_>> { Vec::new() }
+    /// }
+    ///
+    /// let opt = OptionSpec::<App>::new(1, "Docs", |_| OptionOutcome::None)
+    ///     .with_hyperlink("https://github.com");
+    /// assert_eq!(opt.hyperlink(), Some("https://github.com"));
+    /// ```
+    #[must_use]
+    pub fn with_hyperlink(mut self, url: impl Into<String>) -> Self {
+        self.hyperlink = Some(url.into());
+        self
+    }
+
+    /// Returns the attached hyperlink URL, if any.
+    #[must_use]
+    pub fn hyperlink(&self) -> Option<&str> {
+        self.hyperlink.as_deref()
     }
 
     /// Attaches a dynamic badge callback evaluated on every render pass.
@@ -704,6 +737,9 @@ impl<B: DashboardBackend> Section<B> {
                         let mut item = MenuItem::new(opt.number(), opt.label())
                             .with_badge(b_txt.as_str())
                             .with_enabled(*en);
+                        if let Some(url) = opt.hyperlink() {
+                            item = item.with_hyperlink(url);
+                        }
                         if let Some(c) = *b_col {
                             item = item.with_badge_color(c);
                         }

@@ -26,7 +26,7 @@
 
 use std::time::{Duration, Instant};
 
-use tui_rs::backend::{Backend, CrosstermBackend, TestBackend, format_hyperlink};
+use tui_rs::backend::{Backend, CrosstermBackend, TestBackend};
 use tui_rs::components::{
     DualWaveform, GradientMeter, GraphSymbolMode, QrWidget, WaveScaler, WaveScalerConfig,
     format_bytes, format_rate,
@@ -642,14 +642,19 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
         2,
         1,
         OptionSpec::new(2, "Documentation (Clickable Link)", |_ctx| {
-            OptionOutcome::Toast {
-                message: format_hyperlink(
-                    "https://github.com/vaultdrive/tui-rs",
-                    "Click: https://github.com/vaultdrive/tui-rs",
-                ),
-                is_error: false,
-            }
-        }),
+            OptionOutcome::OpenModal(Box::new(NoticeModal::new(
+                "Documentation & Online Resources",
+                vec![
+                    "Official Documentation & Architecture Guides:".to_string(),
+                    "https://github.com/vaultdrive/tui-rs".to_string(),
+                    String::new(),
+                    "• Ctrl+Click (or Cmd+Click) the link above to open in browser".to_string(),
+                    "• Or scan the QR Code in the section below with your phone".to_string(),
+                    "• Full AI integration manual: AI_GUIDE.md".to_string(),
+                ],
+            )))
+        })
+        .with_hyperlink("https://github.com/vaultdrive/tui-rs"),
     ));
 
     if let Ok(qr) = QrWidget::from_text(

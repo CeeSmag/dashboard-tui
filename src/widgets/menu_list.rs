@@ -45,6 +45,7 @@ pub struct MenuItem<'a> {
     badge: &'a str,
     badge_color: Option<Color>,
     enabled: bool,
+    hyperlink: Option<&'a str>,
 }
 
 impl<'a> MenuItem<'a> {
@@ -67,7 +68,32 @@ impl<'a> MenuItem<'a> {
             badge: "",
             badge_color: None,
             enabled: true,
+            hyperlink: None,
         }
+    }
+
+    /// Attaches an optional OSC 8 clickable target URL to this menu item.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::widgets::MenuItem;
+    ///
+    /// let item = MenuItem::new(1, "Docs").with_hyperlink("https://github.com");
+    /// assert_eq!(item.hyperlink(), Some("https://github.com"));
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn with_hyperlink(mut self, url: &'a str) -> Self {
+        self.hyperlink = Some(url);
+        self
+    }
+
+    /// Returns the attached hyperlink URL, if any.
+    #[must_use]
+    #[inline]
+    pub const fn hyperlink(&self) -> Option<&'a str> {
+        self.hyperlink
     }
 
     /// Sets the right-aligned status badge string.
@@ -608,13 +634,25 @@ impl<'a> MenuList<'a> {
             label_style,
             right_edge.saturating_sub(cx.get()),
         );
-        cx = buffer.set_string(
-            cx,
-            row,
-            label_prefix,
-            label_style,
-            right_edge.saturating_sub(cx.get()),
-        );
+        if let Some(url) = item.hyperlink {
+            let label_col = cx;
+            cx = buffer.set_hyperlink(
+                label_col,
+                row,
+                url,
+                label_prefix,
+                label_style.underlined(),
+                right_edge.saturating_sub(cx.get()),
+            );
+        } else {
+            cx = buffer.set_string(
+                cx,
+                row,
+                label_prefix,
+                label_style,
+                right_edge.saturating_sub(cx.get()),
+            );
+        }
         if label_has_ellipsis {
             cx = buffer.set_string(
                 cx,
