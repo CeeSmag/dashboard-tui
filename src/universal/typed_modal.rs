@@ -129,9 +129,13 @@ impl<B: DashboardBackend> Modal<B> for TypedModal<B> {
         cur_y = cur_y.saturating_add(1);
 
         if cur_y.get().saturating_add(3) <= inner.bottom().get() {
-            TextInput::new(&self.input)
-                .with_tty_mode(tty_mode)
-                .render(buffer, inner.x(), cur_y, max_w, palette);
+            TextInput::new(&self.input).with_tty_mode(tty_mode).render(
+                buffer,
+                inner.x(),
+                cur_y,
+                max_w,
+                palette,
+            );
             cur_y = cur_y.saturating_add(3);
         }
 

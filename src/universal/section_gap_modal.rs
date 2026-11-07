@@ -104,8 +104,8 @@ impl<B: DashboardBackend> Modal<B> for SectionGapModal {
             cur_y = cur_y.saturating_add(used);
 
             if cur_y.get() < inner.bottom().get() && max_w > 8 {
-                let slider = SliderBar::new(i32::from(val), 0, i32::from(max_val))
-                    .with_tty_mode(tty_mode);
+                let slider =
+                    SliderBar::new(i32::from(val), 0, i32::from(max_val)).with_tty_mode(tty_mode);
                 let _ = slider.render(
                     buffer,
                     inner.x().saturating_add(6),

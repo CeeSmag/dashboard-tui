@@ -4,9 +4,7 @@
 //! verified without a physical TTY.
 
 use crate::backend::{Backend, TerminalCapabilities};
-use crate::core::{
-    Buffer, CellDiff, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth,
-};
+use crate::core::{Buffer, CellDiff, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
 use crate::error::TuiError;
 
 /// In-memory headless backend implementing [`Backend`] for unit and snapshot tests.
@@ -303,9 +301,7 @@ impl Backend for TestBackend {
                 *dst = src.clone();
             }
             if gw == 2 {
-                if let Some(next_dst) =
-                    self.screen_buffer.cell_at_mut(col.saturating_add(1), row)
-                {
+                if let Some(next_dst) = self.screen_buffer.cell_at_mut(col.saturating_add(1), row) {
                     next_dst.replace_style(src.style());
                     next_dst.set_wide_continuation(true);
                 }

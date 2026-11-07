@@ -9,11 +9,11 @@
 //! - `Page::resolve_layout` never panics across all 6 `SectionLayoutMode`s and `0..=u16::MAX` viewports.
 
 use proptest::prelude::*;
-use tui_rs::components::{nice_ceil, round_scale, WaveScaler, WaveScalerConfig};
+use tui_rs::components::{WaveScaler, WaveScalerConfig, nice_ceil, round_scale};
 use tui_rs::core::{
-    clip_from_left, clip_to_width, display_width, split_equal_spans, truncate_with_ellipsis_parts,
-    wrap_lines_iter, Buffer, Color, ColumnIndex, Constraint, Layout, PrioritySegment, Rect,
-    RowIndex, Spacing4D, Style, TerminalHeight, TerminalWidth, TextAlignment,
+    Buffer, Color, ColumnIndex, Constraint, Layout, PrioritySegment, Rect, RowIndex, Spacing4D,
+    Style, TerminalHeight, TerminalWidth, TextAlignment, clip_from_left, clip_to_width,
+    display_width, split_equal_spans, truncate_with_ellipsis_parts, wrap_lines_iter,
 };
 use tui_rs::dashboard::{
     DashboardBackend, OptionOutcome, OptionSpec, Page, Section, SectionLayoutMode, SpacingConfig,

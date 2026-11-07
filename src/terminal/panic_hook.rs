@@ -50,8 +50,7 @@ pub fn restore_terminal_emergency() {
     let mut stderr = std::io::stderr();
     // Reset DEC 2026 sync, DEC 2027 grapheme, DEC 1007 alt scroll, OSC 9;4 progress,
     // leave alternate screen (?1049l), show cursor (?25h), reset SGR (0m).
-    let _ = stderr.write_all(
-        b"\x1b[?2026l\x1b[?2027l\x1b[?1007l\x1b]9;4;0;0\x07\x1b[?1049l\x1b[?25h\x1b[0m",
-    );
+    let _ = stderr
+        .write_all(b"\x1b[?2026l\x1b[?2027l\x1b[?1007l\x1b]9;4;0;0\x07\x1b[?1049l\x1b[?25h\x1b[0m");
     let _ = stderr.flush();
 }

@@ -620,10 +620,9 @@ impl<B: DashboardBackend> Section<B> {
     pub fn is_visible(&self, backend: &B, terminal_width: u16) -> bool {
         match self.visibility {
             SectionVisibility::Always => true,
-            SectionVisibility::WhenActive => self
-                .widget
-                .as_ref()
-                .is_some_and(|w| w.is_active(backend)),
+            SectionVisibility::WhenActive => {
+                self.widget.as_ref().is_some_and(|w| w.is_active(backend))
+            }
             SectionVisibility::WhenWide { min_cols } => terminal_width >= min_cols,
         }
     }
@@ -658,10 +657,10 @@ impl<B: DashboardBackend> Section<B> {
             .widget
             .as_ref()
             .map_or_else(|| self.subtitle.clone(), |w| w.subtitle(backend));
-        let (badge_str, badge_color) = self.widget.as_ref().map_or_else(
-            || (self.badge.clone(), None),
-            |w| w.badge(backend),
-        );
+        let (badge_str, badge_color) = self
+            .widget
+            .as_ref()
+            .map_or_else(|| (self.badge.clone(), None), |w| w.badge(backend));
 
         let is_focused = focused && self.selectable;
         let mut panel = TabPanel::new(&title_cow)

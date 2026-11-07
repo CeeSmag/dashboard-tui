@@ -171,13 +171,7 @@ impl SliderBar {
             muted_style,
             right_edge.saturating_sub(col.get()),
         );
-        cx = buffer.set_string(
-            cx,
-            row,
-            "[",
-            dim_style,
-            right_edge.saturating_sub(cx.get()),
-        );
+        cx = buffer.set_string(cx, row, "[", dim_style, right_edge.saturating_sub(cx.get()));
 
         let filled_cells = cur.saturating_mul(seg_w);
         let empty_cells = steps.saturating_sub(cur).saturating_mul(seg_w);
@@ -201,13 +195,7 @@ impl SliderBar {
             cx = cx.saturating_add(1);
         }
 
-        cx = buffer.set_string(
-            cx,
-            row,
-            "]",
-            dim_style,
-            right_edge.saturating_sub(cx.get()),
-        );
+        cx = buffer.set_string(cx, row, "]", dim_style, right_edge.saturating_sub(cx.get()));
         buffer.set_string(
             cx,
             row,

@@ -260,7 +260,12 @@ impl<B: DashboardBackend> Page<B> {
         }
     }
 
-    fn column_spans(base_x: ColumnIndex, total_width: u16, count: usize, h_gap: u16) -> Vec<(ColumnIndex, TerminalWidth)> {
+    fn column_spans(
+        base_x: ColumnIndex,
+        total_width: u16,
+        count: usize,
+        h_gap: u16,
+    ) -> Vec<(ColumnIndex, TerminalWidth)> {
         let widths = split_equal_spans(total_width, h_gap, count);
         let mut cur_x = base_x;
         let mut out = Vec::with_capacity(widths.len());
@@ -271,11 +276,7 @@ impl<B: DashboardBackend> Page<B> {
         out
     }
 
-    fn layout_columns(
-        visible: &[usize],
-        body: Rect,
-        h_gap: u16,
-    ) -> Vec<ResolvedSectionRect> {
+    fn layout_columns(visible: &[usize], body: Rect, h_gap: u16) -> Vec<ResolvedSectionRect> {
         let spans = Self::column_spans(body.x(), body.width().get(), visible.len(), h_gap);
         visible
             .iter()

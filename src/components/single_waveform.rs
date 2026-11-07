@@ -5,7 +5,7 @@
 //! (when `height > 1`) or cell-peak coloring (when `height == 1` sparkline mode).
 
 use crate::components::graph_symbols::{
-    graph_down_cell, graph_up_cell, row_wave_dots, total_wave_dots, GraphSymbolMode,
+    GraphSymbolMode, graph_down_cell, graph_up_cell, row_wave_dots, total_wave_dots,
 };
 use crate::components::time_series::{resample_slice_into, resample_slice_scaled_into};
 use crate::core::buffer::Buffer;
@@ -307,12 +307,8 @@ impl<'a> SingleWaveform<'a> {
                     row_grad_color
                 };
 
-                let _ = buffer.set_cell(
-                    screen_x,
-                    screen_y,
-                    glyph,
-                    Style::new().with_fg(cell_color),
-                );
+                let _ =
+                    buffer.set_cell(screen_x, screen_y, glyph, Style::new().with_fg(cell_color));
             }
         }
     }

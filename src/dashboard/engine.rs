@@ -18,7 +18,7 @@ use crate::core::rect::{Rect, TerminalHeight};
 use crate::dashboard::backend_trait::DashboardBackend;
 use crate::dashboard::chrome::{render_footer_bar, render_header_bar};
 use crate::dashboard::key_router::{EngineAction, KeyBindings, KeyCode, KeyPress};
-use crate::dashboard::modal::{splice_modal_overlay, Modal, ModalContext, ModalResult};
+use crate::dashboard::modal::{Modal, ModalContext, ModalResult, splice_modal_overlay};
 use crate::dashboard::navigation::{DigitDispatch, PrefixJumpState};
 use crate::dashboard::page::Page;
 use crate::dashboard::section::{OptionOutcome, Section, SectionRole};
@@ -372,7 +372,10 @@ impl<B: DashboardBackend> DashboardEngine<B> {
 
     /// Processes a normalized [`KeyPress`] according to the 4-tier input priority
     /// hierarchy (`Modal` -> `SubView` -> `PrefixJump / Page / Section / Option`).
-    #[expect(clippy::too_many_lines, reason = "single central 4-tier key dispatcher")]
+    #[expect(
+        clippy::too_many_lines,
+        reason = "single central 4-tier key dispatcher"
+    )]
     pub fn handle_key(&mut self, key: KeyPress) -> EngineAction {
         if key.has_ctrl() && key.code() == KeyCode::Char('c') {
             return EngineAction::Quit;
@@ -677,7 +680,11 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             85,
         ));
         hints.push(KeyHint::new(
-            self.keys.next_section_key().short_label().as_str().to_string(),
+            self.keys
+                .next_section_key()
+                .short_label()
+                .as_str()
+                .to_string(),
             "section",
             key_style,
             60,

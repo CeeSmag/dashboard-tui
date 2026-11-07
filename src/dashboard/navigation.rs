@@ -189,7 +189,12 @@ impl PrefixJumpState {
     /// // On a page where max_option_number = 20, '3' (30 > 20) fires immediately!
     /// assert_eq!(state.feed_digit(3, 20, now), DigitDispatch::FireImmediate(3));
     /// ```
-    pub fn feed_digit(&mut self, digit: u16, max_option_number: u16, now: Instant) -> DigitDispatch {
+    pub fn feed_digit(
+        &mut self,
+        digit: u16,
+        max_option_number: u16,
+        now: Instant,
+    ) -> DigitDispatch {
         if digit > 9 {
             return DigitDispatch::Ignored;
         }

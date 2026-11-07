@@ -12,7 +12,7 @@ use crate::core::buffer::{Buffer, StackStr};
 use crate::core::coordinates::{ColumnIndex, RowIndex, TerminalWidth};
 use crate::core::grapheme::display_width;
 use crate::core::palette::ColorPalette;
-use crate::core::priority_strip::{render_fitted_hints, render_fitted_segments, KeyHint};
+use crate::core::priority_strip::{KeyHint, render_fitted_hints, render_fitted_segments};
 use crate::core::style::Style;
 use crate::dashboard::backend_trait::DashboardBackend;
 use crate::dashboard::page::Page;
@@ -84,7 +84,9 @@ pub fn render_header_bar<B: DashboardBackend>(
 
     let tabs_fit = tabs_width.saturating_add(4) <= usize::from(right_edge.saturating_sub(cx.get()));
     let telemetry_limit = if tabs_fit {
-        right_edge.saturating_sub(tabs_width as u16).saturating_sub(2)
+        right_edge
+            .saturating_sub(tabs_width as u16)
+            .saturating_sub(2)
     } else {
         right_edge
     };
@@ -158,11 +160,7 @@ pub fn render_footer_bar(
 
     if let Some((msg, is_err)) = toast {
         let icon = if is_err {
-            if tty_mode {
-                " [!] "
-            } else {
-                " ✗ "
-            }
+            if tty_mode { " [!] " } else { " ✗ " }
         } else if tty_mode {
             " [*] "
         } else {

@@ -31,8 +31,8 @@ pub use backend_trait::DashboardBackend;
 pub use chrome::{render_footer_bar, render_header_bar};
 pub use engine::DashboardEngine;
 pub use key_router::{EngineAction, EventState, IntoKeyCode, KeyBindings, KeyCode, KeyPress};
-pub use modal::{dim_buffer_backdrop, splice_modal_overlay, Modal, ModalContext, ModalResult};
-pub use navigation::{DigitDispatch, PrefixJumpState, MULTI_DIGIT_TIMEOUT};
+pub use modal::{Modal, ModalContext, ModalResult, dim_buffer_backdrop, splice_modal_overlay};
+pub use navigation::{DigitDispatch, MULTI_DIGIT_TIMEOUT, PrefixJumpState};
 pub use page::{Page, ResolvedSectionRect, SectionLayoutMode};
 pub use registry::{AddonOptionEntry, AddonPageEntry, AddonRegistry, AddonSectionEntry};
 pub use section::{

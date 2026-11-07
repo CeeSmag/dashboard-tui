@@ -27,14 +27,12 @@ pub mod wave_scaler;
 pub use dual_waveform::DualWaveform;
 pub use formatters::{format_bytes, format_rate, format_rate_short, spinner_frame};
 pub use graph_symbols::{
-    braille_down_cell, braille_up_cell, clamp_dots, graph_down_cell, graph_up_cell, row_wave_dots,
-    total_wave_dots, GraphSymbolMode,
+    GraphSymbolMode, braille_down_cell, braille_up_cell, clamp_dots, graph_down_cell,
+    graph_up_cell, row_wave_dots, total_wave_dots,
 };
 pub use meter::GradientMeter;
 pub use qr_code::HalfBlockQr;
 pub use single_waveform::SingleWaveform;
 pub use slider::SliderBar;
-pub use time_series::{
-    resample_slice_into, resample_slice_scaled_into, TimeSeries, TimedSample,
-};
-pub use wave_scaler::{nice_ceil, round_scale, WaveScaler, WaveScalerConfig};
+pub use time_series::{TimeSeries, TimedSample, resample_slice_into, resample_slice_scaled_into};
+pub use wave_scaler::{WaveScaler, WaveScalerConfig, nice_ceil, round_scale};

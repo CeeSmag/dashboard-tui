@@ -69,7 +69,10 @@ impl<B: DashboardBackend> Modal<B> for NoticeModal {
         (TerminalWidth::new(w), TerminalHeight::new(h))
     }
 
-    #[expect(clippy::cast_possible_truncation, reason = "viewport height fits in u16")]
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "viewport height fits in u16"
+    )]
     fn render(&self, buffer: &mut Buffer, inner: Rect, palette: &ColorPalette, tty_mode: bool) {
         if inner.is_empty() {
             return;

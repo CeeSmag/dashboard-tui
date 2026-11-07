@@ -259,11 +259,7 @@ impl<'a> ChoiceRow<'a> {
         };
 
         let cursor_str = if self.selected {
-            if self.tty_mode {
-                "> "
-            } else {
-                "❯ "
-            }
+            if self.tty_mode { "> " } else { "❯ " }
         } else {
             "  "
         };

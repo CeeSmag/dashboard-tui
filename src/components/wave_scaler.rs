@@ -410,11 +410,7 @@ pub fn round_scale(val: f64, floor: f64) -> f64 {
         return val;
     }
     let rounded = (val / step).ceil() * step;
-    if rounded < floor {
-        floor
-    } else {
-        rounded
-    }
+    if rounded < floor { floor } else { rounded }
 }
 
 /// Rounds `val` up to a human-friendly 1–2–5 decade ceiling (`1, 2, 5, 10 × 10^n`).
@@ -452,9 +448,5 @@ pub fn nice_ceil(val: f64, floor: f64) -> f64 {
         10.0
     };
     let res = nice * base;
-    if res < floor {
-        floor
-    } else {
-        res
-    }
+    if res < floor { floor } else { res }
 }

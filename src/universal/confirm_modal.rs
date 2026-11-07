@@ -167,13 +167,7 @@ impl<B: DashboardBackend> Modal<B> for ConfirmModal<B> {
         let mut cx = buffer.set_string(inner.x(), btn_y, yes_str, yes_style, max_w);
         cx = cx.saturating_add(3);
         if cx.get() < inner.right().get() {
-            let _ = buffer.set_string(
-                cx,
-                btn_y,
-                no_str,
-                no_style,
-                inner.right().get() - cx.get(),
-            );
+            let _ = buffer.set_string(cx, btn_y, no_str, no_style, inner.right().get() - cx.get());
         }
     }
 

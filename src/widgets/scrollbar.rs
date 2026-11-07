@@ -129,7 +129,9 @@ impl VerticalScrollState {
         if selected_index < self.top {
             self.top = selected_index;
         } else if selected_index >= self.top.saturating_add(viewport_len) {
-            self.top = selected_index.saturating_add(1).saturating_sub(viewport_len);
+            self.top = selected_index
+                .saturating_add(1)
+                .saturating_sub(viewport_len);
         }
         self.top = self.top.min(self.max_top);
         self.top
@@ -296,19 +298,9 @@ impl SubCellScrollbar {
             let overlap_end = cell_end.min(thumb_end_sub);
 
             if overlap_start >= overlap_end {
-                let _ = buffer.set_cell(
-                    col,
-                    ry,
-                    "│",
-                    Style::new().with_fg(track_color),
-                );
+                let _ = buffer.set_cell(col, ry, "│", Style::new().with_fg(track_color));
             } else if self.tty_mode || (overlap_start == cell_start && overlap_end == cell_end) {
-                let _ = buffer.set_cell(
-                    col,
-                    ry,
-                    "█",
-                    Style::new().with_fg(thumb_color),
-                );
+                let _ = buffer.set_cell(col, ry, "█", Style::new().with_fg(thumb_color));
             } else if overlap_end == cell_end {
                 // Bottom portion of cell is thumb -> lower block with fg = thumb, bg = track
                 let eighths = (overlap_end - overlap_start).clamp(1, 8);

@@ -562,11 +562,7 @@ impl<'a> MenuList<'a> {
         let pad_after_label = target_label_w.saturating_sub(label_cols).max(1);
 
         let cursor_glyph = if selected {
-            if self.tty_mode {
-                "> "
-            } else {
-                "❯ "
-            }
+            if self.tty_mode { "> " } else { "❯ " }
         } else {
             "  "
         };

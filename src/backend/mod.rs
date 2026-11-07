@@ -14,9 +14,7 @@ pub use self::ansi_writer::{
 };
 pub use self::crossterm_backend::CrosstermBackend;
 pub use self::test_backend::TestBackend;
-pub use self::tty_detector::{
-    TerminalCapabilities, detect_color_depth, detect_linux_tty_console,
-};
+pub use self::tty_detector::{TerminalCapabilities, detect_color_depth, detect_linux_tty_console};
 
 use crate::core::{CellDiff, ColumnIndex, RowIndex, TerminalHeight, TerminalWidth};
 use crate::error::TuiError;

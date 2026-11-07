@@ -129,10 +129,7 @@ impl AnsiFrameWriter {
     /// // Zero diffs produce zero bytes:
     /// assert!(writer.encode_frame(diff_buffers(&a, &b)).is_empty());
     /// ```
-    pub fn encode_frame<'a>(
-        &mut self,
-        diffs: impl IntoIterator<Item = CellDiff<'a>>,
-    ) -> &[u8] {
+    pub fn encode_frame<'a>(&mut self, diffs: impl IntoIterator<Item = CellDiff<'a>>) -> &[u8] {
         self.buffer.clear();
         let mut iter = diffs.into_iter().peekable();
         if iter.peek().is_none() {
@@ -151,10 +148,9 @@ impl AnsiFrameWriter {
             let row = diff.row();
             let cell = diff.cell();
 
-            let needs_move =
-                last_cursor.is_none_or(|(expected_col, expected_row)| {
-                    expected_col != col || expected_row != row
-                });
+            let needs_move = last_cursor.is_none_or(|(expected_col, expected_row)| {
+                expected_col != col || expected_row != row
+            });
 
             if needs_move {
                 push_cursor_move(&mut self.buffer, col, row);

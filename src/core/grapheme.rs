@@ -223,8 +223,7 @@ impl<'a> Iterator for WrapLinesIter<'a> {
             if space_idx > 0 {
                 let line = clipped[..space_idx].trim_end();
                 let rest_in_para = trimmed_para[space_idx..].trim_start_matches([' ', '\t']);
-                let offset_in_remaining =
-                    trimmed_para.len().saturating_sub(rest_in_para.len());
+                let offset_in_remaining = trimmed_para.len().saturating_sub(rest_in_para.len());
                 self.remaining = &self.remaining[offset_in_remaining..];
                 return Some(line);
             }

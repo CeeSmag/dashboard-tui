@@ -15,9 +15,9 @@ pub mod notice_modal;
 pub mod section_gap_modal;
 pub mod typed_modal;
 
-pub use color_theme_modal::{color_theme_option, ColorThemeModal};
+pub use color_theme_modal::{ColorThemeModal, color_theme_option};
 pub use confirm_modal::{ConfirmActionFn, ConfirmModal};
 pub use edit_modal::{EditModal, EditSubmitFn};
 pub use notice_modal::NoticeModal;
-pub use section_gap_modal::{section_gap_option, SectionGapModal};
+pub use section_gap_modal::{SectionGapModal, section_gap_option};
 pub use typed_modal::TypedModal;

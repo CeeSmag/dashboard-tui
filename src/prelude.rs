@@ -14,9 +14,9 @@ pub use crate::backend::{
     Backend, CrosstermBackend, ProgressBarState, TerminalCapabilities, TestBackend,
 };
 pub use crate::components::{
-    format_bytes, format_rate, format_rate_short, resample_slice_into,
-    resample_slice_scaled_into, spinner_frame, DualWaveform, GradientMeter, GraphSymbolMode,
-    HalfBlockQr, SingleWaveform, SliderBar, TimeSeries, WaveScaler, WaveScalerConfig,
+    DualWaveform, GradientMeter, GraphSymbolMode, HalfBlockQr, SingleWaveform, SliderBar,
+    TimeSeries, WaveScaler, WaveScalerConfig, format_bytes, format_rate, format_rate_short,
+    resample_slice_into, resample_slice_scaled_into, spinner_frame,
 };
 pub use crate::core::{
     Buffer, Cell, Color, ColorDepth, ColorPalette, ColumnIndex, Constraint, GradientLut, KeyHint,
@@ -32,12 +32,12 @@ pub use crate::dashboard::{
 };
 pub use crate::error::TuiError;
 pub use crate::terminal::{
-    install_panic_restoration_hook, restore_terminal_emergency, TerminalSessionConfig,
-    TerminalSessionGuard,
+    TerminalSessionConfig, TerminalSessionGuard, install_panic_restoration_hook,
+    restore_terminal_emergency,
 };
 pub use crate::universal::{
-    color_theme_option, section_gap_option, ColorThemeModal, ConfirmModal, EditModal, NoticeModal,
-    SectionGapModal, TypedModal,
+    ColorThemeModal, ConfirmModal, EditModal, NoticeModal, SectionGapModal, TypedModal,
+    color_theme_option, section_gap_option,
 };
 pub use crate::widgets::{
     ChoiceRow, LabeledDivider, MenuItem, MenuList, SubCellScrollbar, TabPanel, TableColumn,

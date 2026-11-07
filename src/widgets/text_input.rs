@@ -175,7 +175,11 @@ impl TextInputState {
         }
         let byte_idx = self.byte_index_of_grapheme(self.cursor_grapheme);
         self.value.insert(byte_idx, ch);
-        self.cursor_grapheme = self.value.graphemes(true).count().min(self.cursor_grapheme + 1);
+        self.cursor_grapheme = self
+            .value
+            .graphemes(true)
+            .count()
+            .min(self.cursor_grapheme + 1);
     }
 
     /// Deletes the grapheme immediately preceding the cursor (`Backspace`).
@@ -467,12 +471,7 @@ impl<'a> TextInput<'a> {
         let mut cx = col.saturating_add(2);
         let max_cx = col.get().saturating_add(width - 2);
 
-        for (idx, &g) in graphemes
-            .iter()
-            .enumerate()
-            .take(end_g)
-            .skip(start_g)
-        {
+        for (idx, &g) in graphemes.iter().enumerate().take(end_g).skip(start_g) {
             if idx == cur_g && cx.get() < max_cx {
                 let _ = buffer.set_cell(cx, mid_row, cursor_glyph, cursor_style);
                 cx = cx.saturating_add(1);

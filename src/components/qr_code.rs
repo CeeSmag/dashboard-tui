@@ -132,7 +132,9 @@ impl<'a> HalfBlockQr<'a> {
     #[inline]
     #[expect(clippy::cast_possible_truncation, reason = "QR dimensions fit in u16")]
     pub const fn rendered_width(&self) -> u16 {
-        (self.dimension.saturating_add(self.quiet_zone.saturating_mul(2))) as u16
+        (self
+            .dimension
+            .saturating_add(self.quiet_zone.saturating_mul(2))) as u16
     }
 
     /// Returns the total rendered height in terminal rows (2 vertical modules per row).
@@ -149,7 +151,9 @@ impl<'a> HalfBlockQr<'a> {
     #[inline]
     #[expect(clippy::cast_possible_truncation, reason = "QR dimensions fit in u16")]
     pub const fn rendered_height(&self) -> u16 {
-        let total = self.dimension.saturating_add(self.quiet_zone.saturating_mul(2));
+        let total = self
+            .dimension
+            .saturating_add(self.quiet_zone.saturating_mul(2));
         total.div_ceil(2) as u16
     }
 
@@ -185,7 +189,9 @@ impl<'a> HalfBlockQr<'a> {
         if self.dimension == 0 {
             return;
         }
-        let total = self.dimension.saturating_add(self.quiet_zone.saturating_mul(2));
+        let total = self
+            .dimension
+            .saturating_add(self.quiet_zone.saturating_mul(2));
         let mut r = 0;
         let mut out_row = row;
         while r < total {

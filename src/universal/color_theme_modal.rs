@@ -123,12 +123,7 @@ impl<B: DashboardBackend> Modal<B> for ColorThemeModal {
                 let swatch_x = inner.right().saturating_sub(8);
                 let glyph = if tty_mode { "#" } else { "■" };
                 let colors = [theme.accent, theme.ok, theme.warn, theme.err];
-                let _ = buffer.set_cell(
-                    swatch_x,
-                    cur_y,
-                    "[",
-                    Style::new().with_fg(palette.dim),
-                );
+                let _ = buffer.set_cell(swatch_x, cur_y, "[", Style::new().with_fg(palette.dim));
                 for (ci, &c) in colors.iter().enumerate() {
                     let _ = buffer.set_cell(
                         swatch_x.saturating_add((ci + 1) as u16),

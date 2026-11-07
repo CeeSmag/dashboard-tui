@@ -43,12 +43,7 @@ impl GradientLut {
     /// assert_eq!(lut.color_at_percent(100), Color::Rgb(255, 255, 255));
     /// ```
     #[must_use]
-    pub const fn from_stops(
-        low: [u8; 3],
-        mid: [u8; 3],
-        warn: [u8; 3],
-        peak: [u8; 3],
-    ) -> Self {
+    pub const fn from_stops(low: [u8; 3], mid: [u8; 3], warn: [u8; 3], peak: [u8; 3]) -> Self {
         let mut table = [Color::Reset; 101];
         let mut pct = 0usize;
         while pct <= 100 {
@@ -128,7 +123,10 @@ impl GradientLut {
     /// assert!(style.foreground().is_some());
     /// ```
     #[must_use]
-    #[expect(clippy::cast_possible_truncation, reason = "ratio clamped to 0.0..=1.0")]
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "ratio clamped to 0.0..=1.0"
+    )]
     pub fn style_at_ratio(&self, ratio: f64) -> Style {
         Style::new().fg(self.at_ratio(ratio as f32))
     }
@@ -152,7 +150,10 @@ const fn lerp_channel(start: u8, end: u8, num: u16, den: u16) -> u8 {
     if end >= start {
         let diff = (end - start) as u16;
         let delta = (diff.saturating_mul(num).saturating_add(den / 2)) / den;
-        #[expect(clippy::cast_possible_truncation, reason = "start + delta <= end <= 255")]
+        #[expect(
+            clippy::cast_possible_truncation,
+            reason = "start + delta <= end <= 255"
+        )]
         return start.saturating_add(delta as u8);
     }
     let diff = (start - end) as u16;
@@ -364,7 +365,10 @@ impl ColorPalette {
         Self::TTY,
     ];
 
-    #[expect(clippy::too_many_arguments, reason = "internal const constructor for static palettes")]
+    #[expect(
+        clippy::too_many_arguments,
+        reason = "internal const constructor for static palettes"
+    )]
     #[must_use]
     const fn from_const(
         id: &'static str,

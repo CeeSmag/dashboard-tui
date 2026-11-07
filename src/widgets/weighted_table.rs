@@ -298,13 +298,15 @@ impl<'a> WeightedTable<'a> {
         reason = "column widths are clamped to u16"
     )]
     pub fn solve_column_widths(&self, total_width: u16, out_widths: &mut [u16]) {
-        let n = self.columns.len().min(out_widths.len()).min(MAX_TABLE_COLUMNS);
+        let n = self
+            .columns
+            .len()
+            .min(out_widths.len())
+            .min(MAX_TABLE_COLUMNS);
         if n == 0 {
             return;
         }
-        let total_gaps = self
-            .column_gap
-            .saturating_mul((n.saturating_sub(1)) as u16);
+        let total_gaps = self.column_gap.saturating_mul((n.saturating_sub(1)) as u16);
         let budget = total_width.saturating_sub(total_gaps);
 
         let mut natural = [0_u16; MAX_TABLE_COLUMNS];
@@ -354,7 +356,8 @@ impl<'a> WeightedTable<'a> {
             .max(1);
         let mut used = 0_u16;
         for i in 0..n {
-            let share = ((u32::from(budget) * u32::from(self.columns[i].weight)) / total_weight) as u16;
+            let share =
+                ((u32::from(budget) * u32::from(self.columns[i].weight)) / total_weight) as u16;
             let w = share.max(self.columns[i].min_width).min(natural[i]);
             out_widths[i] = w;
             used = used.saturating_add(w);
@@ -457,6 +460,12 @@ impl<'a> WeightedTable<'a> {
             TextAlignment::Center => col_w.saturating_sub(text_w) / 2,
             TextAlignment::Right => col_w.saturating_sub(text_w),
         };
-        let _ = buffer.set_string(col.saturating_add(pad), row, text, style, col_w.saturating_sub(pad));
+        let _ = buffer.set_string(
+            col.saturating_add(pad),
+            row,
+            text,
+            style,
+            col_w.saturating_sub(pad),
+        );
     }
 }

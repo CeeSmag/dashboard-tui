@@ -28,8 +28,8 @@ use std::time::{Duration, Instant};
 
 use tui_rs::backend::{Backend, CrosstermBackend, TestBackend};
 use tui_rs::components::{
-    format_bytes, format_rate, DualWaveform, GradientMeter, GraphSymbolMode, WaveScaler,
-    WaveScalerConfig,
+    DualWaveform, GradientMeter, GraphSymbolMode, WaveScaler, WaveScalerConfig, format_bytes,
+    format_rate,
 };
 use tui_rs::core::{
     Buffer, Color, ColorPalette, PrioritySegment, Rect, Style, TerminalHeight, TerminalWidth,
@@ -40,9 +40,11 @@ use tui_rs::dashboard::{
     DashboardEngine, EngineAction, KeyBindings, KeyCode, KeyPress, ModalContext, OptionOutcome,
     OptionSpec, Section, SectionLayoutMode, SectionWidget, SubView, SubViewResult,
 };
-use tui_rs::terminal::{install_panic_restoration_hook, TerminalSessionConfig, TerminalSessionGuard};
+use tui_rs::terminal::{
+    TerminalSessionConfig, TerminalSessionGuard, install_panic_restoration_hook,
+};
 use tui_rs::universal::{
-    color_theme_option, section_gap_option, ConfirmModal, EditModal, NoticeModal, TypedModal,
+    ConfirmModal, EditModal, NoticeModal, TypedModal, color_theme_option, section_gap_option,
 };
 use tui_rs::widgets::{TabPanel, TableColumn, WeightedTable};
 
@@ -67,9 +69,8 @@ const TELEMETRY_WINDOW_SAMPLES: usize = 240;
 #[expect(clippy::cast_precision_loss, reason = "sample index is small")]
 fn sample_pair_at_tick(tick: u64) -> (f64, f64) {
     let t = (tick as f64) * 0.18;
-    let up_wave = (t.sin() * 0.5 + 0.5) * 920_000.0
-        + ((t * 2.3).cos() * 0.5 + 0.5) * 480_000.0
-        + 120_000.0;
+    let up_wave =
+        (t.sin() * 0.5 + 0.5) * 920_000.0 + ((t * 2.3).cos() * 0.5 + 0.5) * 480_000.0 + 120_000.0;
     let down_wave = ((t * 0.85 + 1.2).sin() * 0.5 + 0.5) * 1_050_000.0
         + ((t * 1.9).sin() * 0.5 + 0.5) * 520_000.0
         + 150_000.0;
@@ -218,13 +219,7 @@ impl SectionWidget<VaultDriveMockBackend> for DriveStatusWidget {
 
         if y.get() < inner.bottom().get() && max_w > 18 {
             let ratio = (backend.cache_used_bytes as f64) / (backend.cache_max_bytes.max(1) as f64);
-            let _ = buffer.set_string(
-                x0,
-                y,
-                "VFS Cache:",
-                Style::new().with_fg(palette.muted),
-                12,
-            );
+            let _ = buffer.set_string(x0, y, "VFS Cache:", Style::new().with_fg(palette.muted), 12);
             let bar_x = x0.saturating_add(13);
             let bar_w = max_w.saturating_sub(14).min(24);
             let _ = GradientMeter::new(ratio, bar_w)
@@ -562,7 +557,10 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
                     cur,
                     |backend: &mut VaultDriveMockBackend, val: &str| {
                         backend.bandwidth_limit = val.trim().to_string();
-                        Ok(format!("Bandwidth limit set to {}", backend.bandwidth_limit))
+                        Ok(format!(
+                            "Bandwidth limit set to {}",
+                            backend.bandwidth_limit
+                        ))
                     },
                 )))
             },

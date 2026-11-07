@@ -215,7 +215,10 @@ pub const fn rgb_to_ansi256(r: u8, g: u8, b: u8) -> u8 {
         .saturating_add(r6.saturating_mul(36))
         .saturating_add(g6.saturating_mul(6))
         .saturating_add(b6);
-    #[expect(clippy::cast_possible_truncation, reason = "idx is bounded to 16..=231")]
+    #[expect(
+        clippy::cast_possible_truncation,
+        reason = "idx is bounded to 16..=231"
+    )]
     return idx as u8;
 }
 
@@ -223,7 +226,9 @@ pub const fn rgb_to_ansi256(r: u8, g: u8, b: u8) -> u8 {
 #[must_use]
 const fn ansi256_to_rgb(idx: u8) -> (u8, u8, u8) {
     if idx >= 232 {
-        let gray = (idx.saturating_sub(232)).saturating_mul(10).saturating_add(8);
+        let gray = (idx.saturating_sub(232))
+            .saturating_mul(10)
+            .saturating_add(8);
         return (gray, gray, gray);
     }
     let cube = idx.saturating_sub(16);

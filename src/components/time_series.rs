@@ -295,7 +295,9 @@ impl TimeSeries {
         let mut prev_age_secs = f64::INFINITY;
 
         for sample in &self.samples {
-            let age_secs = now.saturating_duration_since(sample.timestamp).as_secs_f64();
+            let age_secs = now
+                .saturating_duration_since(sample.timestamp)
+                .as_secs_f64();
             if age_secs > window_secs {
                 // Sample precedes window; remember as carry-over candidate
                 prev_val = sample.value;
@@ -303,7 +305,8 @@ impl TimeSeries {
                 continue;
             }
             let elapsed_from_start = (window_secs - age_secs).max(0.0);
-            let idx = ((elapsed_from_start / step_secs) as usize).min(num_buckets.saturating_sub(1));
+            let idx =
+                ((elapsed_from_start / step_secs) as usize).min(num_buckets.saturating_sub(1));
             if sample.value > buckets[idx] {
                 buckets[idx] = sample.value;
             }

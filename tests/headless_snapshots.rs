@@ -16,14 +16,14 @@ use tui_rs::components::{
     DualWaveform, GradientMeter, GraphSymbolMode, HalfBlockQr, SingleWaveform,
 };
 use tui_rs::core::{
-    diff_buffers, Buffer, Color, ColorPalette, ColumnIndex, KeyHint, PrioritySegment, Rect,
-    RowIndex, Style, TerminalHeight, TerminalWidth,
+    Buffer, Color, ColorPalette, ColumnIndex, KeyHint, PrioritySegment, Rect, RowIndex, Style,
+    TerminalHeight, TerminalWidth, diff_buffers,
 };
 use tui_rs::dashboard::{
     DashboardBackend, DashboardEngine, EngineAction, KeyBindings, KeyCode, KeyPress, ModalContext,
     OptionOutcome, OptionSpec, Page, Section, SectionWidget, SpacingLayer, SubView, SubViewResult,
 };
-use tui_rs::universal::{color_theme_option, section_gap_option, ConfirmModal, EditModal};
+use tui_rs::universal::{ConfirmModal, EditModal, color_theme_option, section_gap_option};
 use tui_rs::widgets::{MenuItem, MenuList, TabPanel};
 
 struct MockVaultBackend {
@@ -170,9 +170,11 @@ fn tab_panel_4_step_width_degradation_and_tty_fallback() {
     // Step 2: Compact width where badge is dropped
     let compact_rect = Rect::from_xywh(0, 0, 22, 3);
     let mut compact_buf = Buffer::empty(compact_rect);
-    let _ = TabPanel::new("Drive Status")
-        .with_badge("MOUNTED")
-        .render(&mut compact_buf, compact_rect, &palette);
+    let _ = TabPanel::new("Drive Status").with_badge("MOUNTED").render(
+        &mut compact_buf,
+        compact_rect,
+        &palette,
+    );
     let compact_lines = compact_buf.to_visual_lines();
     assert!(compact_lines[0].starts_with("╭─┐ Drive Status ┌"));
     assert!(!compact_lines[0].contains("MOUNTED"));
@@ -192,9 +194,10 @@ fn tab_panel_4_step_width_degradation_and_tty_fallback() {
 
     // TTY square-corner fallback ("┌─┐ Drive Status ┌─...─┐")
     let mut tty_buf = Buffer::empty(wide_rect);
-    let _ = TabPanel::new("Drive Status")
-        .with_tty_mode(true)
-        .render(&mut tty_buf, wide_rect, &palette);
+    let _ =
+        TabPanel::new("Drive Status")
+            .with_tty_mode(true)
+            .render(&mut tty_buf, wide_rect, &palette);
     let tty_lines = tty_buf.to_visual_lines();
     assert!(tty_lines[0].starts_with("┌─┐ Drive Status ┌─"));
 }
@@ -303,8 +306,12 @@ fn menu_list_single_and_two_column_with_option_gaps() {
 }
 
 #[test]
-#[expect(clippy::too_many_lines, reason = "comprehensive end-to-end integration test")]
-fn dashboard_engine_end_to_end_navigation_modals_and_sub_views() -> Result<(), tui_rs::error::TuiError> {
+#[expect(
+    clippy::too_many_lines,
+    reason = "comprehensive end-to-end integration test"
+)]
+fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
+-> Result<(), tui_rs::error::TuiError> {
     let mut page1 = Page::new("Monitor", "F1");
     page1.push_section(Section::display(Box::new(SyncTelemetryWidget)).with_heights(5, 8));
 
@@ -349,15 +356,20 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views() -> Result<(), t
     page1.push_section(actions);
 
     let mut page2 = Page::new("Settings", "F2");
-    let mut settings_sec = Section::menu("Preferences", "1-20 edit", Vec::new()).with_heights(8, 16);
+    let mut settings_sec =
+        Section::menu("Preferences", "1-20 edit", Vec::new()).with_heights(8, 16);
     for num in 1..=18 {
-        settings_sec.push_option(OptionSpec::new(num, format!("Setting #{num}"), move |_ctx| {
-            OptionOutcome::OpenModal(Box::new(ConfirmModal::new(
-                "Confirm Change",
-                format!("Toggle setting #{num}?"),
-                move |_: &mut MockVaultBackend| Ok(format!("Toggled #{num}")),
-            )))
-        }));
+        settings_sec.push_option(OptionSpec::new(
+            num,
+            format!("Setting #{num}"),
+            move |_ctx| {
+                OptionOutcome::OpenModal(Box::new(ConfirmModal::new(
+                    "Confirm Change",
+                    format!("Toggle setting #{num}?"),
+                    move |_: &mut MockVaultBackend| Ok(format!("Toggled #{num}")),
+                )))
+            },
+        ));
     }
     settings_sec.push_option(section_gap_option(19));
     settings_sec.push_option(color_theme_option(20));
@@ -383,7 +395,10 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views() -> Result<(), t
     assert!(grid.contains("Quick Actions"));
 
     // Press '1' on Page 1 (max_option == 3 <= 9 -> immediate dispatch!)
-    assert_eq!(engine.handle_key(KeyPress::char('1')), EngineAction::Continue);
+    assert_eq!(
+        engine.handle_key(KeyPress::char('1')),
+        EngineAction::Continue
+    );
     assert!(!engine.backend().mounted);
 
     // Pressing Tab on Page 1 must NOT select section 0 (`SyncTelemetryWidget`, which has
@@ -400,10 +415,17 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views() -> Result<(), t
     assert!(engine.backend().mounted);
 
     // Press '3' to push MockLogSubView onto the SubView stack
-    assert_eq!(engine.handle_key(KeyPress::char('3')), EngineAction::Continue);
+    assert_eq!(
+        engine.handle_key(KeyPress::char('3')),
+        EngineAction::Continue
+    );
     engine.render(&mut frame_buf, viewport);
     let sv_lines = frame_buf.to_visual_lines();
-    assert!(sv_lines.iter().any(|l| l.contains("Journalctl Live Stream")));
+    assert!(
+        sv_lines
+            .iter()
+            .any(|l| l.contains("Journalctl Live Stream"))
+    );
 
     // Press Esc to pop SubView
     assert_eq!(
@@ -420,13 +442,19 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views() -> Result<(), t
 
     // On Page 2, max_option is 20 (> 9). Pressing '2' should enter pending prefix state (#2_),
     // and pressing '0' immediately after dispatches option [20] (ColorThemeModal)!
-    assert_eq!(engine.handle_key(KeyPress::char('2')), EngineAction::Continue);
+    assert_eq!(
+        engine.handle_key(KeyPress::char('2')),
+        EngineAction::Continue
+    );
     assert!(!engine.has_modal());
     engine.render(&mut frame_buf, viewport);
     let footer_line = &frame_buf.to_visual_lines()[27];
     assert!(footer_line.contains("#2_"));
 
-    assert_eq!(engine.handle_key(KeyPress::char('0')), EngineAction::Continue);
+    assert_eq!(
+        engine.handle_key(KeyPress::char('0')),
+        EngineAction::Continue
+    );
     assert!(engine.has_modal());
 
     // ColorThemeModal is open! Pressing Down live-previews the next theme (Catppuccin Mocha)
@@ -469,8 +497,14 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views() -> Result<(), t
             .page_cycle('<', '>')
             .activate("Space"),
     );
-    assert_eq!(engine.handle_key(KeyPress::char('q')), EngineAction::Continue);
-    assert_eq!(engine.handle_key(KeyPress::char('<')), EngineAction::Continue);
+    assert_eq!(
+        engine.handle_key(KeyPress::char('q')),
+        EngineAction::Continue
+    );
+    assert_eq!(
+        engine.handle_key(KeyPress::char('<')),
+        EngineAction::Continue
+    );
     assert_eq!(engine.active_page(), 0);
     assert_eq!(engine.handle_key(KeyPress::char('x')), EngineAction::Quit);
     Ok(())

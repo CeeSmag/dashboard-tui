@@ -94,11 +94,7 @@ const TTY_DOWN: [[&str; 5]; 5] = [
 #[must_use]
 #[inline]
 pub const fn clamp_dots(dots: usize) -> usize {
-    if dots > 4 {
-        4
-    } else {
-        dots
-    }
+    if dots > 4 { 4 } else { dots }
 }
 
 /// Returns the upward-growing Braille glyph for `(left_dots, right_dots)` in `0..=4`.

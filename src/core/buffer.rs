@@ -411,9 +411,7 @@ impl Buffer {
                     .cell_at(left_col, RowIndex(r))
                     .is_some_and(Cell::is_wide_continuation);
                 if is_cont {
-                    if let Some(prev) =
-                        self.cell_at_mut(left_col.saturating_sub(1), RowIndex(r))
-                    {
+                    if let Some(prev) = self.cell_at_mut(left_col.saturating_sub(1), RowIndex(r)) {
                         prev.reset();
                     }
                 }

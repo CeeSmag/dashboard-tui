@@ -16,7 +16,7 @@ use crate::dashboard::page::{Page, SectionLayoutMode};
 use crate::dashboard::section::{OptionSpec, Section, SectionWidget};
 use crate::error::TuiError;
 use crate::terminal::{
-    install_panic_restoration_hook, TerminalSessionConfig, TerminalSessionGuard,
+    TerminalSessionConfig, TerminalSessionGuard, install_panic_restoration_hook,
 };
 
 /// Declarative registration entry for a top-level [`Page`].
@@ -295,7 +295,12 @@ impl<B: DashboardBackend> AddonRegistry<B> {
         key_hint: impl Into<String>,
         layout_mode: SectionLayoutMode,
     ) -> Self {
-        self.register_page(AddonPageEntry::new(page_index, title, key_hint, layout_mode));
+        self.register_page(AddonPageEntry::new(
+            page_index,
+            title,
+            key_hint,
+            layout_mode,
+        ));
         self
     }
 

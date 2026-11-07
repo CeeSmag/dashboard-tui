@@ -145,11 +145,7 @@ impl<'a> Iterator for DiffIter<'a> {
                 continue;
             }
 
-            let changed = self.force_all
-                || self
-                    .prev_cells
-                    .get(i)
-                    .is_none_or(|prev| prev != curr);
+            let changed = self.force_all || self.prev_cells.get(i).is_none_or(|prev| prev != curr);
 
             if changed {
                 #[expect(

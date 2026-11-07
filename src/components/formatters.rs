@@ -40,7 +40,10 @@ pub const fn spinner_frame(tick: usize) -> &'static str {
 /// assert_eq!(format_bytes(1024 * 1024).as_str(), "1.0 MB");
 /// ```
 #[must_use]
-#[expect(clippy::cast_precision_loss, reason = "u64 to f64 for display formatting")]
+#[expect(
+    clippy::cast_precision_loss,
+    reason = "u64 to f64 for display formatting"
+)]
 pub fn format_bytes(bytes: u64) -> StackStr<32> {
     const KB: u64 = 1024;
     const MB: u64 = KB * 1024;
