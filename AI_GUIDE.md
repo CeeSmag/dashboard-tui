@@ -31,6 +31,7 @@ Use this table to jump directly to the exact file in `src/` for any task without
 | **Generate QR codes from text/URLs & embed in dashboards** | [`src/components/qr_code.rs`](./src/components/qr_code.rs), [`src/components/qr_widget.rs`](./src/components/qr_widget.rs) | `QrCodeMatrix`, `QrErrorCorrection`, `QrWidget`, `HalfBlockQr` |
 | **Embed clickable terminal web-links (OSC 8 hyperlinks)** | [`src/widgets/hyperlink.rs`](./src/widgets/hyperlink.rs), [`src/backend/ansi_writer.rs`](./src/backend/ansi_writer.rs), [`src/core/text.rs`](./src/core/text.rs) | `Hyperlink`, `Span::hyperlink`, `format_hyperlink`, `format_hyperlink_with_id` |
 | **Render a `btop`-style notched border box or data table** | [`src/widgets/panel.rs`](./src/widgets/panel.rs), [`src/widgets/weighted_table.rs`](./src/widgets/weighted_table.rs) | `TabPanel`, `WeightedTable`, `TableColumn`, `TextAlignment` |
+| **Render a list, table, paragraph, tabs, gauge, sparkline, bar/line chart, canvas or calendar** | [`src/widgets/`](./src/widgets/) (`list.rs`, `table.rs`, `paragraph.rs`, `tabs.rs`, `gauge.rs`, `sparkline.rs`, `bar_chart.rs`, `chart.rs`, `canvas.rs`, `calendar.rs`, `clear.rs`), [`src/core/widget.rs`](./src/core/widget.rs) | `Widget`, `StatefulWidget`, `List`/`ListState`, `Table`/`TableState`, `Paragraph`, `Tabs`, `Gauge`, `LineGauge`, `Sparkline`, `BarChart`, `Chart`, `Canvas`, `Calendar`, `Clear` |
 | **Render a scrollable numbered menu, choice row, or text input** | [`src/widgets/menu_list.rs`](./src/widgets/menu_list.rs), [`src/widgets/choice_row.rs`](./src/widgets/choice_row.rs), [`src/widgets/text_input.rs`](./src/widgets/text_input.rs) | `MenuList`, `MenuItem`, `ChoiceRow`, `TextInput`, `TextInputState`, `SubCellScrollbar` |
 | **Write strings/cells to the 2D screen buffer or split rects** | [`src/core/buffer.rs`](./src/core/buffer.rs), [`src/core/rect.rs`](./src/core/rect.rs), [`src/core/layout.rs`](./src/core/layout.rs) | `Buffer`, `Rect`, `ColumnIndex`, `RowIndex`, `TerminalWidth`, `TerminalHeight`, `Layout`, `Constraint` |
 | **Write deterministic headless tests without a real terminal** | [`src/backend/test_backend.rs`](./src/backend/test_backend.rs), [`tests/headless_snapshots.rs`](./tests/headless_snapshots.rs) | `TestBackend`, `Buffer::to_visual_lines()`, `KeyPress`, `KeyCode` |
@@ -748,6 +749,59 @@ registry.with_option(1, 0, terminal_background_option(21))
 ```
 
 Every built-in palette carries a `background`; custom code can read `palette.background`.
+
+#### General-purpose widgets (`Widget` / `StatefulWidget`)
+
+Every standard widget draws into any `Rect` of a `Buffer` through two small traits, so they work inside sections, modals, sub-views, or a hand-written loop. They carry their own `Style`s (nothing is themed or hardcoded); pass colors from `ColorPalette` or write them with `Stylize`.
+
+```rust
+use tui_rs::prelude::*;
+
+// Layout: Ratio / Flex / areas::<N>() (destructure, no indexing, never panics)
+let [header, body, footer] = Layout::vertical([Constraint::Fixed(1), Constraint::Fill(1), Constraint::Fixed(1)]).areas(area);
+let [sidebar, main] = Layout::horizontal([Constraint::Ratio(1, 4), Constraint::Fill(1)]).with_gap(1).areas(body);
+let buttons = Layout::horizontal([Constraint::Fixed(8); 3]).with_flex(Flex::SpaceBetween).split(footer);
+
+// Fluent styles
+let warning = "disk almost full".yellow().bold();
+
+// Stateful list / table: the app owns the state, widgets scroll to keep the selection visible
+let mut list_state = ListState::default().with_selected(Some(0));      // select_next(), select_previous(), ...
+buffer.render_stateful_widget(List::new(["mount", "sync"]).highlight_symbol("> "), sidebar, &mut list_state);
+let mut table_state = TableState::default();
+buffer.render_stateful_widget(
+    Table::new([Row::new(["db.tar", "78%"])], [Constraint::Fill(1), Constraint::Fixed(5)])
+        .header(Row::new(["File", "Done"])).highlight_symbol("> "),
+    main, &mut table_state);
+
+// Plain widgets
+buffer.render_widget(Paragraph::new("long text...").wrap(WrapMode::Word), main);     // .line_count(width) for scrollbars
+buffer.render_widget(Tabs::new(["Monitor", "Setup"]).select(0), header);
+buffer.render_widget(Gauge::default().ratio(0.4).gauge_style(Style::new().bg(Color::Green)), footer);
+buffer.render_widget(Sparkline::new(history.as_slice()), main);                      // newest samples, right-aligned
+buffer.render_widget(BarChart::new([Bar::new("cpu", 62)]).show_values(true), main);
+buffer.render_widget(Chart::new([Dataset::new("load", &points).graph_type(GraphType::Line)])
+    .x_axis(Axis::new([0.0, 60.0]).labels(["0s", "60s"])).y_axis(Axis::new([0.0, 100.0]).labels(["0", "100"])), main);
+buffer.render_widget(Canvas::new([0.0, 10.0], [0.0, 10.0]).shape(Shape::Circle { x: 5.0, y: 5.0, radius: 3.0, style: Style::DEFAULT }), main);
+buffer.render_widget(Calendar::new(2026, 11).selected(Some(8)), main);
+buffer.render_widget(Clear, popup_area);                                              // wipe before drawing a popup
+```
+
+See `examples/widget_gallery.rs` for all of them on one screen (`cargo run --example widget_gallery`). All widgets are property-tested to never panic for any geometry, NaN/infinite data, or off-buffer areas.
+
+#### Cursor, inline viewport, and box-drawing merges
+
+```rust
+// Show the hardware cursor (e.g. in a text field); None hides it again.
+session.draw_with_cursor(|buffer, area| { /* draw */ Some((ColumnIndex::new(10), RowIndex::new(3))) })?;
+
+// Draw in the last N rows of the normal screen and leave earlier terminal output untouched.
+let config = TerminalSessionConfig::new().with_viewport(Viewport::Inline(12));
+engine.run_interactive_with(config, Duration::from_millis(250))?;
+
+// Join adjacent borders cleanly: "─" over "│" becomes "┼" (light/rounded, heavy, double).
+buffer.set_border_symbol(column, row, "│", Style::DEFAULT);
+```
 
 - **`selectable` (`true` / `false`) Section Focus**: Cycle focus (`→ / ←`) **only** among sections on the current page that have `selectable = true` (configured via `.with_display_section(..., selectable)`, `.with_menu_section(..., selectable)`, or `Section::with_selectable(bool)`). Purely informative visual sections with `selectable = false` are never selected.
 - **`1`..`99` Numeric Direct Jump**:

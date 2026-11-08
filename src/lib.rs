@@ -26,7 +26,11 @@
 //!    hysteresis [`components::WaveScaler`], [`components::GradientMeter`],
 //!    [`components::SliderBar`], QR generator ([`components::QrCodeMatrix`], [`components::HalfBlockQr`],
 //!    [`components::QrWidget`]), [`widgets::TabPanel`], [`widgets::Hyperlink`],
-//!    [`widgets::MenuList`], [`widgets::WeightedTable`], and [`widgets::SubCellScrollbar`].
+//!    [`widgets::MenuList`], [`widgets::WeightedTable`], and [`widgets::SubCellScrollbar`],
+//!    plus the general-purpose set built on the [`core::Widget`] / [`core::StatefulWidget`]
+//!    traits: [`widgets::List`], [`widgets::Table`], [`widgets::Paragraph`], [`widgets::Tabs`],
+//!    [`widgets::Gauge`], [`widgets::Sparkline`], [`widgets::BarChart`], [`widgets::Chart`],
+//!    [`widgets::Canvas`], and [`widgets::Calendar`].
 //! 5. **Layer 3 — Tier 1 ([`dashboard`])**: Domain-agnostic [`dashboard::DashboardEngine`]
 //!    with 3-method [`dashboard::DashboardBackend`] contract, 4-layer [`dashboard::SpacingConfig`],
 //!    6 [`dashboard::SectionLayoutMode`] presets, multi-digit `1`..`99` prefix jump,
