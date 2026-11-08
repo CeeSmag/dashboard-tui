@@ -3,6 +3,16 @@
 All notable changes to `dashboard-tui` are recorded here. Versions follow [SemVer](https://semver.org);
 the entry for a version is written in the same commit that raises it (`RULES.md` §8).
 
+## [0.4.3] - 2026-11-08
+
+### Fixed
+- `vaultdrive_dashboard` example and `AI_GUIDE.md`: `WaveScaler` is fed only the last ~20 samples
+  (~5 s) of each series while `DualWaveform` still draws the full 60 s window, so the scale follows
+  recent activity. After a 15 MB/s burst the wave recovers about 6 s after the burst ends instead of
+  staying squashed for ~60 s. A regression test simulates 100 KB/s -> 15 MB/s -> 100 KB/s.
+- Rustdoc: the `EngineAction::Back` link in `KeyBindings::confirm_quit` docs resolves again after the
+  `key_router` split.
+
 ## [0.4.2] - 2026-11-08
 
 ### Changed

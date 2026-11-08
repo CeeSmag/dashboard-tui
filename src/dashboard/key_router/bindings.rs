@@ -279,7 +279,7 @@ impl KeyBindings {
     }
 
     /// Makes the quit key open a warning popup first: `Enter` confirms the quit,
-    /// `q` / `Esc` cancels (default: `false`, quit immediately). `Ctrl+C` always leaves at once ([`EngineAction::Back`]).
+    /// `q` / `Esc` cancels (default: `false`, quit immediately). `Ctrl+C` always leaves at once ([`EngineAction::Back`](super::events::EngineAction::Back)).
     ///
     /// # Examples
     ///

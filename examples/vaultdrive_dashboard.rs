@@ -66,6 +66,15 @@ struct VaultDriveMockBackend {
 /// Number of 250ms samples in the 60-second telemetry window (`240` samples).
 const TELEMETRY_WINDOW_SAMPLES: usize = 240;
 
+/// Samples (~5 s at 250 ms) the scale follows. The waveform still draws the whole window, but the
+/// ceiling only reacts to recent activity, so one burst cannot squash the wave for a minute.
+const SCALE_WINDOW_SAMPLES: usize = 20;
+
+/// The newest `SCALE_WINDOW_SAMPLES` of `samples`.
+fn recent(samples: &[f64]) -> &[f64] {
+    &samples[samples.len().saturating_sub(SCALE_WINDOW_SAMPLES)..]
+}
+
 #[expect(clippy::cast_precision_loss, reason = "sample index is small")]
 fn sample_pair_at_tick(tick: u64) -> (f64, f64) {
     let t = (tick as f64) * 0.18;
@@ -77,6 +86,24 @@ fn sample_pair_at_tick(tick: u64) -> (f64, f64) {
     let dn_b = (t * 1.9).sin().mul_add(0.5, 0.5);
     let down_wave = dn_a.mul_add(1_050_000.0, dn_b.mul_add(520_000.0, 150_000.0));
     (up_wave, down_wave)
+}
+
+impl VaultDriveMockBackend {
+    /// Appends one sample pair to the drawn window and re-targets the scale from the recent tail.
+    fn push_sample(&mut self, up: f64, down: f64) {
+        if self.up_samples.len() >= TELEMETRY_WINDOW_SAMPLES {
+            self.up_samples.remove(0);
+        }
+        if self.down_samples.len() >= TELEMETRY_WINDOW_SAMPLES {
+            self.down_samples.remove(0);
+        }
+        self.up_samples.push(up);
+        self.down_samples.push(down);
+        // Both series share one ceiling, computed from ~5 s of history, not the whole window.
+        let _ = self
+            .scaler
+            .update_sync(recent(&self.up_samples), recent(&self.down_samples));
+    }
 }
 
 impl Default for VaultDriveMockBackend {
@@ -149,17 +176,7 @@ impl DashboardBackend for VaultDriveMockBackend {
         } else {
             (0.0, 0.0)
         };
-        if self.up_samples.len() >= TELEMETRY_WINDOW_SAMPLES {
-            self.up_samples.remove(0);
-        }
-        if self.down_samples.len() >= TELEMETRY_WINDOW_SAMPLES {
-            self.down_samples.remove(0);
-        }
-        self.up_samples.push(next_up);
-        self.down_samples.push(next_down);
-        // The scaler must see the whole visible window of BOTH series (shared ceiling), not just
-        // the newest sample, or the ceiling decays while old peaks are still on screen.
-        let _ = self.scaler.update_sync(&self.up_samples, &self.down_samples);
+        self.push_sample(next_up, next_down);
     }
 }
 
@@ -751,4 +768,70 @@ fn main() -> Result<(), dashboard_tui::error::TuiError> {
     }
 
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::time::Duration;
+
+    /// Real time between simulated ticks: `WaveScaler` ignores updates closer than 40 ms.
+    const TICK_PAUSE: Duration = Duration::from_millis(45);
+
+    fn quiet_backend() -> VaultDriveMockBackend {
+        let mut backend = VaultDriveMockBackend::default();
+        backend.up_samples = vec![100_000.0; TELEMETRY_WINDOW_SAMPLES];
+        backend.down_samples = vec![100_000.0; TELEMETRY_WINDOW_SAMPLES];
+        backend.scaler = WaveScaler::new(WaveScalerConfig::new(65_536.0));
+        let _ = backend
+            .scaler
+            .update_sync(recent(&backend.up_samples), recent(&backend.down_samples));
+        backend
+    }
+
+    fn tick(backend: &mut VaultDriveMockBackend, up: f64, down: f64) {
+        std::thread::sleep(TICK_PAUSE);
+        backend.push_sample(up, down);
+    }
+
+    #[test]
+    fn scale_follows_recent_activity_after_a_burst() {
+        let mut backend = quiet_backend();
+        for _ in 0..10 {
+            tick(&mut backend, 100_000.0, 100_000.0);
+        }
+        let quiet_scale = backend.scaler.current_scale();
+        assert!(quiet_scale < 1_000_000.0, "quiet scale {quiet_scale}");
+
+        // 2 s (8 ticks) at 15 MB/s.
+        for _ in 0..8 {
+            tick(&mut backend, 15_000_000.0, 15_000_000.0);
+        }
+        let burst_scale = backend.scaler.current_scale();
+        assert!(burst_scale >= 15_000_000.0, "burst scale {burst_scale}");
+
+        // Back to 100 KB/s: count 250 ms ticks until the wave is no longer squashed.
+        let mut ticks_to_recover = None;
+        for n in 1..=60_u32 {
+            tick(&mut backend, 100_000.0, 100_000.0);
+            if ticks_to_recover.is_none() && backend.scaler.current_scale() < 1_000_000.0 {
+                ticks_to_recover = Some(n);
+            }
+        }
+        let Some(ticks) = ticks_to_recover else {
+            panic!("scale never dropped: {}", backend.scaler.current_scale());
+        };
+        let seconds = f64::from(ticks) * 0.25;
+        assert!(
+            seconds <= 6.0,
+            "scale took {seconds} s to follow the traffic back down (old behaviour: ~60 s)"
+        );
+        assert!(
+            ticks > u32::try_from(SCALE_WINDOW_SAMPLES).unwrap_or(20),
+            "must not drop while the burst is still inside the 5 s scale window"
+        );
+        // The graph itself keeps the whole minute, burst included.
+        assert_eq!(backend.up_samples.len(), TELEMETRY_WINDOW_SAMPLES);
+        assert!(backend.up_samples.iter().any(|&v| v >= 15_000_000.0));
+    }
 }
