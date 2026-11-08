@@ -23,7 +23,7 @@ pub use self::grapheme::{
     WrapLinesIter, clip_from_left, clip_to_width, display_width, grapheme_width,
     truncate_with_ellipsis_parts, wrap_lines_iter,
 };
-pub use self::layout::{Constraint, Layout, LayoutDirection, split_equal_spans};
+pub use self::layout::{Constraint, Flex, Layout, LayoutDirection, split_equal_spans};
 pub use self::palette::{ColorPalette, GradientLut, TerminalBackground};
 pub use self::priority_strip::{
     KeyHint, PrioritySegment, fit_hint_indices, fit_segment_indices, render_fitted_hints,

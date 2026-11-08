@@ -128,6 +128,84 @@ proptest! {
     }
 
     #[test]
+    fn ratio_and_flex_layouts_never_exceed_parent_bounds(
+        x in 0..=u16::MAX,
+        y in 0..=u16::MAX,
+        w in 0..=u16::MAX,
+        h in 0..=u16::MAX,
+        gap in 0..=16u16,
+        numerator in 0..=1000u32,
+        denominator in 0..=1000u32,
+        fixed in 0..=500u16,
+        flex_pick in 0..6u8,
+    ) {
+        use tui_rs::core::Flex;
+        let flex = match flex_pick {
+            0 => Flex::Start,
+            1 => Flex::End,
+            2 => Flex::Center,
+            3 => Flex::SpaceBetween,
+            4 => Flex::SpaceAround,
+            _ => Flex::SpaceEvenly,
+        };
+        let parent = Rect::new(
+            ColumnIndex::new(x),
+            RowIndex::new(y),
+            TerminalWidth::new(w),
+            TerminalHeight::new(h),
+        );
+        let constraints = [
+            Constraint::Ratio(numerator, denominator),
+            Constraint::Fixed(fixed),
+            Constraint::Ratio(1, 3),
+        ];
+        for layout in [
+            Layout::horizontal(constraints).with_gap(gap).with_flex(flex),
+            Layout::vertical(constraints).with_gap(gap).with_flex(flex),
+        ] {
+            let chunks = layout.split(parent);
+            prop_assert_eq!(chunks.len(), constraints.len());
+            for chunk in &chunks {
+                prop_assert!(chunk.left().get() >= parent.left().get());
+                prop_assert!(chunk.right().get() <= parent.right().get());
+                prop_assert!(chunk.top().get() >= parent.top().get());
+                prop_assert!(chunk.bottom().get() <= parent.bottom().get());
+            }
+            // split_into / areas must agree with split
+            let [a, b, c] = layout.areas::<3>(parent);
+            let via_areas = [a, b, c];
+            prop_assert_eq!(via_areas.as_slice(), chunks.as_slice());
+        }
+    }
+
+    #[test]
+    fn rect_union_offset_clamp_stay_in_bounds(
+        x in 0..=u16::MAX, y in 0..=u16::MAX, w in 0..=u16::MAX, h in 0..=u16::MAX,
+        ox in 0..=u16::MAX, oy in 0..=u16::MAX, ow in 0..=u16::MAX, oh in 0..=u16::MAX,
+        dx in -70000..=70000i32, dy in -70000..=70000i32,
+    ) {
+        let a = Rect::from_xywh(x, y, w.min(u16::MAX - x), h.min(u16::MAX - y));
+        let b = Rect::from_xywh(ox, oy, ow.min(u16::MAX - ox), oh.min(u16::MAX - oy));
+        let u = a.union(b);
+        if !a.is_empty() && !b.is_empty() {
+            prop_assert!(u.left().get() <= a.left().get().min(b.left().get()));
+            prop_assert!(u.right().get() >= a.right().get().max(b.right().get()));
+        }
+        let moved = a.offset(dx, dy);
+        prop_assert_eq!(moved.width(), a.width());
+        prop_assert_eq!(moved.height(), a.height());
+        let clamped = a.clamp_inside(b);
+        if !b.is_empty() {
+            prop_assert!(clamped.left().get() >= b.left().get());
+            prop_assert!(clamped.right().get() <= b.right().get());
+            prop_assert!(clamped.top().get() >= b.top().get());
+            prop_assert!(clamped.bottom().get() <= b.bottom().get());
+        }
+        prop_assert_eq!(a.rows().count(), usize::from(a.height().get()));
+        prop_assert_eq!(a.columns().count(), usize::from(a.width().get()));
+    }
+
+    #[test]
     fn split_equal_spans_conserves_budget(
         total in 0..=u16::MAX,
         gap in 0..=20u16,

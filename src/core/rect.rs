@@ -544,6 +544,146 @@ impl Rect {
         Self::from_xywh(x1, y1, x2.saturating_sub(x1), y2.saturating_sub(y1))
     }
 
+    /// Returns the smallest rectangle containing both `self` and `other`
+    /// (an empty rectangle is ignored).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Rect;
+    ///
+    /// let a = Rect::from_xywh(0, 0, 4, 4);
+    /// let b = Rect::from_xywh(10, 2, 2, 2);
+    /// assert_eq!(a.union(b), Rect::from_xywh(0, 0, 12, 4));
+    /// ```
+    #[must_use]
+    pub const fn union(self, other: Self) -> Self {
+        if self.is_empty() {
+            return other;
+        }
+        if other.is_empty() {
+            return self;
+        }
+        let x1 = if self.left().0 < other.left().0 {
+            self.left().0
+        } else {
+            other.left().0
+        };
+        let y1 = if self.top().0 < other.top().0 {
+            self.top().0
+        } else {
+            other.top().0
+        };
+        let x2 = if self.right().0 > other.right().0 {
+            self.right().0
+        } else {
+            other.right().0
+        };
+        let y2 = if self.bottom().0 > other.bottom().0 {
+            self.bottom().0
+        } else {
+            other.bottom().0
+        };
+        Self::from_xywh(x1, y1, x2.saturating_sub(x1), y2.saturating_sub(y1))
+    }
+
+    /// Moves the rectangle by `(delta_columns, delta_rows)`, keeping its size and never leaving
+    /// the `u16` coordinate space.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Rect;
+    ///
+    /// assert_eq!(Rect::from_xywh(5, 5, 2, 2).offset(3, -2), Rect::from_xywh(8, 3, 2, 2));
+    /// assert_eq!(Rect::from_xywh(1, 1, 2, 2).offset(-10, -10), Rect::from_xywh(0, 0, 2, 2));
+    /// ```
+    #[must_use]
+    pub fn offset(self, delta_columns: i32, delta_rows: i32) -> Self {
+        let shift = |origin: u16, delta: i32, size: u16| -> u16 {
+            let furthest = i64::from(u16::MAX.saturating_sub(size));
+            let moved = (i64::from(origin) + i64::from(delta)).clamp(0, furthest);
+            u16::try_from(moved).unwrap_or(0)
+        };
+        Self::from_xywh(
+            shift(self.left().0, delta_columns, self.width().0),
+            shift(self.top().0, delta_rows, self.height().0),
+            self.width().0,
+            self.height().0,
+        )
+    }
+
+    /// Shrinks and moves the rectangle so it fits entirely inside `outer`.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Rect;
+    ///
+    /// let outer = Rect::from_xywh(0, 0, 10, 10);
+    /// assert_eq!(Rect::from_xywh(8, 8, 6, 6).clamp_inside(outer), Rect::from_xywh(4, 4, 6, 6));
+    /// ```
+    #[must_use]
+    pub const fn clamp_inside(self, outer: Self) -> Self {
+        let width = if self.width().0 < outer.width().0 {
+            self.width().0
+        } else {
+            outer.width().0
+        };
+        let height = if self.height().0 < outer.height().0 {
+            self.height().0
+        } else {
+            outer.height().0
+        };
+        let max_x = outer.right().0.saturating_sub(width);
+        let max_y = outer.bottom().0.saturating_sub(height);
+        let mut x = self.left().0;
+        let mut y = self.top().0;
+        if x < outer.left().0 {
+            x = outer.left().0;
+        } else if x > max_x {
+            x = max_x;
+        }
+        if y < outer.top().0 {
+            y = outer.top().0;
+        } else if y > max_y {
+            y = max_y;
+        }
+        Self::from_xywh(x, y, width, height)
+    }
+
+    /// Iterates the rectangle one full-width row at a time (top to bottom).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Rect;
+    ///
+    /// let rows: Vec<Rect> = Rect::from_xywh(2, 1, 5, 3).rows().collect();
+    /// assert_eq!(rows.len(), 3);
+    /// assert_eq!(rows[2], Rect::from_xywh(2, 3, 5, 1));
+    /// ```
+    pub fn rows(self) -> impl Iterator<Item = Self> {
+        let left = self.left().0;
+        let width = self.width().0;
+        (self.top().0..self.bottom().0).map(move |row| Self::from_xywh(left, row, width, 1))
+    }
+
+    /// Iterates the rectangle one full-height column at a time (left to right).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::Rect;
+    ///
+    /// assert_eq!(Rect::from_xywh(0, 0, 4, 2).columns().count(), 4);
+    /// ```
+    pub fn columns(self) -> impl Iterator<Item = Self> {
+        let top = self.top().0;
+        let height = self.height().0;
+        (self.left().0..self.right().0).map(move |column| Self::from_xywh(column, top, 1, height))
+    }
+
     /// Returns a centered sub-rectangle of at most `(target_width, target_height)` inside `self`.
     ///
     /// # Examples
