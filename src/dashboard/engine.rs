@@ -681,8 +681,8 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             if self.modal.is_none() {
                 self.toast = None;
                 self.open_modal(Box::new(ConfirmModal::quit(
-                    "Quit",
-                    "Are you sure you want to quit?",
+                    self.keys.quit_popup_title(),
+                    self.keys.quit_popup_description(),
                 )));
                 return EngineAction::Continue;
             }

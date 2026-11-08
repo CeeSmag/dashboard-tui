@@ -371,6 +371,7 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
             // Developers can configure any ctrl+[key] to their liking (e.g. "ctrl+q", "^q", "ctrl-x", "ctrl+w")
             .quit("ctrl+q")
             .confirm_quit(true) // warning popup: Enter confirms, q cancels
+            .quit_popup("Quit VaultDrive", "Active transfers will be stopped. Quit anyway?")
             .page_cycle("Shift+Tab", "Tab")
             .section_cycle("Right", "Left")
             .up_down("Up", "Down")

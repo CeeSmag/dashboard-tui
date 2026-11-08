@@ -3,6 +3,12 @@
 All notable changes to `dashboard-tui` are recorded here. Versions follow [SemVer](https://semver.org);
 the entry for a version is written in the same commit that raises it (`RULES.md` §8).
 
+## [0.4.1] - 2026-11-08
+
+### Added
+- `KeyBindings::quit_popup(title, description)`: the developer chooses the text of the `Ctrl+Q`
+  quit warning popup (accessors `quit_popup_title` / `quit_popup_description`).
+
 ## [0.4.0] - 2026-11-08
 
 ### Changed

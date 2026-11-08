@@ -652,6 +652,12 @@ KeyBindings::default()
 // Warn before quitting: Enter confirms, q / Esc cancels (Ctrl+C always leaves at once (`Back`)).
 KeyBindings::default().quit("ctrl+q").confirm_quit(true)
 
+// The developer decides the popup text (default: "Quit" / "Are you sure you want to quit?"):
+KeyBindings::default()
+    .quit("ctrl+q")
+    .confirm_quit(true)
+    .quit_popup("Stop server", "This stops all running services.")
+
 // Put a warning popup on ANY key. Enter runs the closure, q / Esc cancels.
 registry.bind_confirmed_key("ctrl+x", "Wipe Cache", "This cannot be undone.", |app: &mut App| {
     app.wipe_cache();

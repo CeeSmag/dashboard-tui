@@ -692,6 +692,8 @@ pub struct KeyBindings {
     cancel: KeyPress,
     numeric_jump: bool,
     confirm_quit: bool,
+    quit_popup_title: &'static str,
+    quit_popup_description: &'static str,
 }
 
 impl Default for KeyBindings {
@@ -742,6 +744,8 @@ impl KeyBindings {
             cancel: KeyPress::char('q'),
             numeric_jump: true,
             confirm_quit: false,
+            quit_popup_title: "Quit",
+            quit_popup_description: "Are you sure you want to quit?",
         }
     }
 
@@ -943,6 +947,43 @@ impl KeyBindings {
     pub const fn confirm_quit(mut self, required: bool) -> Self {
         self.confirm_quit = required;
         self
+    }
+
+    /// Sets the title and description shown in the quit warning popup
+    /// (defaults: `"Quit"` / `"Are you sure you want to quit?"`). Only used when
+    /// [`confirm_quit`](Self::confirm_quit) is enabled.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use dashboard_tui::dashboard::KeyBindings;
+    ///
+    /// let keys = KeyBindings::default()
+    ///     .confirm_quit(true)
+    ///     .quit_popup("Stop server", "This stops all running services.");
+    /// assert_eq!(keys.quit_popup_title(), "Stop server");
+    /// assert_eq!(keys.quit_popup_description(), "This stops all running services.");
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn quit_popup(mut self, title: &'static str, description: &'static str) -> Self {
+        self.quit_popup_title = title;
+        self.quit_popup_description = description;
+        self
+    }
+
+    /// Returns the title of the quit warning popup.
+    #[must_use]
+    #[inline]
+    pub const fn quit_popup_title(&self) -> &'static str {
+        self.quit_popup_title
+    }
+
+    /// Returns the description (question text) of the quit warning popup.
+    #[must_use]
+    #[inline]
+    pub const fn quit_popup_description(&self) -> &'static str {
+        self.quit_popup_description
     }
 
     /// Returns `true` if the quit key must be confirmed through a warning popup.
