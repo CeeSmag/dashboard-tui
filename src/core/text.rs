@@ -409,8 +409,113 @@ impl<'a> From<&'a str> for Line<'a> {
     }
 }
 
+impl From<String> for Line<'static> {
+    fn from(value: String) -> Self {
+        Self::raw(value)
+    }
+}
+
 impl<'a> From<Span<'a>> for Line<'a> {
     fn from(value: Span<'a>) -> Self {
         Self::from_spans([value])
+    }
+}
+
+/// An ordered vertical sequence of [`Line`]s (a multi-line block of styled text).
+///
+/// # Examples
+///
+/// ```
+/// use tui_rs::core::{Line, Text};
+///
+/// let text = Text::from("first\nsecond line");
+/// assert_eq!(text.height(), 2);
+/// assert_eq!(text.width().get(), 11);
+/// let built = Text::from_lines([Line::raw("a"), Line::raw("bb")]);
+/// assert_eq!(built.lines().len(), 2);
+/// ```
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+#[cfg_attr(feature = "serde", derive(serde::Serialize, serde::Deserialize))]
+pub struct Text<'a> {
+    lines: Vec<Line<'a>>,
+}
+
+impl<'a> Text<'a> {
+    /// Creates an empty [`Text`].
+    #[must_use]
+    pub const fn new() -> Self {
+        Self { lines: Vec::new() }
+    }
+
+    /// Builds a [`Text`] from lines.
+    #[must_use]
+    pub fn from_lines(lines: impl IntoIterator<Item = Line<'a>>) -> Self {
+        Self {
+            lines: lines.into_iter().collect(),
+        }
+    }
+
+    /// Appends a line.
+    pub fn push_line(&mut self, line: impl Into<Line<'a>>) {
+        self.lines.push(line.into());
+    }
+
+    /// Returns the lines.
+    #[must_use]
+    pub fn lines(&self) -> &[Line<'a>] {
+        &self.lines
+    }
+
+    /// Returns the number of lines.
+    #[must_use]
+    pub fn height(&self) -> usize {
+        self.lines.len()
+    }
+
+    /// Returns the width of the widest line.
+    #[must_use]
+    pub fn width(&self) -> TerminalWidth {
+        self.lines
+            .iter()
+            .map(Line::width)
+            .max()
+            .unwrap_or(TerminalWidth::new(0))
+    }
+
+    /// Returns `true` if there are no lines.
+    #[must_use]
+    pub fn is_empty(&self) -> bool {
+        self.lines.is_empty()
+    }
+}
+
+impl<'a> From<&'a str> for Text<'a> {
+    fn from(value: &'a str) -> Self {
+        Self {
+            lines: value.split('\n').map(Line::raw).collect(),
+        }
+    }
+}
+
+impl From<String> for Text<'static> {
+    fn from(value: String) -> Self {
+        Self {
+            lines: value
+                .split('\n')
+                .map(|part| Line::raw(part.to_string()))
+                .collect(),
+        }
+    }
+}
+
+impl<'a> From<Line<'a>> for Text<'a> {
+    fn from(value: Line<'a>) -> Self {
+        Self { lines: vec![value] }
+    }
+}
+
+impl<'a> From<Vec<Line<'a>>> for Text<'a> {
+    fn from(value: Vec<Line<'a>>) -> Self {
+        Self { lines: value }
     }
 }
