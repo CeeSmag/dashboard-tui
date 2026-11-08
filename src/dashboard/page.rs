@@ -26,7 +26,7 @@ use crate::dashboard::spacing::SpacingConfig;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::SectionLayoutMode;
+/// use dashboard_tui::dashboard::SectionLayoutMode;
 ///
 /// assert_eq!(SectionLayoutMode::default(), SectionLayoutMode::Auto);
 /// ```
@@ -86,8 +86,8 @@ impl<B: DashboardBackend> Page<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, Page, SectionLayoutMode};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, Page, SectionLayoutMode};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -126,8 +126,8 @@ impl<B: DashboardBackend> Page<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, Page};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, Page};
     ///
     /// struct App { errors: usize }
     /// impl DashboardBackend for App {

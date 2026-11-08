@@ -12,7 +12,7 @@ use crate::core::coordinates::{ColumnIndex, RowIndex};
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
+/// use dashboard_tui::core::{Buffer, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
 ///
 /// let rect = Rect::from_xywh(0, 0, 4, 1);
 /// let prev = Buffer::empty(rect);
@@ -37,7 +37,7 @@ impl<'a> CellDiff<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
     /// let r = Rect::from_xywh(0, 0, 2, 1);
     /// let prev = Buffer::empty(r);
     /// let mut curr = Buffer::empty(r);
@@ -55,7 +55,7 @@ impl<'a> CellDiff<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
     /// let r = Rect::from_xywh(0, 0, 2, 1);
     /// let prev = Buffer::empty(r);
     /// let mut curr = Buffer::empty(r);
@@ -73,7 +73,7 @@ impl<'a> CellDiff<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
     /// let r = Rect::from_xywh(0, 0, 2, 1);
     /// let prev = Buffer::empty(r);
     /// let mut curr = Buffer::empty(r);
@@ -95,7 +95,7 @@ impl<'a> CellDiff<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, diff_buffers, Rect};
+/// use dashboard_tui::core::{Buffer, diff_buffers, Rect};
 ///
 /// let r = Rect::from_xywh(0, 0, 10, 5);
 /// let a = Buffer::empty(r);

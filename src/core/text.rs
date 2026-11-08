@@ -14,7 +14,7 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::TextAlignment;
+/// use dashboard_tui::core::TextAlignment;
 ///
 /// assert_eq!(TextAlignment::default(), TextAlignment::Left);
 /// ```
@@ -35,7 +35,7 @@ pub enum TextAlignment {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, Span, Style, TerminalWidth};
+/// use dashboard_tui::core::{Color, Span, Style, TerminalWidth};
 ///
 /// let span = Span::styled("● MOUNTED", Style::new().fg(Color::Green).bold());
 /// assert_eq!(span.width(), TerminalWidth::new(9));
@@ -54,7 +54,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Span;
+    /// use dashboard_tui::core::Span;
     ///
     /// let s = Span::raw("VaultDrive");
     /// assert_eq!(s.as_str(), "VaultDrive");
@@ -73,7 +73,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Span, Style};
+    /// use dashboard_tui::core::{Color, Span, Style};
     ///
     /// let span = Span::styled("ok", Style::new().bold()).patch_style(Style::new().fg(Color::Green));
     /// assert_eq!(span.style(), Style::new().bold().fg(Color::Green));
@@ -89,7 +89,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Span, Style};
+    /// use dashboard_tui::core::{Color, Span, Style};
     ///
     /// let s = Span::styled("Online", Style::new().fg(Color::Green));
     /// assert_eq!(s.style().foreground(), Some(Color::Green));
@@ -110,7 +110,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Span;
+    /// use dashboard_tui::core::Span;
     ///
     /// let link = Span::hyperlink("VaultDrive Home", "https://github.com/vaultdrive");
     /// assert_eq!(link.as_str(), "VaultDrive Home");
@@ -130,7 +130,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Span;
+    /// use dashboard_tui::core::Span;
     ///
     /// let span = Span::raw("GitHub").with_hyperlink("https://github.com");
     /// assert_eq!(span.hyperlink_url(), Some("https://github.com"));
@@ -146,7 +146,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Span;
+    /// use dashboard_tui::core::Span;
     ///
     /// let span = Span::raw("Plain");
     /// assert_eq!(span.hyperlink_url(), None);
@@ -164,7 +164,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Span;
+    /// use dashboard_tui::core::Span;
     /// assert_eq!(Span::raw("abc").as_str(), "abc");
     /// ```
     #[must_use]
@@ -177,7 +177,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Span, Style};
+    /// use dashboard_tui::core::{Span, Style};
     /// assert_eq!(Span::raw("x").style(), Style::DEFAULT);
     /// ```
     #[must_use]
@@ -190,7 +190,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Span, TerminalWidth};
+    /// use dashboard_tui::core::{Span, TerminalWidth};
     /// assert_eq!(Span::raw("100%").width(), TerminalWidth(4));
     /// ```
     #[must_use]
@@ -203,7 +203,7 @@ impl<'a> Span<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Span;
+    /// use dashboard_tui::core::Span;
     /// assert!(Span::raw("").is_empty());
     /// ```
     #[must_use]
@@ -229,7 +229,7 @@ impl From<String> for Span<'static> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, Line, Span, Style, TerminalWidth};
+/// use dashboard_tui::core::{Color, Line, Span, Style, TerminalWidth};
 ///
 /// let line = Line::from_spans([
 ///     Span::styled("Route: ", Style::new().dim()),
@@ -251,7 +251,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Line;
+    /// use dashboard_tui::core::Line;
     /// assert!(Line::empty().is_empty());
     /// ```
     #[must_use]
@@ -268,7 +268,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Line, Span};
+    /// use dashboard_tui::core::{Line, Span};
     ///
     /// let line = Line::from_spans([Span::raw("A"), Span::raw("B")]);
     /// assert_eq!(line.as_spans().len(), 2);
@@ -287,7 +287,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Line;
+    /// use dashboard_tui::core::Line;
     /// let line = Line::raw("Hello");
     /// assert_eq!(line.width().as_u16(), 5);
     /// ```
@@ -305,7 +305,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Line, Style};
+    /// use dashboard_tui::core::{Color, Line, Style};
     /// let line = Line::styled("Header", Style::new().fg(Color::Cyan));
     /// assert_eq!(line.as_spans().len(), 1);
     /// ```
@@ -323,7 +323,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Line, TextAlignment};
+    /// use dashboard_tui::core::{Line, TextAlignment};
     /// let line = Line::raw("Centered").alignment(TextAlignment::Center);
     /// assert_eq!(line.text_alignment(), TextAlignment::Center);
     /// ```
@@ -338,7 +338,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Line, Style};
+    /// use dashboard_tui::core::{Color, Line, Style};
     /// let line = Line::raw("Row").style(Style::new().bg(Color::Black));
     /// assert_eq!(line.base_style().background(), Some(Color::Black));
     /// ```
@@ -353,7 +353,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Line;
+    /// use dashboard_tui::core::Line;
     /// assert!(Line::empty().as_spans().is_empty());
     /// ```
     #[must_use]
@@ -366,7 +366,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Line, Style};
+    /// use dashboard_tui::core::{Line, Style};
     /// assert_eq!(Line::empty().base_style(), Style::DEFAULT);
     /// ```
     #[must_use]
@@ -379,7 +379,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Line, TextAlignment};
+    /// use dashboard_tui::core::{Line, TextAlignment};
     /// assert_eq!(Line::empty().text_alignment(), TextAlignment::Left);
     /// ```
     #[must_use]
@@ -392,7 +392,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Line, Span, TerminalWidth};
+    /// use dashboard_tui::core::{Line, Span, TerminalWidth};
     /// let l = Line::from_spans([Span::raw("ab"), Span::raw("cde")]);
     /// assert_eq!(l.width(), TerminalWidth(5));
     /// ```
@@ -410,7 +410,7 @@ impl<'a> Line<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Line;
+    /// use dashboard_tui::core::Line;
     /// assert!(Line::raw("").is_empty());
     /// ```
     #[must_use]
@@ -442,7 +442,7 @@ impl<'a> From<Span<'a>> for Line<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Line, Text};
+/// use dashboard_tui::core::{Line, Text};
 ///
 /// let text = Text::from("first\nsecond line");
 /// assert_eq!(text.height(), 2);

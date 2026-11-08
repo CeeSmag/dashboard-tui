@@ -21,7 +21,7 @@ pub type TableState = ListState;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::Row;
+/// use dashboard_tui::widgets::Row;
 ///
 /// let row = Row::new(["backup.tar", "UPLOAD", "78%"]);
 /// assert_eq!(row.cell_count(), 3);
@@ -70,8 +70,8 @@ impl<'a, T: Into<Line<'a>>> FromIterator<T> for Row<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Constraint, Rect, Style, TextAlignment};
-/// use tui_rs::widgets::{Row, Table, TableState};
+/// use dashboard_tui::core::{Buffer, Constraint, Rect, Style, TextAlignment};
+/// use dashboard_tui::widgets::{Row, Table, TableState};
 ///
 /// let area = Rect::from_xywh(0, 0, 24, 4);
 /// let mut buffer = Buffer::empty(area);

@@ -25,8 +25,8 @@ use crate::error::TuiError;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::backend::{Backend, TestBackend};
-/// use tui_rs::core::{TerminalHeight, TerminalWidth};
+/// use dashboard_tui::backend::{Backend, TestBackend};
+/// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
 ///
 /// let mut backend = TestBackend::new(TerminalWidth(80), TerminalHeight(24));
 /// backend.hide_cursor().unwrap();
@@ -38,8 +38,8 @@ pub trait Backend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::{Backend, TestBackend};
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::{Backend, TestBackend};
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     ///
     /// let b = TestBackend::new(TerminalWidth(60), TerminalHeight(20));
     /// assert_eq!(b.dimensions(), (TerminalWidth(60), TerminalHeight(20)));
@@ -51,8 +51,8 @@ pub trait Backend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::{Backend, TestBackend};
-    /// use tui_rs::core::{ColorDepth, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::{Backend, TestBackend};
+    /// use dashboard_tui::core::{ColorDepth, TerminalHeight, TerminalWidth};
     ///
     /// let b = TestBackend::new(TerminalWidth(60), TerminalHeight(20));
     /// assert_eq!(b.capabilities().color_depth(), ColorDepth::TrueColor);

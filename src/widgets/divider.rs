@@ -13,8 +13,8 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-/// use tui_rs::widgets::LabeledDivider;
+/// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::widgets::LabeledDivider;
 ///
 /// let area = Rect::from_size(TerminalWidth::new(30), TerminalHeight::new(1));
 /// let mut buf = Buffer::empty(area);
@@ -34,7 +34,7 @@ impl<'a> LabeledDivider<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::LabeledDivider;
+    /// use dashboard_tui::widgets::LabeledDivider;
     ///
     /// let div = LabeledDivider::new("STATUS");
     /// assert_eq!(div.label(), "STATUS");
@@ -53,7 +53,7 @@ impl<'a> LabeledDivider<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::LabeledDivider;
+    /// use dashboard_tui::widgets::LabeledDivider;
     ///
     /// let div = LabeledDivider::new("STATUS").with_tty_mode(true);
     /// assert!(div.is_tty_mode());
@@ -70,7 +70,7 @@ impl<'a> LabeledDivider<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::LabeledDivider;
+    /// use dashboard_tui::widgets::LabeledDivider;
     ///
     /// assert_eq!(LabeledDivider::new("SYNC").label(), "SYNC");
     /// ```
@@ -85,7 +85,7 @@ impl<'a> LabeledDivider<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::LabeledDivider;
+    /// use dashboard_tui::widgets::LabeledDivider;
     ///
     /// assert!(!LabeledDivider::new("SYNC").is_tty_mode());
     /// ```
@@ -100,8 +100,8 @@ impl<'a> LabeledDivider<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::LabeledDivider;
+    /// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::LabeledDivider;
     ///
     /// let area = Rect::from_size(TerminalWidth::new(25), TerminalHeight::new(1));
     /// let mut buf = Buffer::empty(area);

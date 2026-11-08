@@ -16,7 +16,7 @@ use crate::core::widget::StatefulWidget;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::ListState;
+/// use dashboard_tui::widgets::ListState;
 ///
 /// let mut state = ListState::default();
 /// assert_eq!(state.selected(), None);
@@ -164,8 +164,8 @@ pub(crate) fn follow_selection(
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, Style};
-/// use tui_rs::widgets::ListItem;
+/// use dashboard_tui::core::{Color, Style};
+/// use dashboard_tui::widgets::ListItem;
 ///
 /// let item = ListItem::new("Mount vault").style(Style::new().fg(Color::Green));
 /// assert_eq!(item.line().width().get(), 11);
@@ -209,8 +209,8 @@ impl<'a, T: Into<Line<'a>>> From<T> for ListItem<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Style, StatefulWidget};
-/// use tui_rs::widgets::{List, ListState};
+/// use dashboard_tui::core::{Buffer, Rect, Style, StatefulWidget};
+/// use dashboard_tui::widgets::{List, ListState};
 ///
 /// let area = Rect::from_xywh(0, 0, 12, 3);
 /// let mut buffer = Buffer::empty(area);

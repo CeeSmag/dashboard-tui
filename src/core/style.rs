@@ -13,7 +13,7 @@ bitflags! {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Modifiers;
+    /// use dashboard_tui::core::Modifiers;
     ///
     /// let m = Modifiers::BOLD | Modifiers::UNDERLINED;
     /// assert!(m.contains(Modifiers::BOLD));
@@ -41,7 +41,7 @@ bitflags! {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, Modifiers, Style};
+/// use dashboard_tui::core::{Color, Modifiers, Style};
 ///
 /// let style = Style::new().fg(Color::Cyan).bold();
 /// assert_eq!(style.foreground(), Some(Color::Cyan));
@@ -70,7 +70,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Style;
+    /// use dashboard_tui::core::Style;
     ///
     /// assert_eq!(Style::new(), Style::DEFAULT);
     /// ```
@@ -84,7 +84,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Style};
+    /// use dashboard_tui::core::{Color, Style};
     ///
     /// let s = Style::new().fg(Color::Green);
     /// assert_eq!(s.foreground(), Some(Color::Green));
@@ -107,7 +107,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Style};
+    /// use dashboard_tui::core::{Color, Style};
     ///
     /// let s = Style::new().bg(Color::Black);
     /// assert_eq!(s.background(), Some(Color::Black));
@@ -130,7 +130,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Modifiers, Style};
+    /// use dashboard_tui::core::{Modifiers, Style};
     ///
     /// assert!(Style::new().bold().modifiers().contains(Modifiers::BOLD));
     /// ```
@@ -144,7 +144,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Modifiers, Style};
+    /// use dashboard_tui::core::{Modifiers, Style};
     ///
     /// assert!(Style::new().dim().modifiers().contains(Modifiers::DIM));
     /// ```
@@ -158,7 +158,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Modifiers, Style};
+    /// use dashboard_tui::core::{Modifiers, Style};
     ///
     /// assert!(Style::new().italic().modifiers().contains(Modifiers::ITALIC));
     /// ```
@@ -172,7 +172,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Modifiers, Style};
+    /// use dashboard_tui::core::{Modifiers, Style};
     ///
     /// assert!(Style::new().underlined().modifiers().contains(Modifiers::UNDERLINED));
     /// ```
@@ -186,7 +186,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Modifiers, Style};
+    /// use dashboard_tui::core::{Modifiers, Style};
     ///
     /// assert!(Style::new().reversed().modifiers().contains(Modifiers::REVERSED));
     /// ```
@@ -200,7 +200,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Modifiers, Style};
+    /// use dashboard_tui::core::{Modifiers, Style};
     ///
     /// let s = Style::new().add_modifier(Modifiers::BOLD | Modifiers::ITALIC);
     /// assert!(s.modifiers().contains(Modifiers::BOLD));
@@ -217,7 +217,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Modifiers, Style};
+    /// use dashboard_tui::core::{Modifiers, Style};
     ///
     /// let s = Style::new().bold().remove_modifier(Modifiers::BOLD);
     /// assert!(!s.modifiers().contains(Modifiers::BOLD));
@@ -234,7 +234,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Style};
+    /// use dashboard_tui::core::{Color, Style};
     ///
     /// let base = Style::new().fg(Color::White).bg(Color::Black);
     /// let accent = Style::new().fg(Color::Cyan).bold();
@@ -266,7 +266,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Style};
+    /// use dashboard_tui::core::{Color, Style};
     /// assert_eq!(Style::new().fg(Color::Red).foreground(), Some(Color::Red));
     /// ```
     #[must_use]
@@ -279,7 +279,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Style};
+    /// use dashboard_tui::core::{Color, Style};
     /// assert_eq!(Style::new().bg(Color::Blue).background(), Some(Color::Blue));
     /// ```
     #[must_use]
@@ -292,7 +292,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Modifiers, Style};
+    /// use dashboard_tui::core::{Modifiers, Style};
     /// assert_eq!(Style::new().bold().modifiers(), Modifiers::BOLD);
     /// ```
     #[must_use]
@@ -305,7 +305,7 @@ impl Style {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, ColorDepth, Style};
+    /// use dashboard_tui::core::{Color, ColorDepth, Style};
     ///
     /// let s = Style::new().fg(Color::Rgb(255, 0, 0)).bold();
     /// let no_color = s.degrade(ColorDepth::NoColor);

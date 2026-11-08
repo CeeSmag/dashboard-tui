@@ -12,8 +12,8 @@ use crate::error::TuiError;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::backend::{Backend, TestBackend};
-/// use tui_rs::core::{TerminalHeight, TerminalWidth};
+/// use dashboard_tui::backend::{Backend, TestBackend};
+/// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
 ///
 /// let backend = TestBackend::new(TerminalWidth(40), TerminalHeight(10));
 /// assert_eq!(backend.dimensions(), (TerminalWidth(40), TerminalHeight(10)));
@@ -44,8 +44,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     ///
     /// let tb = TestBackend::new(TerminalWidth(80), TerminalHeight(24));
     /// assert!(!tb.is_raw_mode_enabled());
@@ -73,8 +73,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::{Backend, TestBackend};
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::{Backend, TestBackend};
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     ///
     /// let tb = TestBackend::new_tty(TerminalWidth(80), TerminalHeight(25));
     /// assert!(tb.capabilities().is_tty_console());
@@ -92,8 +92,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::{Backend, TestBackend};
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::{Backend, TestBackend};
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     ///
     /// let mut tb = TestBackend::new(TerminalWidth(80), TerminalHeight(24));
     /// tb.resize(TerminalWidth(100), TerminalHeight(30));
@@ -111,8 +111,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     ///
     /// let tb = TestBackend::new(TerminalWidth(10), TerminalHeight(2));
     /// assert_eq!(tb.screen_buffer().bounds().width(), TerminalWidth(10));
@@ -127,8 +127,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     ///
     /// let tb = TestBackend::new(TerminalWidth(4), TerminalHeight(2));
     /// assert_eq!(tb.to_visual_grid(), "    \n    ");
@@ -143,8 +143,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     /// assert!(!TestBackend::new(TerminalWidth(10), TerminalHeight(2)).is_raw_mode_enabled());
     /// ```
     #[must_use]
@@ -157,8 +157,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     /// assert!(!TestBackend::new(TerminalWidth(10), TerminalHeight(2)).is_alternate_screen_active());
     /// ```
     #[must_use]
@@ -171,8 +171,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     /// assert!(!TestBackend::new(TerminalWidth(10), TerminalHeight(2)).is_alternate_scroll_active());
     /// ```
     #[must_use]
@@ -185,8 +185,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     /// assert!(TestBackend::new(TerminalWidth(10), TerminalHeight(2)).is_cursor_visible());
     /// ```
     #[must_use]
@@ -199,8 +199,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::{Backend, TestBackend};
-    /// use tui_rs::core::{ColumnIndex, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::{Backend, TestBackend};
+    /// use dashboard_tui::core::{ColumnIndex, RowIndex, TerminalHeight, TerminalWidth};
     ///
     /// let mut backend = TestBackend::new(TerminalWidth(10), TerminalHeight(2));
     /// backend.set_cursor_position(ColumnIndex(3), RowIndex(1)).unwrap();
@@ -216,8 +216,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     /// assert_eq!(TestBackend::new(TerminalWidth(10), TerminalHeight(2)).window_title(), "");
     /// ```
     #[must_use]
@@ -230,8 +230,8 @@ impl TestBackend {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TestBackend;
-    /// use tui_rs::core::{TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::backend::TestBackend;
+    /// use dashboard_tui::core::{TerminalHeight, TerminalWidth};
     /// assert_eq!(TestBackend::new(TerminalWidth(10), TerminalHeight(2)).flush_count(), 0);
     /// ```
     #[must_use]

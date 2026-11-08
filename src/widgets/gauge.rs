@@ -18,8 +18,8 @@ const EIGHTHS: [&str; 8] = [" ", "▏", "▎", "▍", "▌", "▋", "▊", "▉"
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Color, Rect, Style, Widget};
-/// use tui_rs::widgets::Gauge;
+/// use dashboard_tui::core::{Buffer, Color, Rect, Style, Widget};
+/// use dashboard_tui::widgets::Gauge;
 ///
 /// let area = Rect::from_xywh(0, 0, 10, 1);
 /// let mut buffer = Buffer::empty(area);
@@ -161,8 +161,8 @@ impl Widget for Gauge<'_> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Widget};
-/// use tui_rs::widgets::LineGauge;
+/// use dashboard_tui::core::{Buffer, Rect, Widget};
+/// use dashboard_tui::widgets::LineGauge;
 ///
 /// let area = Rect::from_xywh(0, 0, 16, 1);
 /// let mut buffer = Buffer::empty(area);

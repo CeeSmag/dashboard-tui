@@ -21,7 +21,7 @@ use crate::core::text::{Line, Span, TextAlignment};
 ///
 /// ```
 /// use core::fmt::Write;
-/// use tui_rs::core::StackStr;
+/// use dashboard_tui::core::StackStr;
 ///
 /// let mut buf = StackStr::<32>::new();
 /// let _ = write!(buf, "[{}] {:.1}%", 1, 99.5);
@@ -51,7 +51,7 @@ impl<const N: usize> StackStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::StackStr;
+    /// use dashboard_tui::core::StackStr;
     /// let s = StackStr::<16>::new();
     /// assert!(s.is_empty());
     /// ```
@@ -68,7 +68,7 @@ impl<const N: usize> StackStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::StackStr;
+    /// use dashboard_tui::core::StackStr;
     /// let mut s = StackStr::<16>::new();
     /// s.push_str("ok");
     /// assert_eq!(s.as_str(), "ok");
@@ -83,7 +83,7 @@ impl<const N: usize> StackStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::StackStr;
+    /// use dashboard_tui::core::StackStr;
     /// assert!(StackStr::<8>::new().is_empty());
     /// ```
     #[must_use]
@@ -114,7 +114,7 @@ impl<const N: usize> StackStr<N> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::StackStr;
+    /// use dashboard_tui::core::StackStr;
     /// let mut s = StackStr::<4>::new();
     /// s.push_str("hello");
     /// assert_eq!(s.as_str(), "hell");
@@ -147,7 +147,7 @@ impl<const N: usize> fmt::Write for StackStr<N> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
+/// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
 ///
 /// let rect = Rect::from_xywh(0, 0, 10, 2);
 /// let mut buf = Buffer::empty(rect);
@@ -166,7 +166,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, Rect};
+    /// use dashboard_tui::core::{Buffer, Rect};
     ///
     /// let buf = Buffer::empty(Rect::from_xywh(0, 0, 20, 5));
     /// assert_eq!(buf.as_cell_slice().len(), 100);
@@ -185,7 +185,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, Rect};
+    /// use dashboard_tui::core::{Buffer, Rect};
     /// let r = Rect::from_xywh(0, 0, 10, 4);
     /// assert_eq!(Buffer::empty(r).bounds(), r);
     /// ```
@@ -206,7 +206,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, Rect};
+    /// use dashboard_tui::core::{Buffer, Rect};
     /// let buf = Buffer::empty(Rect::from_xywh(0, 0, 4, 2));
     /// assert_eq!(buf.as_cell_slice().len(), 8);
     /// ```
@@ -220,7 +220,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 4, 1));
     /// buf.set_str_clipped(ColumnIndex(0), RowIndex(0), "Test", ColumnIndex(4), Style::DEFAULT);
     /// buf.reset();
@@ -239,7 +239,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, Rect};
+    /// use dashboard_tui::core::{Buffer, Rect};
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 10, 10));
     /// buf.resize(Rect::from_xywh(0, 0, 5, 5));
     /// assert_eq!(buf.bounds(), Rect::from_xywh(0, 0, 5, 5));
@@ -268,7 +268,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex};
     /// let buf = Buffer::empty(Rect::from_xywh(0, 0, 5, 5));
     /// assert!(buf.cell_at(ColumnIndex(2), RowIndex(2)).is_some());
     /// assert!(buf.cell_at(ColumnIndex(9), RowIndex(2)).is_none());
@@ -284,7 +284,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex};
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 5, 5));
     /// if let Some(cell) = buf.cell_at_mut(ColumnIndex(0), RowIndex(0)) {
     ///     cell.set_char('X');
@@ -360,7 +360,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, Color, ColumnIndex, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, Color, ColumnIndex, Rect, RowIndex, Style};
     /// let rect = Rect::from_xywh(0, 0, 4, 2);
     /// let mut buf = Buffer::empty(rect);
     /// buf.set_style(rect, Style::new().fg(Color::Cyan));
@@ -392,7 +392,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, Color, ColumnIndex, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, Color, ColumnIndex, Rect, RowIndex, Style};
     /// let rect = Rect::from_xywh(0, 0, 3, 1);
     /// let mut buf = Buffer::empty(rect);
     /// buf.set_style(Rect::from_xywh(0, 0, 1, 1), Style::new().bg(Color::Red));
@@ -431,7 +431,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
     /// let rect = Rect::from_xywh(0, 0, 4, 1);
     /// let mut buf = Buffer::empty(rect);
     /// buf.set_str_clipped(ColumnIndex(0), RowIndex(0), "ABCD", ColumnIndex(4), Style::DEFAULT);
@@ -475,7 +475,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 3, 1));
     /// buf.set_char(ColumnIndex(1), RowIndex(0), '●', Style::DEFAULT);
     /// assert_eq!(buf.to_visual_lines(), vec![" ● "]);
@@ -498,7 +498,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
     ///
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 5, 1));
     /// let end = buf.set_str_clipped(ColumnIndex(0), RowIndex(0), "日本A", ColumnIndex(3), Style::DEFAULT);
@@ -576,7 +576,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style, TerminalWidth};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style, TerminalWidth};
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 6, 1));
     /// buf.set_str_truncated(ColumnIndex(0), RowIndex(0), "VaultDrive", TerminalWidth(6), Style::DEFAULT);
     /// assert_eq!(buf.to_visual_lines(), vec!["Vault…"]);
@@ -603,7 +603,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Span};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Span};
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 5, 1));
     /// buf.set_span(ColumnIndex(0), RowIndex(0), &Span::raw("Hello"), ColumnIndex(5));
     /// assert_eq!(buf.to_visual_lines(), vec!["Hello"]);
@@ -633,7 +633,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style, TerminalHeight, TerminalWidth};
     ///
     /// let mut buf = Buffer::empty(Rect::from_size(TerminalWidth::new(20), TerminalHeight::new(1)));
     /// buf.set_hyperlink(
@@ -672,7 +672,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Line, Rect, RowIndex, TerminalWidth, TextAlignment};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Line, Rect, RowIndex, TerminalWidth, TextAlignment};
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 8, 1));
     /// let line = Line::raw("OK").alignment(TextAlignment::Center);
     /// buf.set_line(ColumnIndex(0), RowIndex(0), &line, TerminalWidth(8));
@@ -727,7 +727,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style, TerminalWidth};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style, TerminalWidth};
     /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 6, 1));
     /// buf.set_str_centered(ColumnIndex(0), RowIndex(0), "HI", TerminalWidth(6), Style::DEFAULT);
     /// assert_eq!(buf.to_visual_lines(), vec!["  HI  "]);
@@ -752,7 +752,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, Rect};
+    /// use dashboard_tui::core::{Buffer, Rect};
     /// let buf = Buffer::empty(Rect::from_xywh(0, 0, 3, 2));
     /// assert_eq!(buf.to_visual_lines(), vec!["   ", "   "]);
     /// ```

@@ -24,8 +24,8 @@ pub const MAX_TABLE_COLUMNS: usize = 16;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::TextAlignment;
-/// use tui_rs::widgets::TableColumn;
+/// use dashboard_tui::core::TextAlignment;
+/// use dashboard_tui::widgets::TableColumn;
 ///
 /// let col = TableColumn::new("Mountpoint", 3).with_alignment(TextAlignment::Left);
 /// assert_eq!(col.header(), "Mountpoint");
@@ -45,7 +45,7 @@ impl<'a> TableColumn<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TableColumn;
+    /// use dashboard_tui::widgets::TableColumn;
     ///
     /// let col = TableColumn::new("Size", 1);
     /// assert_eq!(col.weight(), 1);
@@ -66,7 +66,7 @@ impl<'a> TableColumn<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TableColumn;
+    /// use dashboard_tui::widgets::TableColumn;
     ///
     /// let col = TableColumn::new("ID", 1).with_min_width(4);
     /// assert_eq!(col.min_width(), 4);
@@ -83,8 +83,8 @@ impl<'a> TableColumn<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TextAlignment;
-    /// use tui_rs::widgets::TableColumn;
+    /// use dashboard_tui::core::TextAlignment;
+    /// use dashboard_tui::widgets::TableColumn;
     ///
     /// let col = TableColumn::new("Used", 1).with_alignment(TextAlignment::Right);
     /// assert_eq!(col.alignment(), TextAlignment::Right);
@@ -101,7 +101,7 @@ impl<'a> TableColumn<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TableColumn;
+    /// use dashboard_tui::widgets::TableColumn;
     ///
     /// assert_eq!(TableColumn::new("Device", 2).header(), "Device");
     /// ```
@@ -116,7 +116,7 @@ impl<'a> TableColumn<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TableColumn;
+    /// use dashboard_tui::widgets::TableColumn;
     ///
     /// assert_eq!(TableColumn::new("Device", 2).weight(), 2);
     /// ```
@@ -131,7 +131,7 @@ impl<'a> TableColumn<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TableColumn;
+    /// use dashboard_tui::widgets::TableColumn;
     ///
     /// assert_eq!(TableColumn::new("Device", 2).min_width(), 3);
     /// ```
@@ -146,8 +146,8 @@ impl<'a> TableColumn<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TextAlignment;
-    /// use tui_rs::widgets::TableColumn;
+    /// use dashboard_tui::core::TextAlignment;
+    /// use dashboard_tui::widgets::TableColumn;
     ///
     /// assert_eq!(TableColumn::new("A", 1).alignment(), TextAlignment::Left);
     /// ```
@@ -163,8 +163,8 @@ impl<'a> TableColumn<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth, TextAlignment};
-/// use tui_rs::widgets::{TableColumn, WeightedTable};
+/// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth, TextAlignment};
+/// use dashboard_tui::widgets::{TableColumn, WeightedTable};
 ///
 /// let cols = [
 ///     TableColumn::new("Filesystem", 2),
@@ -194,7 +194,7 @@ impl<'a> WeightedTable<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TableColumn, WeightedTable};
+    /// use dashboard_tui::widgets::{TableColumn, WeightedTable};
     ///
     /// let cols = [TableColumn::new("Name", 1)];
     /// let rows: [&[&str]; 1] = [&["item"]];
@@ -217,7 +217,7 @@ impl<'a> WeightedTable<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TableColumn, WeightedTable};
+    /// use dashboard_tui::widgets::{TableColumn, WeightedTable};
     ///
     /// let cols = [TableColumn::new("Name", 1)];
     /// let table = WeightedTable::new(&cols, &[]).with_selected_row(Some(0));
@@ -235,7 +235,7 @@ impl<'a> WeightedTable<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TableColumn, WeightedTable};
+    /// use dashboard_tui::widgets::{TableColumn, WeightedTable};
     ///
     /// let cols = [TableColumn::new("Name", 1)];
     /// let table = WeightedTable::new(&cols, &[]).with_column_gap(1);
@@ -253,7 +253,7 @@ impl<'a> WeightedTable<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TableColumn, WeightedTable};
+    /// use dashboard_tui::widgets::{TableColumn, WeightedTable};
     ///
     /// assert_eq!(WeightedTable::new(&[], &[]).selected_row(), None);
     /// ```
@@ -268,7 +268,7 @@ impl<'a> WeightedTable<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::WeightedTable;
+    /// use dashboard_tui::widgets::WeightedTable;
     ///
     /// assert_eq!(WeightedTable::new(&[], &[]).column_gap(), 2);
     /// ```
@@ -284,7 +284,7 @@ impl<'a> WeightedTable<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TableColumn, WeightedTable};
+    /// use dashboard_tui::widgets::{TableColumn, WeightedTable};
     ///
     /// let cols = [TableColumn::new("ID", 1), TableColumn::new("Path", 3)];
     /// let rows: [&[&str]; 1] = [&["1", "/home/vaultdrive/mount"]];
@@ -381,8 +381,8 @@ impl<'a> WeightedTable<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::{TableColumn, WeightedTable};
+    /// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::{TableColumn, WeightedTable};
     ///
     /// let cols = [TableColumn::new("Key", 1), TableColumn::new("Val", 1)];
     /// let rows: [&[&str]; 1] = [&["Remote", "gdrive:vault"]];

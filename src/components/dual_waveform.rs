@@ -25,8 +25,8 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::DualWaveform;
-/// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::components::DualWaveform;
+/// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
 ///
 /// let area = Rect::from_size(TerminalWidth::new(50), TerminalHeight::new(7));
 /// let mut buf = Buffer::empty(area);
@@ -60,7 +60,7 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::DualWaveform;
+    /// use dashboard_tui::components::DualWaveform;
     ///
     /// let wave = DualWaveform::new(&[10.0], &[20.0], 100.0);
     /// assert_eq!(wave.scale_ceiling(), 100.0);
@@ -96,7 +96,7 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::DualWaveform;
+    /// use dashboard_tui::components::DualWaveform;
     ///
     /// let wave = DualWaveform::new(&[], &[], 100.0).with_labels("Up", "Down");
     /// ```
@@ -114,7 +114,7 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::DualWaveform;
+    /// use dashboard_tui::components::DualWaveform;
     ///
     /// let wave = DualWaveform::new(&[], &[], 100.0).with_scale_label("≤100 ops");
     /// ```
@@ -130,8 +130,8 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::DualWaveform;
-    /// use tui_rs::core::Color;
+    /// use dashboard_tui::components::DualWaveform;
+    /// use dashboard_tui::core::Color;
     ///
     /// let wave = DualWaveform::new(&[], &[], 100.0).with_colors(Color::Green, Color::Cyan);
     /// ```
@@ -148,7 +148,7 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{DualWaveform, GraphSymbolMode};
+    /// use dashboard_tui::components::{DualWaveform, GraphSymbolMode};
     ///
     /// let wave = DualWaveform::new(&[], &[], 100.0).with_mode(GraphSymbolMode::Block);
     /// ```
@@ -166,7 +166,7 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::DualWaveform;
+    /// use dashboard_tui::components::DualWaveform;
     ///
     /// let wave = DualWaveform::new(&[10.0], &[20.0], 100.0).with_fill_width(false);
     /// assert!(!wave.is_fill_width());
@@ -183,7 +183,7 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::DualWaveform;
+    /// use dashboard_tui::components::DualWaveform;
     ///
     /// assert!(DualWaveform::new(&[], &[], 100.0).is_fill_width());
     /// ```
@@ -198,7 +198,7 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::DualWaveform;
+    /// use dashboard_tui::components::DualWaveform;
     ///
     /// assert_eq!(DualWaveform::new(&[], &[], 512.0).scale_ceiling(), 512.0);
     /// ```
@@ -213,8 +213,8 @@ impl<'a> DualWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::DualWaveform;
-    /// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::components::DualWaveform;
+    /// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
     ///
     /// let area = Rect::from_size(TerminalWidth::new(40), TerminalHeight::new(5));
     /// let mut buf = Buffer::empty(area);

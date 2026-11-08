@@ -10,7 +10,7 @@
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::GraphSymbolMode;
+/// use dashboard_tui::components::GraphSymbolMode;
 ///
 /// let mode = GraphSymbolMode::default();
 /// assert_eq!(mode, GraphSymbolMode::Braille);
@@ -85,7 +85,7 @@ const TTY_DOWN: [[&str; 5]; 5] = [
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::clamp_dots;
+/// use dashboard_tui::components::clamp_dots;
 ///
 /// assert_eq!(clamp_dots(0), 0);
 /// assert_eq!(clamp_dots(3), 3);
@@ -102,7 +102,7 @@ pub const fn clamp_dots(dots: usize) -> usize {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::braille_up_cell;
+/// use dashboard_tui::components::braille_up_cell;
 ///
 /// assert_eq!(braille_up_cell(0, 0), " ");
 /// assert_eq!(braille_up_cell(4, 4), "⣿");
@@ -119,7 +119,7 @@ pub const fn braille_up_cell(left_dots: usize, right_dots: usize) -> &'static st
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::braille_down_cell;
+/// use dashboard_tui::components::braille_down_cell;
 ///
 /// assert_eq!(braille_down_cell(0, 0), " ");
 /// assert_eq!(braille_down_cell(4, 4), "⣿");
@@ -136,7 +136,7 @@ pub const fn braille_down_cell(left_dots: usize, right_dots: usize) -> &'static 
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::{graph_up_cell, GraphSymbolMode};
+/// use dashboard_tui::components::{graph_up_cell, GraphSymbolMode};
 ///
 /// assert_eq!(graph_up_cell(GraphSymbolMode::Braille, 4, 4), "⣿");
 /// assert_eq!(graph_up_cell(GraphSymbolMode::Block, 4, 4), "█");
@@ -163,7 +163,7 @@ pub const fn graph_up_cell(
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::{graph_down_cell, GraphSymbolMode};
+/// use dashboard_tui::components::{graph_down_cell, GraphSymbolMode};
 ///
 /// assert_eq!(graph_down_cell(GraphSymbolMode::Braille, 1, 1), "⠉");
 /// assert_eq!(graph_down_cell(GraphSymbolMode::Block, 1, 1), "▀");
@@ -193,7 +193,7 @@ pub const fn graph_down_cell(
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::total_wave_dots;
+/// use dashboard_tui::components::total_wave_dots;
 ///
 /// assert_eq!(total_wave_dots(0.0, 100.0, 4), 0);
 /// assert_eq!(total_wave_dots(0.1, 100.0, 4), 1);
@@ -225,7 +225,7 @@ pub fn total_wave_dots(value: f64, max_value: f64, rows: usize) -> usize {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::row_wave_dots;
+/// use dashboard_tui::components::row_wave_dots;
 ///
 /// // 6 total dots across 2 rows: bottom row (0) has 4 dots, top row (1) has 2 dots.
 /// assert_eq!(row_wave_dots(6, 0), 4);

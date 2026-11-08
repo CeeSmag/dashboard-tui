@@ -13,7 +13,7 @@ use crate::core::color::ColorDepth;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::backend::TerminalCapabilities;
+/// use dashboard_tui::backend::TerminalCapabilities;
 ///
 /// let caps = TerminalCapabilities::detect();
 /// let _ = caps.is_tty_console();
@@ -50,8 +50,8 @@ impl TerminalCapabilities {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TerminalCapabilities;
-    /// use tui_rs::core::ColorDepth;
+    /// use dashboard_tui::backend::TerminalCapabilities;
+    /// use dashboard_tui::core::ColorDepth;
     ///
     /// let tty_caps = TerminalCapabilities::new(ColorDepth::Ansi16, true, false, false);
     /// assert!(tty_caps.is_tty_console());
@@ -77,7 +77,7 @@ impl TerminalCapabilities {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TerminalCapabilities;
+    /// use dashboard_tui::backend::TerminalCapabilities;
     ///
     /// let caps = TerminalCapabilities::default().with_hyperlinks(false);
     /// assert!(!caps.supports_hyperlinks());
@@ -93,7 +93,7 @@ impl TerminalCapabilities {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TerminalCapabilities;
+    /// use dashboard_tui::backend::TerminalCapabilities;
     ///
     /// let caps = TerminalCapabilities::detect();
     /// let _ = caps.color_depth();
@@ -116,8 +116,8 @@ impl TerminalCapabilities {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TerminalCapabilities;
-    /// use tui_rs::core::ColorDepth;
+    /// use dashboard_tui::backend::TerminalCapabilities;
+    /// use dashboard_tui::core::ColorDepth;
     ///
     /// assert_eq!(TerminalCapabilities::default().color_depth(), ColorDepth::TrueColor);
     /// ```
@@ -132,7 +132,7 @@ impl TerminalCapabilities {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TerminalCapabilities;
+    /// use dashboard_tui::backend::TerminalCapabilities;
     /// assert!(!TerminalCapabilities::default().is_tty_console());
     /// ```
     #[must_use]
@@ -145,7 +145,7 @@ impl TerminalCapabilities {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TerminalCapabilities;
+    /// use dashboard_tui::backend::TerminalCapabilities;
     /// assert!(TerminalCapabilities::default().supports_synchronized_output());
     /// ```
     #[must_use]
@@ -158,7 +158,7 @@ impl TerminalCapabilities {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TerminalCapabilities;
+    /// use dashboard_tui::backend::TerminalCapabilities;
     /// assert!(TerminalCapabilities::default().supports_grapheme_clustering());
     /// ```
     #[must_use]
@@ -171,7 +171,7 @@ impl TerminalCapabilities {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::TerminalCapabilities;
+    /// use dashboard_tui::backend::TerminalCapabilities;
     /// assert!(TerminalCapabilities::default().supports_hyperlinks());
     /// ```
     #[must_use]

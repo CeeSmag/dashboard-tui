@@ -14,8 +14,8 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::GradientMeter;
-/// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::components::GradientMeter;
+/// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
 ///
 /// let area = Rect::from_size(TerminalWidth::new(20), TerminalHeight::new(1));
 /// let mut buf = Buffer::empty(area);
@@ -37,7 +37,7 @@ impl GradientMeter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::GradientMeter;
+    /// use dashboard_tui::components::GradientMeter;
     ///
     /// let meter = GradientMeter::new(0.5, 10);
     /// assert_eq!(meter.total_width(), 10);
@@ -65,7 +65,7 @@ impl GradientMeter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::GradientMeter;
+    /// use dashboard_tui::components::GradientMeter;
     ///
     /// let meter = GradientMeter::new(0.5, 10).with_tty_mode(true);
     /// assert!(meter.is_tty_mode());
@@ -82,7 +82,7 @@ impl GradientMeter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::GradientMeter;
+    /// use dashboard_tui::components::GradientMeter;
     ///
     /// assert_eq!(GradientMeter::new(1.5, 10).fraction(), 1.0);
     /// ```
@@ -97,7 +97,7 @@ impl GradientMeter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::GradientMeter;
+    /// use dashboard_tui::components::GradientMeter;
     ///
     /// assert_eq!(GradientMeter::new(0.5, 14).total_width(), 14);
     /// ```
@@ -112,7 +112,7 @@ impl GradientMeter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::GradientMeter;
+    /// use dashboard_tui::components::GradientMeter;
     ///
     /// assert!(!GradientMeter::new(0.5, 10).is_tty_mode());
     /// ```
@@ -128,8 +128,8 @@ impl GradientMeter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::GradientMeter;
-    /// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::components::GradientMeter;
+    /// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
     ///
     /// let area = Rect::from_size(TerminalWidth::new(15), TerminalHeight::new(1));
     /// let mut buf = Buffer::empty(area);

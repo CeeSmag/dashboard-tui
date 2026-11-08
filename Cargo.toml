@@ -1,11 +1,11 @@
 [package]
-name = "tui-rs"
-version = "0.3.0"
+name = "dashboard-tui"
+version = "0.4.0"
 edition = "2024"
 rust-version = "1.85"
 description = "High-performance, zero-allocation, modular Terminal User Interface (TUI) & 3-tier Dashboard Engine for Rust"
 license = "MIT"
-repository = "https://github.com/vaultdrive/tui-rs"
+repository = "https://github.com/CeeSmag/dashboard-tui"
 readme = "RULES.md"
 keywords = ["tui", "terminal", "dashboard", "btop", "ansi"]
 categories = ["command-line-interface", "gui", "rendering"]

@@ -71,7 +71,7 @@ fn encode(weight: LineWeight, mask: u8) -> Option<char> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::merge_border_symbols;
+/// use dashboard_tui::core::merge_border_symbols;
 ///
 /// assert_eq!(merge_border_symbols("─", "│"), Some('┼'));
 /// assert_eq!(merge_border_symbols("┌", "┐"), Some('┬'));
@@ -106,7 +106,7 @@ impl Buffer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, Style};
     ///
     /// let mut buffer = Buffer::empty(Rect::from_xywh(0, 0, 3, 1));
     /// buffer.set_border_symbol(ColumnIndex(1), RowIndex(0), "─", Style::DEFAULT);

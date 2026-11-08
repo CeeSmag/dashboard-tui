@@ -18,7 +18,7 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::ColorPalette;
+/// use dashboard_tui::core::ColorPalette;
 ///
 /// let lut = ColorPalette::DEFAULT.gradient_lut();
 /// let low = lut.color_at_percent(0);
@@ -36,7 +36,7 @@ impl GradientLut {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, GradientLut};
+    /// use dashboard_tui::core::{Color, GradientLut};
     ///
     /// let lut = GradientLut::from_stops([0, 0, 0], [50, 50, 50], [150, 150, 150], [255, 255, 255]);
     /// assert_eq!(lut.color_at_percent(0), Color::Rgb(0, 0, 0));
@@ -71,7 +71,7 @@ impl GradientLut {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::ColorPalette;
+    /// use dashboard_tui::core::ColorPalette;
     ///
     /// let lut = ColorPalette::DEFAULT.gradient_lut();
     /// assert_eq!(lut.color_at_percent(150), lut.color_at_percent(100));
@@ -87,7 +87,7 @@ impl GradientLut {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::ColorPalette;
+    /// use dashboard_tui::core::ColorPalette;
     ///
     /// let lut = ColorPalette::DEFAULT.gradient_lut();
     /// assert_eq!(lut.at_ratio(0.0), lut.color_at_percent(0));
@@ -116,7 +116,7 @@ impl GradientLut {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::ColorPalette;
+    /// use dashboard_tui::core::ColorPalette;
     ///
     /// let lut = ColorPalette::DEFAULT.gradient_lut();
     /// let style = lut.style_at_ratio(0.5);
@@ -167,7 +167,7 @@ const fn lerp_channel(start: u8, end: u8, num: u16, den: u16) -> u8 {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::ColorPalette;
+/// use dashboard_tui::core::ColorPalette;
 ///
 /// let theme = ColorPalette::lookup("catppuccin");
 /// assert_eq!(theme.id(), "catppuccin");
@@ -222,7 +222,7 @@ pub struct ColorPalette {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, ColorPalette, TerminalBackground};
+/// use dashboard_tui::core::{Color, ColorPalette, TerminalBackground};
 ///
 /// let palette = ColorPalette::NORD;
 /// assert_eq!(TerminalBackground::Inherit.resolve(&palette), None);

@@ -1,10 +1,10 @@
-# `tui-rs` — Exhaustive AI Agent Architecture & Integration Manual
+# `dashboard-tui` — Exhaustive AI Agent Architecture & Integration Manual
 
 > **TARGET AUDIENCE: AI Coding Agents & Autonomous Systems Architects**
 >
-> This document is the single source of truth for AI agents integrating `tui-rs` into host Rust applications (such as `vaultdrive-linux` or any system daemon/CLI dashboard) or extending `tui-rs` itself.
+> This document is the single source of truth for AI agents integrating `dashboard-tui` into host Rust applications (such as `vaultdrive-linux` or any system daemon/CLI dashboard) or extending `dashboard-tui` itself.
 >
-> - **Before modifying `tui-rs` internals**, read [`RULES.md`](./RULES.md).
+> - **Before modifying `dashboard-tui` internals**, read [`RULES.md`](./RULES.md).
 > - **Before building a dashboard in a host project**, read **Sections 1–6** of this guide.
 > - **Reference working showcase**: [`examples/vaultdrive_dashboard.rs`](./examples/vaultdrive_dashboard.rs) and [`tests/headless_snapshots.rs`](./tests/headless_snapshots.rs).
 
@@ -14,7 +14,7 @@
 
 Use this table to jump directly to the exact file in `src/` for any task without scanning the entire repository:
 
-| If You Need To... | Read This File First | Key Types / Functions to Import (`use tui_rs::prelude::*;`) |
+| If You Need To... | Read This File First | Key Types / Functions to Import (`use dashboard_tui::prelude::*;`) |
 | :--- | :--- | :--- |
 | **Wire a complete multi-page dashboard in `tui/dashboard.rs`** | [`src/dashboard/registry.rs`](./src/dashboard/registry.rs) | `AddonRegistry`, `SectionLayoutMode`, `DashboardEngine` |
 | **Connect host app state to the dashboard** | [`src/dashboard/backend_trait.rs`](./src/dashboard/backend_trait.rs) | `DashboardBackend`, `PrioritySegment`, `Color`, `Style` |
@@ -40,10 +40,10 @@ Use this table to jump directly to the exact file in `src/` for any task without
 
 ## 2. Complete Repository Sitemap (`src/`)
 
-`tui-rs` is organized into **7 strictly layered modules** (`61` source files total, zero cyclic dependencies, `#![forbid(unsafe_code)]`, zero `.unwrap()`/`.expect()` in production paths):
+`dashboard-tui` is organized into **7 strictly layered modules** (`61` source files total, zero cyclic dependencies, `#![forbid(unsafe_code)]`, zero `.unwrap()`/`.expect()` in production paths):
 
 ```text
-/home/cee/Documents/TUI-rs/
+/home/cee/Documents/dashboard-tui/
 ├── Cargo.toml                         # Crate manifest (Cargo lints, dependencies)
 ├── RULES.md                           # Mandatory engineering & API design laws
 ├── AI_GUIDE.md                        # This AI integration & architecture manual
@@ -55,7 +55,7 @@ Use this table to jump directly to the exact file in `src/` for any task without
 └── src/
     ├── lib.rs                         # Crate root & module exports
     ├── error.rs                       # TuiError#[non_exhaustive] domain error enum
-    ├── prelude.rs                     # Single-import ergonomic prelude (`use tui_rs::prelude::*;`)
+    ├── prelude.rs                     # Single-import ergonomic prelude (`use dashboard_tui::prelude::*;`)
     │
     ├── core/                          # LAYER 1: Zero-Allocation Primitives, Geometry, Buffer, Themes
     │   ├── mod.rs
@@ -164,7 +164,7 @@ host-project/
 ### Why This Pattern Is Mandatory
 - **Zero Sprawl in `dashboard.rs`**: Anyone (human or AI) reading `src/tui/dashboard.rs` immediately sees the entire page/section/option hierarchy at a glance.
 - **Independent Add-On Modules**: Adding or modifying option `[7]` or a telemetry panel only touches a single small file inside `src/tui/addons/`.
-- **Zero Engine Edits**: `tui-rs` handles all focus borders, `F1`..`F12` / `[` `]` page tabs, `Tab` section cycling, `1`..`99` multi-digit key jumping, 2-column wide menu layout (`width >= 100`), scrollbars, modal backdrop dimming, and terminal resize adaptation automatically.
+- **Zero Engine Edits**: `dashboard-tui` handles all focus borders, `F1`..`F12` / `[` `]` page tabs, `Tab` section cycling, `1`..`99` multi-digit key jumping, 2-column wide menu layout (`width >= 100`), scrollbars, modal backdrop dimming, and terminal resize adaptation automatically.
 
 ---
 
@@ -175,7 +175,7 @@ host-project/
 File reference: [`src/dashboard/backend_trait.rs`](./src/dashboard/backend_trait.rs)
 
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 
 pub struct VaultDriveApp {
     pub mounted: bool,
@@ -259,7 +259,7 @@ File references:
 
 #### Example 2A: Bandwidth Waveform Widget (`src/tui/addons/wave_panel.rs`)
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 use crate::app::VaultDriveApp;
 
 pub struct SyncWaveformWidget;
@@ -307,7 +307,7 @@ impl SectionWidget<VaultDriveApp> for SyncWaveformWidget {
 
 #### Example 2B: Key-Value + Gradient Meter Status Widget (`src/tui/addons/status_panel.rs`)
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 use crate::app::VaultDriveApp;
 
 pub struct DriveStatusWidget;
@@ -363,7 +363,7 @@ impl SectionWidget<VaultDriveApp> for DriveStatusWidget {
 
 #### Example 2C: Proportional Table Widget (`WeightedTable`)
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 use crate::app::VaultDriveApp;
 
 pub struct TransfersTableWidget;
@@ -419,7 +419,7 @@ Every numbered menu option (`[1]`..`[99]`) is constructed with `OptionSpec::new(
 
 #### Example: All 5 Option Patterns (`src/tui/addons/quick_actions.rs`)
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 use crate::app::VaultDriveApp;
 use crate::tui::addons::log_inspector::LiveJournalSubView;
 
@@ -504,7 +504,7 @@ File reference: [`src/dashboard/sub_view.rs`](./src/dashboard/sub_view.rs)
 When a `SubView` is active, it replaces the page body area between the top header bar and bottom footer bar. Pressing `Esc` pops back to the dashboard page.
 
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 use crate::app::VaultDriveApp;
 
 pub struct LiveJournalSubView;
@@ -557,7 +557,7 @@ File reference: [`src/dashboard/registry.rs`](./src/dashboard/registry.rs)
 ```rust
 // src/tui/dashboard.rs
 use std::time::Duration;
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 use crate::app::VaultDriveApp;
 use crate::tui::addons::{quick_actions, status_panel, wave_panel};
 
@@ -755,7 +755,7 @@ Every built-in palette carries a `background`; custom code can read `palette.bac
 Every standard widget draws into any `Rect` of a `Buffer` through two small traits, so they work inside sections, modals, sub-views, or a hand-written loop. They carry their own `Style`s (nothing is themed or hardcoded); pass colors from `ColorPalette` or write them with `Stylize`.
 
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 
 // Layout: Ratio / Flex / areas::<N>() (destructure, no indexing, never panics)
 let [header, body, footer] = Layout::vertical([Constraint::Fixed(1), Constraint::Fill(1), Constraint::Fixed(1)]).areas(area);
@@ -814,12 +814,12 @@ buffer.set_border_symbol(column, row, "│", Style::DEFAULT);
 
 ## 6. Headless Verification Recipe for AI Agents
 
-**NEVER** guess whether a dashboard layout renders properly. Every dashboard built with `tui-rs` can and MUST be verified headlessly in unit/integration tests using [`TestBackend`](./src/backend/test_backend.rs) and [`Buffer::to_visual_lines()`](./src/core/buffer.rs#L406-L423):
+**NEVER** guess whether a dashboard layout renders properly. Every dashboard built with `dashboard-tui` can and MUST be verified headlessly in unit/integration tests using [`TestBackend`](./src/backend/test_backend.rs) and [`Buffer::to_visual_lines()`](./src/core/buffer.rs#L406-L423):
 
 ```rust
 #[test]
 fn verify_project_dashboard_headless() {
-    use tui_rs::prelude::*;
+    use dashboard_tui::prelude::*;
 
     let mut engine = build_my_project_engine(); // Your AddonRegistry::new()...build_engine(app)
 
@@ -843,7 +843,7 @@ fn verify_project_dashboard_headless() {
 ```
 
 ### Verification Commands Checklist
-When working inside `/home/cee/Documents/TUI-rs` or a project consuming `tui-rs`, run:
+When working inside `/home/cee/Documents/dashboard-tui` or a project consuming `dashboard-tui`, run:
 ```bash
 cargo clippy --all-targets --all-features
 cargo test
@@ -856,13 +856,13 @@ cargo run --example vaultdrive_dashboard -- --headless-check
 ## 7. QR Code Generation & Clickable Terminal Web-Links (OSC 8)
 
 ### 7.1 Generating & Rendering QR Codes
-`tui-rs` supports zero-dependency QR code generation and 2× half-block rendering directly within the library:
+`dashboard-tui` supports zero-dependency QR code generation and 2× half-block rendering directly within the library:
 
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 
 // 1. Generate an owned QR matrix from text or a URL:
-let qr_matrix = QrCodeMatrix::from_text("https://github.com/vaultdrive/tui-rs")?;
+let qr_matrix = QrCodeMatrix::from_text("https://github.com/CeeSmag/dashboard-tui")?;
 
 // 2. Adjust quiet zone or custom colors (optional):
 let qr_matrix = qr_matrix
@@ -882,18 +882,18 @@ let qr_section = Section::display(Box::new(
 ```
 
 ### 7.2 Clickable Terminal Hyperlinks (OSC 8)
-Modern terminal emulators (iTerm2, Alacritty, Kitty, `WezTerm`, VS Code, Windows Terminal) support clickable web links using standard OSC 8 escape sequences. In `tui-rs`, hyperlinks are first-class primitives across `Cell`, `Span`, `Buffer`, and `AnsiFrameWriter`:
+Modern terminal emulators (iTerm2, Alacritty, Kitty, `WezTerm`, VS Code, Windows Terminal) support clickable web links using standard OSC 8 escape sequences. In `dashboard-tui`, hyperlinks are first-class primitives across `Cell`, `Span`, `Buffer`, and `AnsiFrameWriter`:
 
 ```rust
-use tui_rs::prelude::*;
+use dashboard_tui::prelude::*;
 
 // 1. In inline text runs (Span / Line):
-let link_span = Span::hyperlink("Open Documentation", "https://github.com/vaultdrive/tui-rs");
+let link_span = Span::hyperlink("Open Documentation", "https://github.com/CeeSmag/dashboard-tui");
 let line = Line::from_spans([Span::raw("For help: "), link_span]);
 buffer.set_line(ColumnIndex::new(0), RowIndex::new(0), &line, TerminalWidth::new(40));
 
 // 2. Using the Hyperlink widget:
-let link_widget = Hyperlink::new("https://crates.io/crates/tui-rs", "View on Crates.io");
+let link_widget = Hyperlink::new("https://crates.io/crates/dashboard-tui", "View on Crates.io");
 link_widget.render(&mut buffer, ColumnIndex::new(0), RowIndex::new(1), 30);
 
 // 3. Directly in cell buffers:
@@ -907,5 +907,5 @@ buffer.set_hyperlink(
 );
 
 // 4. Standalone string formatters for toasts, modals, and notifications:
-let toast = format_hyperlink("https://github.com/vaultdrive/tui-rs", "Click to visit repo");
+let toast = format_hyperlink("https://github.com/CeeSmag/dashboard-tui", "Click to visit repo");
 ```

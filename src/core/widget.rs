@@ -13,7 +13,7 @@ use crate::core::rect::Rect;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Style, Widget};
+/// use dashboard_tui::core::{Buffer, Rect, Style, Widget};
 ///
 /// struct Banner(&'static str);
 /// impl Widget for Banner {
@@ -39,7 +39,7 @@ pub trait Widget {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, StatefulWidget, Style};
+/// use dashboard_tui::core::{Buffer, Rect, StatefulWidget, Style};
 ///
 /// struct Counter;
 /// impl StatefulWidget for Counter {

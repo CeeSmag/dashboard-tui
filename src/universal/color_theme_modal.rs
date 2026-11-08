@@ -29,8 +29,8 @@ const THEME_DESCRIPTIONS: [&str; 6] = [
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::ColorPalette;
-/// use tui_rs::universal::ColorThemeModal;
+/// use dashboard_tui::core::ColorPalette;
+/// use dashboard_tui::universal::ColorThemeModal;
 ///
 /// let modal = ColorThemeModal::new(0, ColorPalette::DEFAULT);
 /// assert_eq!(modal.cursor(), 0);
@@ -186,9 +186,9 @@ impl<B: DashboardBackend> Modal<B> for ColorThemeModal {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::color_theme_option;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::color_theme_option;
 ///
 /// struct App;
 /// impl DashboardBackend for App {

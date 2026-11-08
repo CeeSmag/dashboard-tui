@@ -159,8 +159,8 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine, OptionOutcome};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, DashboardEngine, OptionOutcome};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -188,8 +188,8 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, DashboardEngine};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -237,8 +237,8 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment, TerminalBackground};
-    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine};
+    /// use dashboard_tui::core::{Color, PrioritySegment, TerminalBackground};
+    /// use dashboard_tui::dashboard::{DashboardBackend, DashboardEngine};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -435,8 +435,8 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, DashboardEngine};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -470,8 +470,8 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, DashboardEngine};
     ///
     /// struct App;
     /// impl DashboardBackend for App {

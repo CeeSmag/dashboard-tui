@@ -18,8 +18,8 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-/// use tui_rs::widgets::ChoiceRow;
+/// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::widgets::ChoiceRow;
 ///
 /// let area = Rect::from_size(TerminalWidth::new(50), TerminalHeight::new(2));
 /// let mut buf = Buffer::empty(area);
@@ -47,7 +47,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// let row = ChoiceRow::new(1, "Default Dark");
     /// assert_eq!(row.label(), "Default Dark");
@@ -71,7 +71,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// let row = ChoiceRow::new(1, "Nord").with_badge("ACTIVE");
     /// assert_eq!(row.badge(), "ACTIVE");
@@ -88,8 +88,8 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Color;
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::core::Color;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// let row = ChoiceRow::new(1, "Nord").with_badge_color(Color::Green);
     /// ```
@@ -105,7 +105,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// let row = ChoiceRow::new(1, "Nord").with_detail("Arctic bluish-gray");
     /// assert_eq!(row.detail(), "Arctic bluish-gray");
@@ -122,7 +122,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// let row = ChoiceRow::new(1, "Nord").with_selected(true);
     /// assert!(row.is_selected());
@@ -139,7 +139,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// let row = ChoiceRow::new(1, "Nord").with_tty_mode(true);
     /// ```
@@ -155,7 +155,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// assert_eq!(ChoiceRow::new(1, "Nord").label(), "Nord");
     /// ```
@@ -170,7 +170,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// assert_eq!(ChoiceRow::new(1, "Nord").with_badge("ON").badge(), "ON");
     /// ```
@@ -185,7 +185,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// assert_eq!(ChoiceRow::new(1, "Nord").detail(), "");
     /// ```
@@ -200,7 +200,7 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// assert!(!ChoiceRow::new(1, "Nord").is_selected());
     /// ```
@@ -216,8 +216,8 @@ impl<'a> ChoiceRow<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::ChoiceRow;
+    /// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::ChoiceRow;
     ///
     /// let area = Rect::from_size(TerminalWidth::new(40), TerminalHeight::new(2));
     /// let mut buf = Buffer::empty(area);

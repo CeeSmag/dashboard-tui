@@ -11,21 +11,21 @@
 //!   `SubView` drill-down stack, and Tier 2 `SectionGapModal` / `ColorThemeModal` live preview
 //!   and revert on `Esc`.
 
-use tui_rs::backend::{Backend, TestBackend};
-use tui_rs::components::{
+use dashboard_tui::backend::{Backend, TestBackend};
+use dashboard_tui::components::{
     DualWaveform, GradientMeter, GraphSymbolMode, HalfBlockQr, SingleWaveform,
 };
-use tui_rs::core::{
+use dashboard_tui::core::{
     Buffer, Color, ColorPalette, ColumnIndex, KeyHint, PrioritySegment, Rect, RowIndex, Style,
     TerminalHeight, TerminalWidth, diff_buffers,
 };
-use tui_rs::dashboard::{
+use dashboard_tui::dashboard::{
     DashboardBackend, DashboardEngine, EngineAction, IntoKeyPress, KeyBindings, KeyCode, KeyPress,
     ModalContext, OptionOutcome, OptionSpec, Page, Section, SectionWidget, SpacingLayer, SubView,
     SubViewResult,
 };
-use tui_rs::universal::{ConfirmModal, EditModal, color_theme_option, section_gap_option};
-use tui_rs::widgets::{MenuItem, MenuList, TabPanel};
+use dashboard_tui::universal::{ConfirmModal, EditModal, color_theme_option, section_gap_option};
+use dashboard_tui::widgets::{MenuItem, MenuList, TabPanel};
 
 struct MockVaultBackend {
     mounted: bool,
@@ -68,7 +68,7 @@ impl DashboardBackend for MockVaultBackend {
         ]
     }
 
-    fn save_ui_prefs(&mut self) -> Result<(), tui_rs::error::TuiError> {
+    fn save_ui_prefs(&mut self) -> Result<(), dashboard_tui::error::TuiError> {
         self.saved_count = self.saved_count.saturating_add(1);
         Ok(())
     }
@@ -312,7 +312,7 @@ fn menu_list_single_and_two_column_with_option_gaps() {
     reason = "comprehensive end-to-end integration test"
 )]
 fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
--> Result<(), tui_rs::error::TuiError> {
+-> Result<(), dashboard_tui::error::TuiError> {
     let mut page1 = Page::new("Monitor", "F1");
     page1.push_section(Section::display(Box::new(SyncTelemetryWidget)).with_heights(5, 8));
 
@@ -529,11 +529,11 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
 }
 
 #[test]
-fn notice_modal_embeds_qr_code_and_hyperlinks() -> Result<(), tui_rs::error::TuiError> {
-    use tui_rs::dashboard::splice_modal_overlay;
-    use tui_rs::universal::NoticeModal;
+fn notice_modal_embeds_qr_code_and_hyperlinks() -> Result<(), dashboard_tui::error::TuiError> {
+    use dashboard_tui::dashboard::splice_modal_overlay;
+    use dashboard_tui::universal::NoticeModal;
 
-    let url = "https://github.com/vaultdrive/tui-rs";
+    let url = "https://github.com/CeeSmag/dashboard-tui";
     let modal = NoticeModal::new(
         "Documentation & Mobile Pairing",
         vec![
@@ -565,14 +565,14 @@ fn notice_modal_embeds_qr_code_and_hyperlinks() -> Result<(), tui_rs::error::Tui
     assert!(
         visual
             .iter()
-            .any(|line| line.contains("https://github.com/vaultdrive/tui-rs"))
+            .any(|line| line.contains("https://github.com/CeeSmag/dashboard-tui"))
     );
     assert!(visual.iter().any(|line| line.contains('▀')));
 
     let link_cell = buf
         .as_cell_slice()
         .iter()
-        .find(|c| c.hyperlink() == Some("https://github.com/vaultdrive/tui-rs"));
+        .find(|c| c.hyperlink() == Some("https://github.com/CeeSmag/dashboard-tui"));
     assert!(
         link_cell.is_some(),
         "Cell with OSC 8 hyperlink must exist inside the modal"
@@ -582,15 +582,15 @@ fn notice_modal_embeds_qr_code_and_hyperlinks() -> Result<(), tui_rs::error::Tui
 }
 
 #[test]
-fn qr_code_generation_matrix_and_widget_rendering() -> Result<(), tui_rs::error::TuiError> {
-    use tui_rs::components::{HalfBlockQr, QrCodeMatrix, QrWidget};
+fn qr_code_generation_matrix_and_widget_rendering() -> Result<(), dashboard_tui::error::TuiError> {
+    use dashboard_tui::components::{HalfBlockQr, QrCodeMatrix, QrWidget};
 
-    let text = "https://github.com/vaultdrive/tui-rs";
+    let text = "https://github.com/CeeSmag/dashboard-tui";
     let matrix = QrCodeMatrix::from_text(text)?;
     assert!(matrix.dimension() >= 21);
     assert_eq!(matrix.quiet_zone(), 2);
     let expected_w = u16::try_from(matrix.dimension().saturating_add(4)).map_err(|_| {
-        tui_rs::error::TuiError::InvalidDimensions {
+        dashboard_tui::error::TuiError::InvalidDimensions {
             width: 0,
             height: 0,
         }
@@ -615,10 +615,10 @@ fn qr_code_generation_matrix_and_widget_rendering() -> Result<(), tui_rs::error:
 }
 
 #[test]
-fn osc8_hyperlinks_ansi_encoding_and_widgets() -> Result<(), tui_rs::error::TuiError> {
-    use tui_rs::backend::{AnsiFrameWriter, format_hyperlink, format_hyperlink_with_id};
-    use tui_rs::core::{ColorDepth, Line, Span};
-    use tui_rs::widgets::Hyperlink;
+fn osc8_hyperlinks_ansi_encoding_and_widgets() -> Result<(), dashboard_tui::error::TuiError> {
+    use dashboard_tui::backend::{AnsiFrameWriter, format_hyperlink, format_hyperlink_with_id};
+    use dashboard_tui::core::{ColorDepth, Line, Span};
+    use dashboard_tui::widgets::Hyperlink;
 
     // 1. Standalone formatters
     let formatted = format_hyperlink("https://github.com/vaultdrive", "VaultDrive");
@@ -647,7 +647,7 @@ fn osc8_hyperlinks_ansi_encoding_and_widgets() -> Result<(), tui_rs::error::TuiE
     );
 
     let cell = buf.cell_at(ColumnIndex::new(0), RowIndex::new(0)).ok_or(
-        tui_rs::error::TuiError::OutOfBounds {
+        dashboard_tui::error::TuiError::OutOfBounds {
             column: 0,
             row: 0,
             width: 30,
@@ -681,7 +681,7 @@ fn osc8_hyperlinks_ansi_encoding_and_widgets() -> Result<(), tui_rs::error::TuiE
     assert_eq!(widget.text(), "Crates");
     widget.render(&mut buf2, ColumnIndex::new(5), RowIndex::new(0), 15);
     let cell2 = buf2.cell_at(ColumnIndex::new(5), RowIndex::new(0)).ok_or(
-        tui_rs::error::TuiError::OutOfBounds {
+        dashboard_tui::error::TuiError::OutOfBounds {
             column: 5,
             row: 0,
             width: 30,
@@ -696,7 +696,7 @@ fn osc8_hyperlinks_ansi_encoding_and_widgets() -> Result<(), tui_rs::error::TuiE
 
 #[test]
 fn key_mapping_summary_and_ctrl_key_customization() {
-    use tui_rs::dashboard::{IntoKeyPress, KeyBindings, KeyCode, KeyPress};
+    use dashboard_tui::dashboard::{IntoKeyPress, KeyBindings, KeyCode, KeyPress};
 
     // 1. Verify string parsing for any ctrl+[key] pattern
     assert_eq!(
@@ -858,7 +858,7 @@ fn render_engine_grid(
     engine: &mut DashboardEngine<MockVaultBackend>,
     columns: u16,
     rows: u16,
-) -> Result<String, tui_rs::error::TuiError> {
+) -> Result<String, dashboard_tui::error::TuiError> {
     let mut test_backend = TestBackend::new(TerminalWidth::new(columns), TerminalHeight::new(rows));
     let viewport = Rect::from_size(test_backend.dimensions().0, test_backend.dimensions().1);
     let mut frame_buf = Buffer::empty(viewport);
@@ -898,7 +898,7 @@ fn unmapped_key_flashes_hint_and_question_mark_shows_help() {
 }
 
 #[test]
-fn active_page_tab_badge_is_rendered_in_header() -> Result<(), tui_rs::error::TuiError> {
+fn active_page_tab_badge_is_rendered_in_header() -> Result<(), dashboard_tui::error::TuiError> {
     let page = Page::<MockVaultBackend>::new("Monitor", "F1")
         .with_tab_badge(|backend| format!("{} saved", backend.saved_count));
     let mut engine = DashboardEngine::new(MockVaultBackend::default(), vec![page]);
@@ -908,8 +908,8 @@ fn active_page_tab_badge_is_rendered_in_header() -> Result<(), tui_rs::error::Tu
 }
 
 #[test]
-fn log_viewer_lists_newest_first_scrolls_and_pops() -> Result<(), tui_rs::error::TuiError> {
-    use tui_rs::universal::{LogEntry, LogLevel, LogViewSubView};
+fn log_viewer_lists_newest_first_scrolls_and_pops() -> Result<(), dashboard_tui::error::TuiError> {
+    use dashboard_tui::universal::{LogEntry, LogLevel, LogViewSubView};
 
     fn mock_entries(_backend: &MockVaultBackend) -> &[LogEntry] {
         static ENTRIES: std::sync::OnceLock<Vec<LogEntry>> = std::sync::OnceLock::new();
@@ -955,8 +955,9 @@ fn log_viewer_lists_newest_first_scrolls_and_pops() -> Result<(), tui_rs::error:
 }
 
 #[test]
-fn status_and_throughput_panels_render_live_backend_data() -> Result<(), tui_rs::error::TuiError> {
-    use tui_rs::universal::{StatusPanel, ThroughputPanel};
+fn status_and_throughput_panels_render_live_backend_data()
+-> Result<(), dashboard_tui::error::TuiError> {
+    use dashboard_tui::universal::{StatusPanel, ThroughputPanel};
 
     let system = StatusPanel::<MockVaultBackend>::new("Vault System")
         .with_subtitle("vault.service")
@@ -1008,8 +1009,8 @@ fn status_and_throughput_panels_render_live_backend_data() -> Result<(), tui_rs:
 }
 
 #[test]
-fn page_sub_view_runs_options_modals_and_goes_back() -> Result<(), tui_rs::error::TuiError> {
-    use tui_rs::dashboard::PageSubView;
+fn page_sub_view_runs_options_modals_and_goes_back() -> Result<(), dashboard_tui::error::TuiError> {
+    use dashboard_tui::dashboard::PageSubView;
 
     let mut root_menu = Section::menu("Main", "", Vec::new()).with_heights(5, 8);
     root_menu.push_option(OptionSpec::new(
@@ -1087,7 +1088,7 @@ fn page_sub_view_runs_options_modals_and_goes_back() -> Result<(), tui_rs::error
 }
 
 fn settings_engine() -> DashboardEngine<MockVaultBackend> {
-    use tui_rs::universal::{SettingField, SettingsModal};
+    use dashboard_tui::universal::{SettingField, SettingsModal};
 
     let mut menu = Section::menu("Settings", "", Vec::new()).with_heights(5, 8);
     menu.push_option(OptionSpec::new(
@@ -1117,8 +1118,8 @@ fn settings_engine() -> DashboardEngine<MockVaultBackend> {
 }
 
 #[test]
-fn settings_modal_previews_live_reverts_on_cancel_and_saves() -> Result<(), tui_rs::error::TuiError>
-{
+fn settings_modal_previews_live_reverts_on_cancel_and_saves()
+-> Result<(), dashboard_tui::error::TuiError> {
     let mut engine = settings_engine();
     let _ = engine.handle_key(KeyPress::char('1'));
     assert!(engine.has_modal());
@@ -1165,7 +1166,7 @@ fn background_of(buffer: &Buffer, column: u16, row: u16) -> Option<Color> {
 
 #[test]
 fn terminal_background_inherit_theme_and_fixed_modes() {
-    use tui_rs::core::TerminalBackground;
+    use dashboard_tui::core::TerminalBackground;
 
     let viewport = Rect::from_xywh(0, 0, 60, 12);
     let render = |mode: TerminalBackground| {
@@ -1192,8 +1193,8 @@ fn terminal_background_inherit_theme_and_fixed_modes() {
 
 #[test]
 fn terminal_background_option_previews_applies_and_reverts() {
-    use tui_rs::core::TerminalBackground;
-    use tui_rs::universal::terminal_background_option;
+    use dashboard_tui::core::TerminalBackground;
+    use dashboard_tui::universal::terminal_background_option;
 
     let mut menu = Section::menu("Appearance", "", Vec::new()).with_heights(5, 8);
     menu.push_option(terminal_background_option::<MockVaultBackend>(9));

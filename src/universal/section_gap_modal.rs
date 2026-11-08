@@ -23,8 +23,8 @@ use crate::widgets::choice_row::ChoiceRow;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::SpacingConfig;
-/// use tui_rs::universal::SectionGapModal;
+/// use dashboard_tui::dashboard::SpacingConfig;
+/// use dashboard_tui::universal::SectionGapModal;
 ///
 /// let modal = SectionGapModal::new(SpacingConfig::default());
 /// assert_eq!(modal.cursor(), 0);
@@ -175,9 +175,9 @@ impl<B: DashboardBackend> Modal<B> for SectionGapModal {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::section_gap_option;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::section_gap_option;
 ///
 /// struct App;
 /// impl DashboardBackend for App {

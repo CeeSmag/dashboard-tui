@@ -16,7 +16,7 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::Marker;
+/// use dashboard_tui::widgets::Marker;
 /// assert_eq!(Marker::default(), Marker::Braille);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -73,8 +73,8 @@ fn half_block_mask(symbol: &str) -> u8 {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Style};
-/// use tui_rs::widgets::{DotPlotter, Marker};
+/// use dashboard_tui::core::{Buffer, Rect, Style};
+/// use dashboard_tui::widgets::{DotPlotter, Marker};
 ///
 /// let area = Rect::from_xywh(0, 0, 2, 1);
 /// let mut buffer = Buffer::empty(area);

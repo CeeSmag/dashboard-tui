@@ -13,8 +13,8 @@ use crate::core::widget::Widget;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Style, Widget};
-/// use tui_rs::widgets::Tabs;
+/// use dashboard_tui::core::{Buffer, Rect, Style, Widget};
+/// use dashboard_tui::widgets::Tabs;
 ///
 /// let area = Rect::from_xywh(0, 0, 25, 1);
 /// let mut buffer = Buffer::empty(area);

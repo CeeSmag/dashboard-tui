@@ -9,7 +9,7 @@
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::RateHistory;
+/// use dashboard_tui::components::RateHistory;
 ///
 /// let mut history = RateHistory::new(3);
 /// for value in [1.0, 2.0, 3.0, 4.0] {

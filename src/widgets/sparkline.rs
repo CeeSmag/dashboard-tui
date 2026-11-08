@@ -17,8 +17,8 @@ const TTY_BLOCKS: [&str; 9] = [" ", ".", ".", ":", ":", "i", "i", "I", "#"];
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Widget};
-/// use tui_rs::widgets::Sparkline;
+/// use dashboard_tui::core::{Buffer, Rect, Widget};
+/// use dashboard_tui::widgets::Sparkline;
 ///
 /// let area = Rect::from_xywh(0, 0, 8, 1);
 /// let mut buffer = Buffer::empty(area);

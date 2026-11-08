@@ -17,7 +17,7 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Cell, Color, Style};
+/// use dashboard_tui::core::{Cell, Color, Style};
 ///
 /// let mut cell = Cell::new("█", Style::new().fg(Color::Cyan));
 /// assert_eq!(cell.symbol(), "█");
@@ -54,7 +54,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Cell, Style};
+    /// use dashboard_tui::core::{Cell, Style};
     ///
     /// let cell = Cell::new("●", Style::DEFAULT);
     /// assert_eq!(cell.symbol(), "●");
@@ -78,7 +78,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Cell, Style};
+    /// use dashboard_tui::core::{Cell, Style};
     ///
     /// let cell = Cell::from_char('╭', Style::DEFAULT);
     /// assert_eq!(cell.symbol(), "╭");
@@ -100,7 +100,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Cell;
+    /// use dashboard_tui::core::Cell;
     /// assert_eq!(Cell::EMPTY.symbol(), " ");
     /// ```
     #[must_use]
@@ -113,7 +113,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Cell, Style};
+    /// use dashboard_tui::core::{Cell, Style};
     /// assert_eq!(Cell::EMPTY.style(), Style::DEFAULT);
     /// ```
     #[must_use]
@@ -126,7 +126,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Cell;
+    /// use dashboard_tui::core::Cell;
     /// assert!(!Cell::EMPTY.is_wide_continuation());
     /// ```
     #[must_use]
@@ -139,7 +139,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Cell;
+    /// use dashboard_tui::core::Cell;
     ///
     /// let mut c = Cell::EMPTY;
     /// c.set_symbol("❯");
@@ -161,7 +161,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Cell;
+    /// use dashboard_tui::core::Cell;
     ///
     /// let mut c = Cell::EMPTY;
     /// c.set_char('■');
@@ -181,7 +181,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Cell, Color, Style};
+    /// use dashboard_tui::core::{Cell, Color, Style};
     ///
     /// let mut c = Cell::EMPTY;
     /// c.set_style(Style::new().fg(Color::Yellow));
@@ -197,7 +197,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Cell, Color, Style};
+    /// use dashboard_tui::core::{Cell, Color, Style};
     ///
     /// let mut c = Cell::new("x", Style::new().fg(Color::Red).bold());
     /// c.replace_style(Style::new().fg(Color::Green));
@@ -223,12 +223,12 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Cell;
+    /// use dashboard_tui::core::Cell;
     ///
     /// let mut c = Cell::EMPTY;
     /// assert_eq!(c.hyperlink(), None);
-    /// c.set_hyperlink(Some("https://github.com/vaultdrive/tui-rs"));
-    /// assert_eq!(c.hyperlink(), Some("https://github.com/vaultdrive/tui-rs"));
+    /// c.set_hyperlink(Some("https://github.com/CeeSmag/dashboard-tui"));
+    /// assert_eq!(c.hyperlink(), Some("https://github.com/CeeSmag/dashboard-tui"));
     /// ```
     #[must_use]
     pub fn hyperlink(&self) -> Option<&str> {
@@ -240,7 +240,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Cell;
+    /// use dashboard_tui::core::Cell;
     ///
     /// let mut c = Cell::EMPTY;
     /// c.set_hyperlink(Some("https://example.com"));
@@ -258,7 +258,7 @@ impl Cell {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Cell, Color, Style};
+    /// use dashboard_tui::core::{Cell, Color, Style};
     ///
     /// let mut c = Cell::new("X", Style::new().fg(Color::Red));
     /// c.reset();

@@ -21,7 +21,7 @@ use std::io::Write;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::terminal::install_panic_restoration_hook;
+/// use dashboard_tui::terminal::install_panic_restoration_hook;
 ///
 /// // Safe to call at application startup before entering a TerminalSessionGuard:
 /// install_panic_restoration_hook();
@@ -41,7 +41,7 @@ pub fn install_panic_restoration_hook() {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::terminal::restore_terminal_emergency;
+/// use dashboard_tui::terminal::restore_terminal_emergency;
 ///
 /// restore_terminal_emergency();
 /// ```

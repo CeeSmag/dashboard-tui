@@ -12,7 +12,7 @@ pub use crate::core::coordinates::{ColumnIndex, RowIndex, TerminalHeight, Termin
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::Spacing4D;
+/// use dashboard_tui::core::Spacing4D;
 ///
 /// let uniform = Spacing4D::uniform(2);
 /// assert_eq!(uniform.horizontal_total(), 4);
@@ -41,7 +41,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     ///
     /// let pad = Spacing4D::new(1, 2, 1, 2);
     /// assert_eq!(pad.top(), 1);
@@ -62,7 +62,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     ///
     /// let pad = Spacing4D::uniform(3);
     /// assert_eq!(pad.left(), 3);
@@ -83,7 +83,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     ///
     /// let pad = Spacing4D::symmetric(1, 3);
     /// assert_eq!(pad.vertical_total(), 2);
@@ -104,7 +104,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     /// assert_eq!(Spacing4D::new(2, 0, 0, 0).top(), 2);
     /// ```
     #[must_use]
@@ -117,7 +117,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     /// assert_eq!(Spacing4D::new(0, 4, 0, 0).right(), 4);
     /// ```
     #[must_use]
@@ -130,7 +130,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     /// assert_eq!(Spacing4D::new(0, 0, 3, 0).bottom(), 3);
     /// ```
     #[must_use]
@@ -143,7 +143,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     /// assert_eq!(Spacing4D::new(0, 0, 0, 5).left(), 5);
     /// ```
     #[must_use]
@@ -156,7 +156,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     /// assert_eq!(Spacing4D::symmetric(1, 4).horizontal_total(), 8);
     /// ```
     #[must_use]
@@ -169,7 +169,7 @@ impl Spacing4D {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Spacing4D;
+    /// use dashboard_tui::core::Spacing4D;
     /// assert_eq!(Spacing4D::symmetric(3, 1).vertical_total(), 6);
     /// ```
     #[must_use]
@@ -185,7 +185,7 @@ impl Spacing4D {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{ColumnIndex, Rect, RowIndex, Spacing4D, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::core::{ColumnIndex, Rect, RowIndex, Spacing4D, TerminalHeight, TerminalWidth};
 ///
 /// let rect = Rect::new(ColumnIndex::new(0), RowIndex::new(0), TerminalWidth::new(80), TerminalHeight::new(24));
 /// let inner = rect.inner(Spacing4D::uniform(1));
@@ -216,7 +216,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::core::{ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
     ///
     /// let r = Rect::new(ColumnIndex(2), RowIndex(3), TerminalWidth(10), TerminalHeight(5));
     /// assert_eq!(r.right(), ColumnIndex(12));
@@ -242,7 +242,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::core::{ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
     ///
     /// let r = Rect::from_dimensions(TerminalWidth(40), TerminalHeight(10));
     /// assert_eq!(r.left(), ColumnIndex(0));
@@ -284,7 +284,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// let r = Rect::from_xywh(1, 2, 20, 10);
     /// assert_eq!(r.area(), 200);
@@ -304,7 +304,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// assert!(Rect::from_xywh(0, 0, 0, 10).is_empty());
     /// assert!(!Rect::from_xywh(0, 0, 10, 10).is_empty());
@@ -319,7 +319,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// let r = Rect::from_xywh(0, 0, 100, 50);
     /// assert_eq!(r.area(), 5000);
@@ -334,7 +334,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{ColumnIndex, Rect};
+    /// use dashboard_tui::core::{ColumnIndex, Rect};
     /// assert_eq!(Rect::from_xywh(4, 0, 10, 5).left(), ColumnIndex(4));
     /// ```
     #[must_use]
@@ -347,7 +347,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{ColumnIndex, Rect};
+    /// use dashboard_tui::core::{ColumnIndex, Rect};
     /// assert_eq!(Rect::from_xywh(4, 0, 10, 5).right(), ColumnIndex(14));
     /// ```
     #[must_use]
@@ -360,7 +360,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, RowIndex};
+    /// use dashboard_tui::core::{Rect, RowIndex};
     /// assert_eq!(Rect::from_xywh(0, 3, 10, 5).top(), RowIndex(3));
     /// ```
     #[must_use]
@@ -373,7 +373,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, RowIndex};
+    /// use dashboard_tui::core::{Rect, RowIndex};
     /// assert_eq!(Rect::from_xywh(0, 3, 10, 5).bottom(), RowIndex(8));
     /// ```
     #[must_use]
@@ -386,7 +386,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, TerminalWidth};
+    /// use dashboard_tui::core::{Rect, TerminalWidth};
     /// assert_eq!(Rect::from_xywh(0, 0, 42, 10).width(), TerminalWidth(42));
     /// ```
     #[must_use]
@@ -399,7 +399,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, TerminalHeight};
+    /// use dashboard_tui::core::{Rect, TerminalHeight};
     /// assert_eq!(Rect::from_xywh(0, 0, 42, 10).height(), TerminalHeight(10));
     /// ```
     #[must_use]
@@ -412,7 +412,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, Spacing4D};
+    /// use dashboard_tui::core::{Rect, Spacing4D};
     ///
     /// let small = Rect::from_xywh(0, 0, 2, 2).inner(Spacing4D::uniform(5));
     /// assert!(small.is_empty());
@@ -445,7 +445,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, Spacing4D, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::core::{Rect, Spacing4D, TerminalHeight, TerminalWidth};
     ///
     /// let outer = Rect::from_xywh(0, 0, 42, 12);
     /// let clamped = outer.inner_clamped(Spacing4D::uniform(6), TerminalWidth(40), TerminalHeight(10));
@@ -491,7 +491,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{ColumnIndex, Rect, RowIndex};
+    /// use dashboard_tui::core::{ColumnIndex, Rect, RowIndex};
     ///
     /// let r = Rect::from_xywh(2, 2, 4, 4);
     /// assert!(r.contains(ColumnIndex(2), RowIndex(2)));
@@ -510,7 +510,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// let a = Rect::from_xywh(0, 0, 10, 10);
     /// let b = Rect::from_xywh(5, 5, 10, 10);
@@ -550,7 +550,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// let a = Rect::from_xywh(0, 0, 4, 4);
     /// let b = Rect::from_xywh(10, 2, 2, 2);
@@ -593,7 +593,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// assert_eq!(Rect::from_xywh(5, 5, 2, 2).offset(3, -2), Rect::from_xywh(8, 3, 2, 2));
     /// assert_eq!(Rect::from_xywh(1, 1, 2, 2).offset(-10, -10), Rect::from_xywh(0, 0, 2, 2));
@@ -618,7 +618,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// let outer = Rect::from_xywh(0, 0, 10, 10);
     /// assert_eq!(Rect::from_xywh(8, 8, 6, 6).clamp_inside(outer), Rect::from_xywh(4, 4, 6, 6));
@@ -657,7 +657,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// let rows: Vec<Rect> = Rect::from_xywh(2, 1, 5, 3).rows().collect();
     /// assert_eq!(rows.len(), 3);
@@ -674,7 +674,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Rect;
+    /// use dashboard_tui::core::Rect;
     ///
     /// assert_eq!(Rect::from_xywh(0, 0, 4, 2).columns().count(), 4);
     /// ```
@@ -689,7 +689,7 @@ impl Rect {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::core::{Rect, TerminalHeight, TerminalWidth};
     ///
     /// let screen = Rect::from_xywh(0, 0, 100, 40);
     /// let modal = screen.centered(TerminalWidth(60), TerminalHeight(20));

@@ -32,7 +32,7 @@ const MONTH_NAMES: [&str; 12] = [
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::WeekStart;
+/// use dashboard_tui::widgets::WeekStart;
 /// assert_eq!(WeekStart::default(), WeekStart::Monday);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -50,7 +50,7 @@ pub enum WeekStart {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::is_leap_year;
+/// use dashboard_tui::widgets::is_leap_year;
 /// assert!(is_leap_year(2024) && !is_leap_year(2100) && is_leap_year(2000));
 /// ```
 #[must_use]
@@ -63,7 +63,7 @@ pub const fn is_leap_year(year: i32) -> bool {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::days_in_month;
+/// use dashboard_tui::widgets::days_in_month;
 /// assert_eq!(days_in_month(2024, 2), 29);
 /// assert_eq!(days_in_month(2026, 11), 30);
 /// ```
@@ -87,7 +87,7 @@ pub const fn days_in_month(year: i32, month: u8) -> u8 {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::first_weekday_of_month;
+/// use dashboard_tui::widgets::first_weekday_of_month;
 /// assert_eq!(first_weekday_of_month(2026, 11), 0); // 1 November 2026 is a Sunday
 /// ```
 #[must_use]
@@ -107,8 +107,8 @@ pub fn first_weekday_of_month(year: i32, month: u8) -> u8 {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Style, Widget};
-/// use tui_rs::widgets::Calendar;
+/// use dashboard_tui::core::{Buffer, Rect, Style, Widget};
+/// use dashboard_tui::widgets::Calendar;
 ///
 /// let area = Rect::from_xywh(0, 0, 20, 8);
 /// let mut buffer = Buffer::empty(area);

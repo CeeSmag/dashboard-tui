@@ -40,7 +40,7 @@ impl AddonPageEntry {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{AddonPageEntry, SectionLayoutMode};
+    /// use dashboard_tui::dashboard::{AddonPageEntry, SectionLayoutMode};
     ///
     /// let entry = AddonPageEntry::new(0, "Monitor", "F1", SectionLayoutMode::TwoTopOneBottom);
     /// assert_eq!(entry.page_index, 0);
@@ -97,8 +97,8 @@ impl<B: DashboardBackend> AddonSectionEntry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{AddonSectionEntry, DashboardBackend, Section};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{AddonSectionEntry, DashboardBackend, Section};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -160,8 +160,8 @@ type EngineHook<B> = Box<dyn FnOnce(DashboardEngine<B>) -> DashboardEngine<B>>;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::{
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::{
 ///     AddonOptionEntry, AddonPageEntry, AddonRegistry, AddonSectionEntry, DashboardBackend,
 ///     OptionOutcome, OptionSpec, Section, SectionLayoutMode,
 /// };
@@ -242,8 +242,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{
     ///     AddonRegistry, DashboardBackend, KeyBindings, KeyCode, SectionLayoutMode,
     /// };
     ///
@@ -273,8 +273,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -315,8 +315,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, KeyBindings};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend, KeyBindings};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -356,8 +356,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment, TerminalBackground};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend};
+    /// use dashboard_tui::core::{Color, PrioritySegment, TerminalBackground};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -398,8 +398,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -440,8 +440,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, Color, ColorPalette, PrioritySegment, Rect};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode, SectionWidget};
+    /// use dashboard_tui::core::{Buffer, Color, ColorPalette, PrioritySegment, Rect};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode, SectionWidget};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -488,8 +488,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -534,8 +534,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{
     ///     AddonRegistry, DashboardBackend, OptionOutcome, OptionSpec, SectionLayoutMode,
     /// };
     ///
@@ -570,8 +570,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -663,8 +663,8 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     ///
     /// ```no_run
     /// use std::time::Duration;
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -679,7 +679,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// let reason = engine.run_interactive(Duration::from_millis(250))?;
     /// // `Back`: leave the UI; `Quit`: terminate the whole application.
     /// # let _ = reason;
-    /// # Ok::<(), tui_rs::TuiError>(())
+    /// # Ok::<(), dashboard_tui::TuiError>(())
     /// ```
     pub fn run_interactive(&mut self, tick_rate: Duration) -> Result<EngineAction, TuiError> {
         self.run_interactive_with(TerminalSessionConfig::default(), tick_rate)
@@ -696,9 +696,9 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     ///
     /// ```no_run
     /// use std::time::Duration;
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
-    /// use tui_rs::terminal::{TerminalSessionConfig, Viewport};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
+    /// use dashboard_tui::terminal::{TerminalSessionConfig, Viewport};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -712,7 +712,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     ///     .build_engine(App);
     /// let config = TerminalSessionConfig::new().with_viewport(Viewport::Inline(12));
     /// engine.run_interactive_with(config, Duration::from_millis(250))?;
-    /// # Ok::<(), tui_rs::TuiError>(())
+    /// # Ok::<(), dashboard_tui::TuiError>(())
     /// ```
     pub fn run_interactive_with(
         &mut self,

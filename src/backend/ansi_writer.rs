@@ -27,7 +27,7 @@ pub const GRAPHEME_CLUSTERING_DISABLE: &[u8] = b"\x1b[?2027l";
 /// # Examples
 ///
 /// ```
-/// use tui_rs::backend::ProgressBarState;
+/// use dashboard_tui::backend::ProgressBarState;
 /// assert_eq!(ProgressBarState::default(), ProgressBarState::None);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -51,8 +51,8 @@ pub enum ProgressBarState {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::backend::AnsiFrameWriter;
-/// use tui_rs::core::{Buffer, Color, ColorDepth, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
+/// use dashboard_tui::backend::AnsiFrameWriter;
+/// use dashboard_tui::core::{Buffer, Color, ColorDepth, ColumnIndex, diff_buffers, Rect, RowIndex, Style};
 ///
 /// let rect = Rect::from_xywh(0, 0, 10, 2);
 /// let prev = Buffer::empty(rect);
@@ -77,8 +77,8 @@ impl AnsiFrameWriter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::AnsiFrameWriter;
-    /// use tui_rs::core::ColorDepth;
+    /// use dashboard_tui::backend::AnsiFrameWriter;
+    /// use dashboard_tui::core::ColorDepth;
     ///
     /// let writer = AnsiFrameWriter::with_capacity(4096, ColorDepth::TrueColor, true);
     /// assert!(writer.as_bytes().is_empty());
@@ -102,8 +102,8 @@ impl AnsiFrameWriter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::AnsiFrameWriter;
-    /// use tui_rs::core::ColorDepth;
+    /// use dashboard_tui::backend::AnsiFrameWriter;
+    /// use dashboard_tui::core::ColorDepth;
     ///
     /// let writer = AnsiFrameWriter::with_capacity(64, ColorDepth::TrueColor, false)
     ///     .with_hyperlinks(false);
@@ -119,8 +119,8 @@ impl AnsiFrameWriter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::AnsiFrameWriter;
-    /// use tui_rs::core::ColorDepth;
+    /// use dashboard_tui::backend::AnsiFrameWriter;
+    /// use dashboard_tui::core::ColorDepth;
     ///
     /// let writer = AnsiFrameWriter::with_capacity(64, ColorDepth::TrueColor, false);
     /// assert_eq!(writer.as_bytes(), b"");
@@ -139,8 +139,8 @@ impl AnsiFrameWriter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::AnsiFrameWriter;
-    /// use tui_rs::core::{Buffer, ColorDepth, diff_buffers, Rect};
+    /// use dashboard_tui::backend::AnsiFrameWriter;
+    /// use dashboard_tui::core::{Buffer, ColorDepth, diff_buffers, Rect};
     ///
     /// let r = Rect::from_xywh(0, 0, 4, 1);
     /// let a = Buffer::empty(r);
@@ -228,8 +228,8 @@ impl AnsiFrameWriter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::AnsiFrameWriter;
-    /// use tui_rs::core::ColorDepth;
+    /// use dashboard_tui::backend::AnsiFrameWriter;
+    /// use dashboard_tui::core::ColorDepth;
     ///
     /// let mut w = AnsiFrameWriter::with_capacity(64, ColorDepth::TrueColor, false);
     /// w.write_hyperlink("https://github.com", "GitHub");
@@ -252,8 +252,8 @@ impl AnsiFrameWriter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::AnsiFrameWriter;
-    /// use tui_rs::core::ColorDepth;
+    /// use dashboard_tui::backend::AnsiFrameWriter;
+    /// use dashboard_tui::core::ColorDepth;
     ///
     /// let mut w = AnsiFrameWriter::with_capacity(64, ColorDepth::TrueColor, false);
     /// w.write_window_title("VaultDrive v2.2.0");
@@ -274,8 +274,8 @@ impl AnsiFrameWriter {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::{AnsiFrameWriter, ProgressBarState};
-    /// use tui_rs::core::ColorDepth;
+    /// use dashboard_tui::backend::{AnsiFrameWriter, ProgressBarState};
+    /// use dashboard_tui::core::ColorDepth;
     ///
     /// let mut w = AnsiFrameWriter::with_capacity(64, ColorDepth::TrueColor, false);
     /// w.write_progress_bar(ProgressBarState::Normal(75));
@@ -421,10 +421,10 @@ fn push_hyperlink_open(buf: &mut Vec<u8>, url: &str) {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::backend::format_hyperlink;
+/// use dashboard_tui::backend::format_hyperlink;
 ///
-/// let link = format_hyperlink("https://github.com/vaultdrive/tui-rs", "VaultDrive");
-/// assert_eq!(link, "\x1b]8;;https://github.com/vaultdrive/tui-rs\x1b\\VaultDrive\x1b]8;;\x1b\\");
+/// let link = format_hyperlink("https://github.com/CeeSmag/dashboard-tui", "VaultDrive");
+/// assert_eq!(link, "\x1b]8;;https://github.com/CeeSmag/dashboard-tui\x1b\\VaultDrive\x1b]8;;\x1b\\");
 /// ```
 #[must_use]
 pub fn format_hyperlink(url: &str, text: &str) -> String {
@@ -443,7 +443,7 @@ pub fn format_hyperlink(url: &str, text: &str) -> String {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::backend::format_hyperlink_with_id;
+/// use dashboard_tui::backend::format_hyperlink_with_id;
 ///
 /// let link = format_hyperlink_with_id("https://github.com", "GitHub", "link-1");
 /// assert_eq!(link, "\x1b]8;id=link-1;https://github.com\x1b\\GitHub\x1b]8;;\x1b\\");

@@ -22,7 +22,7 @@ pub const MULTI_DIGIT_TIMEOUT: Duration = Duration::from_millis(450);
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::DigitDispatch;
+/// use dashboard_tui::dashboard::DigitDispatch;
 ///
 /// assert_eq!(DigitDispatch::FireImmediate(5), DigitDispatch::FireImmediate(5));
 /// ```
@@ -42,7 +42,7 @@ pub enum DigitDispatch {
 ///
 /// ```
 /// use std::time::Instant;
-/// use tui_rs::dashboard::{DigitDispatch, PrefixJumpState};
+/// use dashboard_tui::dashboard::{DigitDispatch, PrefixJumpState};
 ///
 /// let mut jump = PrefixJumpState::new();
 /// let now = Instant::now();
@@ -63,7 +63,7 @@ impl PrefixJumpState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::PrefixJumpState;
+    /// use dashboard_tui::dashboard::PrefixJumpState;
     ///
     /// let state = PrefixJumpState::new();
     /// assert!(!state.has_pending());
@@ -81,7 +81,7 @@ impl PrefixJumpState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::PrefixJumpState;
+    /// use dashboard_tui::dashboard::PrefixJumpState;
     ///
     /// assert!(!PrefixJumpState::new().has_pending());
     /// ```
@@ -97,7 +97,7 @@ impl PrefixJumpState {
     ///
     /// ```
     /// use std::time::Instant;
-    /// use tui_rs::dashboard::PrefixJumpState;
+    /// use dashboard_tui::dashboard::PrefixJumpState;
     ///
     /// let mut state = PrefixJumpState::new();
     /// state.feed_digit(2, 20, Instant::now());
@@ -118,7 +118,7 @@ impl PrefixJumpState {
     ///
     /// ```
     /// use std::time::Instant;
-    /// use tui_rs::dashboard::PrefixJumpState;
+    /// use dashboard_tui::dashboard::PrefixJumpState;
     ///
     /// let mut state = PrefixJumpState::new();
     /// state.feed_digit(1, 20, Instant::now());
@@ -137,7 +137,7 @@ impl PrefixJumpState {
     ///
     /// ```
     /// use std::time::Instant;
-    /// use tui_rs::dashboard::PrefixJumpState;
+    /// use dashboard_tui::dashboard::PrefixJumpState;
     ///
     /// let mut state = PrefixJumpState::new();
     /// state.feed_digit(1, 20, Instant::now());
@@ -156,7 +156,7 @@ impl PrefixJumpState {
     ///
     /// ```
     /// use std::time::{Duration, Instant};
-    /// use tui_rs::dashboard::PrefixJumpState;
+    /// use dashboard_tui::dashboard::PrefixJumpState;
     ///
     /// let mut state = PrefixJumpState::new();
     /// let start = Instant::now();
@@ -182,7 +182,7 @@ impl PrefixJumpState {
     ///
     /// ```
     /// use std::time::Instant;
-    /// use tui_rs::dashboard::{DigitDispatch, PrefixJumpState};
+    /// use dashboard_tui::dashboard::{DigitDispatch, PrefixJumpState};
     ///
     /// let mut state = PrefixJumpState::new();
     /// let now = Instant::now();

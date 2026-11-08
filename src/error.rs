@@ -1,11 +1,11 @@
-//! Granular, actionable domain error types for `tui-rs`.
+//! Granular, actionable domain error types for `dashboard-tui`.
 //!
 //! All error enums are marked `#[non_exhaustive]` to preserve `SemVer` compatibility
 //! across minor releases.
 
 use thiserror::Error;
 
-/// Top-level error type returned by `tui-rs` terminal, layout, and dashboard operations.
+/// Top-level error type returned by `dashboard-tui` terminal, layout, and dashboard operations.
 #[derive(Debug, Error)]
 #[non_exhaustive]
 pub enum TuiError {

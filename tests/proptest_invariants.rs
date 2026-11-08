@@ -8,17 +8,17 @@
 //! - `WaveScaler` never panics or returns NaN/sub-floor ceilings even on extreme `f64` inputs.
 //! - `Page::resolve_layout` never panics across all 6 `SectionLayoutMode`s and `0..=u16::MAX` viewports.
 
-use proptest::prelude::*;
-use tui_rs::components::{WaveScaler, WaveScalerConfig, nice_ceil, round_scale};
-use tui_rs::core::{
+use dashboard_tui::components::{WaveScaler, WaveScalerConfig, nice_ceil, round_scale};
+use dashboard_tui::core::{
     Buffer, Color, ColumnIndex, Constraint, Layout, PrioritySegment, Rect, RowIndex, Spacing4D,
     Style, TerminalHeight, TerminalWidth, TextAlignment, clip_from_left, clip_to_width,
     display_width, split_equal_spans, truncate_with_ellipsis_parts, wrap_lines_iter,
 };
-use tui_rs::dashboard::{
+use dashboard_tui::dashboard::{
     DashboardBackend, OptionOutcome, OptionSpec, Page, Section, SectionLayoutMode, SpacingConfig,
 };
-use tui_rs::widgets::{TableColumn, WeightedTable};
+use dashboard_tui::widgets::{TableColumn, WeightedTable};
+use proptest::prelude::*;
 
 struct DummyBackend;
 
@@ -139,7 +139,7 @@ proptest! {
         fixed in 0..=500u16,
         flex_pick in 0..6u8,
     ) {
-        use tui_rs::core::Flex;
+        use dashboard_tui::core::Flex;
         let flex = match flex_pick {
             0 => Flex::Start,
             1 => Flex::End,

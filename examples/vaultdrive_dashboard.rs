@@ -1,7 +1,7 @@
 //! Complete 3-Page `VaultDrive` Dashboard Showcase (`examples/vaultdrive_dashboard.rs`).
 //!
 //! Demonstrates how the full Rust rewrite of `VaultDrive` (`/home/cee/Documents/vaultdrive-linux`)
-//! plugs into `tui-rs`:
+//! plugs into `dashboard-tui`:
 //! - **Page 1 (`F1: Monitor`)**:
 //!   - `DriveStatusWidget` (mount status, VFS cache meter bar, remote quota, systemd unit status).
 //!   - `SyncWaveformWidget` (`DualWaveform` with `WaveScaler` upload/download history).
@@ -26,27 +26,27 @@
 
 use std::time::{Duration, Instant};
 
-use tui_rs::backend::{Backend, CrosstermBackend, TestBackend};
-use tui_rs::components::{
+use dashboard_tui::backend::{Backend, CrosstermBackend, TestBackend};
+use dashboard_tui::components::{
     DualWaveform, GradientMeter, GraphSymbolMode, WaveScaler, WaveScalerConfig, format_bytes,
     format_rate,
 };
-use tui_rs::core::{
+use dashboard_tui::core::{
     Buffer, Color, ColorPalette, PrioritySegment, Rect, Style, TerminalHeight, TerminalWidth,
     TextAlignment,
 };
-use tui_rs::dashboard::{
+use dashboard_tui::dashboard::{
     AddonOptionEntry, AddonPageEntry, AddonRegistry, AddonSectionEntry, DashboardBackend,
     DashboardEngine, EngineAction, KeyBindings, KeyCode, KeyPress, ModalContext, OptionOutcome,
     OptionSpec, Section, SectionLayoutMode, SectionWidget, SubView, SubViewResult,
 };
-use tui_rs::terminal::{
+use dashboard_tui::terminal::{
     TerminalSessionConfig, TerminalSessionGuard, install_panic_restoration_hook,
 };
-use tui_rs::universal::{
+use dashboard_tui::universal::{
     ConfirmModal, EditModal, NoticeModal, TypedModal, color_theme_option, section_gap_option,
 };
-use tui_rs::widgets::{TabPanel, TableColumn, WeightedTable};
+use dashboard_tui::widgets::{TabPanel, TableColumn, WeightedTable};
 
 struct VaultDriveMockBackend {
     mounted: bool,
@@ -645,7 +645,7 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
         2,
         1,
         OptionSpec::new(2, "Documentation (Clickable Link & QR Code)", |_ctx| {
-            let url = "https://github.com/vaultdrive/tui-rs";
+            let url = "https://github.com/CeeSmag/dashboard-tui";
             let lines = vec![
                 "Official Documentation & Architecture Guides:".to_string(),
                 url.to_string(),
@@ -659,7 +659,7 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
 
             OptionOutcome::OpenModal(Box::new(modal))
         })
-        .with_hyperlink("https://github.com/vaultdrive/tui-rs"),
+        .with_hyperlink("https://github.com/CeeSmag/dashboard-tui"),
     ));
 
     DashboardEngine::new(VaultDriveMockBackend::default(), registry.assemble_pages())
@@ -706,7 +706,7 @@ fn run_headless_check() {
     }
 }
 
-fn main() -> Result<(), tui_rs::error::TuiError> {
+fn main() -> Result<(), dashboard_tui::error::TuiError> {
     if std::env::args().any(|arg| arg == "--headless-check") {
         run_headless_check();
         return Ok(());

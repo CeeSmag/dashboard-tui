@@ -21,7 +21,7 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::TextInputState;
+/// use dashboard_tui::widgets::TextInputState;
 ///
 /// let mut state = TextInputState::from_text("vault");
 /// state.insert_char('!');
@@ -43,7 +43,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let state = TextInputState::new();
     /// assert!(state.is_empty());
@@ -62,7 +62,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let state = TextInputState::from_text("hello");
     /// assert_eq!(state.value(), "hello");
@@ -83,7 +83,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let state = TextInputState::from_text("abc");
     /// assert_eq!(state.value(), "abc");
@@ -99,7 +99,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// assert!(TextInputState::new().is_empty());
     /// ```
@@ -114,7 +114,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// assert_eq!(TextInputState::from_text("hi").cursor_grapheme(), 2);
     /// ```
@@ -129,7 +129,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::new();
     /// state.set_value("new");
@@ -145,7 +145,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::from_text("secret");
     /// state.clear();
@@ -162,7 +162,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::from_text("ab");
     /// state.move_left();
@@ -187,7 +187,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::from_text("ab");
     /// state.backspace();
@@ -208,7 +208,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::from_text("ab");
     /// state.move_home();
@@ -230,7 +230,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::from_text("ab");
     /// state.move_left();
@@ -246,7 +246,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::from_text("ab");
     /// state.move_home();
@@ -266,7 +266,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::from_text("ab");
     /// state.move_home();
@@ -282,7 +282,7 @@ impl TextInputState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TextInputState;
+    /// use dashboard_tui::widgets::TextInputState;
     ///
     /// let mut state = TextInputState::from_text("ab");
     /// state.move_home();
@@ -307,8 +307,8 @@ impl TextInputState {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-/// use tui_rs::widgets::{TextInput, TextInputState};
+/// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::widgets::{TextInput, TextInputState};
 ///
 /// let state = TextInputState::from_text("vault.enc");
 /// let area = Rect::from_size(TerminalWidth::new(30), TerminalHeight::new(3));
@@ -330,7 +330,7 @@ impl<'a> TextInput<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TextInput, TextInputState};
+    /// use dashboard_tui::widgets::{TextInput, TextInputState};
     ///
     /// let state = TextInputState::new();
     /// let input = TextInput::new(&state);
@@ -351,7 +351,7 @@ impl<'a> TextInput<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TextInput, TextInputState};
+    /// use dashboard_tui::widgets::{TextInput, TextInputState};
     ///
     /// let state = TextInputState::new();
     /// let input = TextInput::new(&state).with_masked(true);
@@ -369,7 +369,7 @@ impl<'a> TextInput<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TextInput, TextInputState};
+    /// use dashboard_tui::widgets::{TextInput, TextInputState};
     ///
     /// let state = TextInputState::new();
     /// let input = TextInput::new(&state).with_tty_mode(true);
@@ -386,7 +386,7 @@ impl<'a> TextInput<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::{TextInput, TextInputState};
+    /// use dashboard_tui::widgets::{TextInput, TextInputState};
     ///
     /// let state = TextInputState::new();
     /// assert!(!TextInput::new(&state).is_masked());
@@ -402,8 +402,8 @@ impl<'a> TextInput<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::{TextInput, TextInputState};
+    /// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::{TextInput, TextInputState};
     ///
     /// let state = TextInputState::from_text("secret");
     /// let area = Rect::from_size(TerminalWidth::new(25), TerminalHeight::new(3));

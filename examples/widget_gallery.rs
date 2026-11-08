@@ -9,12 +9,12 @@
 
 use std::io::Write;
 
-use tui_rs::backend::{Backend, TestBackend};
-use tui_rs::core::{
+use dashboard_tui::backend::{Backend, TestBackend};
+use dashboard_tui::core::{
     Buffer, Color, Constraint, Layout, Rect, StatefulWidget, Style, Stylize, TerminalHeight,
     TerminalWidth, TextAlignment, Widget, diff_buffers,
 };
-use tui_rs::widgets::{
+use dashboard_tui::widgets::{
     Axis, Bar, BarChart, Calendar, Canvas, Chart, Dataset, Gauge, GraphType, LineGauge, List,
     ListState, Paragraph, Row, Shape, Sparkline, Table, TableState, Tabs, WrapMode,
 };
@@ -128,7 +128,7 @@ fn draw(buffer: &mut Buffer, area: Rect) {
         .render(canvas_area, buffer);
 }
 
-fn main() -> Result<(), tui_rs::error::TuiError> {
+fn main() -> Result<(), dashboard_tui::error::TuiError> {
     let (width, height) = (TerminalWidth::new(110), TerminalHeight::new(22));
     let mut backend = TestBackend::new(width, height);
     let viewport = Rect::from_size(width, height);

@@ -1,7 +1,13 @@
 # Changelog
 
-All notable changes to `tui-rs` are recorded here. Versions follow [SemVer](https://semver.org);
+All notable changes to `dashboard-tui` are recorded here. Versions follow [SemVer](https://semver.org);
 the entry for a version is written in the same commit that raises it (`RULES.md` §8).
+
+## [0.4.0] - 2026-11-08
+
+### Changed
+- **Breaking:** the crate is renamed from `tui-rs` to `dashboard-tui` (import path `dashboard_tui`),
+  matching the repository rename to `CeeSmag/dashboard-tui`. No API changes otherwise.
 
 ## [0.3.0] - 2026-11-08
 

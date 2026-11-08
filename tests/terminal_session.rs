@@ -1,14 +1,14 @@
 //! Terminal session behavior: inline viewports and hardware cursor control.
 
-use tui_rs::backend::{Backend, TestBackend};
-use tui_rs::core::{
+use dashboard_tui::backend::{Backend, TestBackend};
+use dashboard_tui::core::{
     Buffer, ColumnIndex, Rect, RowIndex, Style, TerminalHeight, TerminalWidth, diff_buffers,
 };
-use tui_rs::terminal::{TerminalSessionConfig, TerminalSessionGuard, Viewport};
+use dashboard_tui::terminal::{TerminalSessionConfig, TerminalSessionGuard, Viewport};
 
 #[test]
 fn inline_viewport_draws_in_the_bottom_rows_without_alternate_screen()
--> Result<(), tui_rs::error::TuiError> {
+-> Result<(), dashboard_tui::error::TuiError> {
     let backend = TestBackend::new(TerminalWidth::new(20), TerminalHeight::new(10));
     let config = TerminalSessionConfig::new().with_viewport(Viewport::Inline(3));
     let mut session = TerminalSessionGuard::enter(backend, config)?;
@@ -26,7 +26,8 @@ fn inline_viewport_draws_in_the_bottom_rows_without_alternate_screen()
 }
 
 #[test]
-fn inline_viewport_taller_than_the_terminal_is_clamped() -> Result<(), tui_rs::error::TuiError> {
+fn inline_viewport_taller_than_the_terminal_is_clamped()
+-> Result<(), dashboard_tui::error::TuiError> {
     let backend = TestBackend::new(TerminalWidth::new(10), TerminalHeight::new(4));
     let config = TerminalSessionConfig::new().with_viewport(Viewport::Inline(50));
     let mut session = TerminalSessionGuard::enter(backend, config)?;
@@ -36,7 +37,8 @@ fn inline_viewport_taller_than_the_terminal_is_clamped() -> Result<(), tui_rs::e
 }
 
 #[test]
-fn draw_with_cursor_shows_and_hides_the_hardware_cursor() -> Result<(), tui_rs::error::TuiError> {
+fn draw_with_cursor_shows_and_hides_the_hardware_cursor()
+-> Result<(), dashboard_tui::error::TuiError> {
     let backend = TestBackend::new(TerminalWidth::new(20), TerminalHeight::new(4));
     let mut session = TerminalSessionGuard::enter(backend, TerminalSessionConfig::default())?;
     assert!(!session.backend().is_cursor_visible());
@@ -52,8 +54,8 @@ fn draw_with_cursor_shows_and_hides_the_hardware_cursor() -> Result<(), tui_rs::
 }
 
 #[test]
-fn test_backend_scroll_up_moves_rows_and_blanks_the_bottom() -> Result<(), tui_rs::error::TuiError>
-{
+fn test_backend_scroll_up_moves_rows_and_blanks_the_bottom()
+-> Result<(), dashboard_tui::error::TuiError> {
     let mut backend = TestBackend::new(TerminalWidth::new(6), TerminalHeight::new(3));
     let mut frame = Buffer::empty(Rect::from_xywh(0, 0, 6, 3));
     let _ = frame.set_string(

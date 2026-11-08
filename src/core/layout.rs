@@ -12,7 +12,7 @@ use crate::core::rect::Rect;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::LayoutDirection;
+/// use dashboard_tui::core::LayoutDirection;
 /// assert_eq!(LayoutDirection::default(), LayoutDirection::Vertical);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -31,7 +31,7 @@ pub enum LayoutDirection {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Constraint, Flex, Layout, Rect};
+/// use dashboard_tui::core::{Constraint, Flex, Layout, Rect};
 ///
 /// let area = Rect::from_xywh(0, 0, 20, 1);
 /// let centered = Layout::horizontal([Constraint::Fixed(4)]).with_flex(Flex::Center).split(area);
@@ -92,7 +92,7 @@ impl Flex {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::Constraint;
+/// use dashboard_tui::core::Constraint;
 ///
 /// let c = Constraint::Percentage(50);
 /// assert_eq!(c, Constraint::Percentage(50));
@@ -128,7 +128,7 @@ impl Constraint {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Constraint;
+    /// use dashboard_tui::core::Constraint;
     /// assert_eq!(Constraint::length(5), Constraint::Fixed(5));
     /// ```
     #[must_use]
@@ -149,7 +149,7 @@ impl Default for Constraint {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{ColumnIndex, Constraint, Layout, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::core::{ColumnIndex, Constraint, Layout, Rect, RowIndex, TerminalHeight, TerminalWidth};
 ///
 /// let area = Rect::new(ColumnIndex(0), RowIndex(0), TerminalWidth(100), TerminalHeight(20));
 /// let chunks = Layout::horizontal([Constraint::Percentage(30), Constraint::Fill(1)]).split(area);
@@ -171,7 +171,7 @@ impl Layout {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Constraint, Layout, Rect};
+    /// use dashboard_tui::core::{Constraint, Layout, Rect};
     ///
     /// let chunks = Layout::vertical([Constraint::Fixed(3), Constraint::Fill(1)])
     ///     .split(Rect::from_xywh(0, 0, 80, 24));
@@ -193,7 +193,7 @@ impl Layout {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Constraint, Layout, Rect};
+    /// use dashboard_tui::core::{Constraint, Layout, Rect};
     ///
     /// let chunks = Layout::horizontal([Constraint::Fill(1), Constraint::Fill(1)])
     ///     .with_gap(2)
@@ -216,7 +216,7 @@ impl Layout {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Constraint, Layout};
+    /// use dashboard_tui::core::{Constraint, Layout};
     /// let layout = Layout::horizontal([Constraint::Fill(1), Constraint::Fill(1)]).with_gap(2);
     /// assert_eq!(layout.gap(), 2);
     /// ```
@@ -245,7 +245,7 @@ impl Layout {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Layout;
+    /// use dashboard_tui::core::Layout;
     /// assert_eq!(Layout::vertical([]).gap(), 0);
     /// ```
     #[must_use]
@@ -261,7 +261,7 @@ impl Layout {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Constraint, Layout, Rect};
+    /// use dashboard_tui::core::{Constraint, Layout, Rect};
     ///
     /// let area = Rect::from_xywh(0, 0, 0, 0);
     /// let chunks = Layout::horizontal([Constraint::Fixed(10), Constraint::Fill(1)]).split(area);
@@ -290,7 +290,7 @@ impl Layout {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Constraint, Layout, Rect};
+    /// use dashboard_tui::core::{Constraint, Layout, Rect};
     ///
     /// let layout = Layout::horizontal([Constraint::Fixed(10), Constraint::Fill(1)]);
     /// let mut cells = [Rect::default(); 2];
@@ -326,7 +326,7 @@ impl Layout {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Constraint, Layout, Rect};
+    /// use dashboard_tui::core::{Constraint, Layout, Rect};
     ///
     /// let [header, body, footer] = Layout::vertical([
     ///     Constraint::Fixed(1),
@@ -416,7 +416,7 @@ impl Layout {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::split_equal_spans;
+/// use dashboard_tui::core::split_equal_spans;
 ///
 /// assert_eq!(split_equal_spans(100, 2, 2), vec![49, 49]);
 /// assert_eq!(split_equal_spans(101, 2, 2), vec![50, 49]);

@@ -20,7 +20,7 @@ use crate::dashboard::section::OptionOutcome;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::SubViewResult;
+/// use dashboard_tui::dashboard::SubViewResult;
 ///
 /// assert_eq!(SubViewResult::Pop, SubViewResult::Pop);
 /// ```
@@ -63,8 +63,8 @@ impl<B: DashboardBackend> core::fmt::Debug for SubViewAction<B> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, KeyHint, Rect};
-/// use tui_rs::dashboard::{DashboardBackend, KeyCode, KeyPress, SubView, SubViewResult};
+/// use dashboard_tui::core::{Buffer, ColorPalette, KeyHint, Rect};
+/// use dashboard_tui::dashboard::{DashboardBackend, KeyCode, KeyPress, SubView, SubViewResult};
 ///
 /// struct LogDetailSubView;
 ///

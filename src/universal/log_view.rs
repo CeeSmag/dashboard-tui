@@ -26,7 +26,7 @@ use crate::widgets::scrollbar::SubCellScrollbar;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::universal::LogLevel;
+/// use dashboard_tui::universal::LogLevel;
 ///
 /// assert!(LogLevel::Error > LogLevel::Info);
 /// assert_eq!(LogLevel::Warn.label(), "WARN ");
@@ -72,7 +72,7 @@ impl LogLevel {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::universal::{LogEntry, LogLevel};
+/// use dashboard_tui::universal::{LogEntry, LogLevel};
 ///
 /// let entry = LogEntry::new(LogLevel::Warn, "sync", "retrying upload");
 /// assert_eq!(entry.level(), LogLevel::Warn);
@@ -124,7 +124,7 @@ impl LogEntry {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::universal::{LogBuffer, LogLevel};
+/// use dashboard_tui::universal::{LogBuffer, LogLevel};
 ///
 /// let mut log = LogBuffer::new(2);
 /// log.info("sync", "started");
@@ -225,9 +225,9 @@ pub type LogEntriesFn<B> = fn(&B) -> &[LogEntry];
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::{LogEntry, LogLevel, LogViewSubView};
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::{LogEntry, LogLevel, LogViewSubView};
 ///
 /// struct App {
 ///     log: Vec<LogEntry>,

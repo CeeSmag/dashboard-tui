@@ -22,8 +22,8 @@ const MAX_STACK_BUCKETS: usize = 1024;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::{GraphSymbolMode, SingleWaveform};
-/// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::components::{GraphSymbolMode, SingleWaveform};
+/// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
 ///
 /// let area = Rect::from_size(TerminalWidth::new(20), TerminalHeight::new(4));
 /// let mut buf = Buffer::empty(area);
@@ -53,7 +53,7 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SingleWaveform;
+    /// use dashboard_tui::components::SingleWaveform;
     ///
     /// let wave = SingleWaveform::new(&[10.0, 20.0], 100.0);
     /// assert!(!wave.is_inverted());
@@ -78,7 +78,7 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{GraphSymbolMode, SingleWaveform};
+    /// use dashboard_tui::components::{GraphSymbolMode, SingleWaveform};
     ///
     /// let wave = SingleWaveform::new(&[1.0], 10.0).with_mode(GraphSymbolMode::Block);
     /// assert_eq!(wave.mode(), GraphSymbolMode::Block);
@@ -96,7 +96,7 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SingleWaveform;
+    /// use dashboard_tui::components::SingleWaveform;
     ///
     /// let wave = SingleWaveform::new(&[1.0], 10.0).with_inverted(true);
     /// assert!(wave.is_inverted());
@@ -113,8 +113,8 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SingleWaveform;
-    /// use tui_rs::core::Color;
+    /// use dashboard_tui::components::SingleWaveform;
+    /// use dashboard_tui::core::Color;
     ///
     /// let wave = SingleWaveform::new(&[1.0], 10.0).with_fixed_color(Color::Cyan);
     /// ```
@@ -130,8 +130,8 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SingleWaveform;
-    /// use tui_rs::core::Color;
+    /// use dashboard_tui::components::SingleWaveform;
+    /// use dashboard_tui::core::Color;
     ///
     /// let wave = SingleWaveform::new(&[1.0], 10.0).with_empty_color(Color::DarkGray);
     /// ```
@@ -147,7 +147,7 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{GraphSymbolMode, SingleWaveform};
+    /// use dashboard_tui::components::{GraphSymbolMode, SingleWaveform};
     ///
     /// assert_eq!(SingleWaveform::new(&[], 1.0).mode(), GraphSymbolMode::Braille);
     /// ```
@@ -162,7 +162,7 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SingleWaveform;
+    /// use dashboard_tui::components::SingleWaveform;
     ///
     /// assert!(!SingleWaveform::new(&[], 1.0).is_inverted());
     /// ```
@@ -179,7 +179,7 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SingleWaveform;
+    /// use dashboard_tui::components::SingleWaveform;
     ///
     /// let wave = SingleWaveform::new(&[10.0, 20.0], 100.0).with_fill_width(false);
     /// assert!(!wave.is_fill_width());
@@ -197,7 +197,7 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SingleWaveform;
+    /// use dashboard_tui::components::SingleWaveform;
     ///
     /// assert!(SingleWaveform::new(&[], 1.0).is_fill_width());
     /// ```
@@ -213,8 +213,8 @@ impl<'a> SingleWaveform<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SingleWaveform;
-    /// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::components::SingleWaveform;
+    /// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
     ///
     /// let area = Rect::from_size(TerminalWidth::new(10), TerminalHeight::new(2));
     /// let mut buf = Buffer::empty(area);

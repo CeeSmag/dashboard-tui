@@ -14,7 +14,7 @@ use std::time::{Duration, Instant};
 ///
 /// ```
 /// use std::time::Instant;
-/// use tui_rs::components::TimedSample;
+/// use dashboard_tui::components::TimedSample;
 ///
 /// let sample = TimedSample::new(Instant::now(), 1024.0);
 /// assert_eq!(sample.value(), 1024.0);
@@ -32,7 +32,7 @@ impl TimedSample {
     ///
     /// ```
     /// use std::time::Instant;
-    /// use tui_rs::components::TimedSample;
+    /// use dashboard_tui::components::TimedSample;
     ///
     /// let s = TimedSample::new(Instant::now(), 42.5);
     /// assert_eq!(s.value(), 42.5);
@@ -49,7 +49,7 @@ impl TimedSample {
     ///
     /// ```
     /// use std::time::Instant;
-    /// use tui_rs::components::TimedSample;
+    /// use dashboard_tui::components::TimedSample;
     ///
     /// let now = Instant::now();
     /// let s = TimedSample::new(now, 1.0);
@@ -67,7 +67,7 @@ impl TimedSample {
     ///
     /// ```
     /// use std::time::Instant;
-    /// use tui_rs::components::TimedSample;
+    /// use dashboard_tui::components::TimedSample;
     ///
     /// let s = TimedSample::new(Instant::now(), 99.0);
     /// assert_eq!(s.value(), 99.0);
@@ -85,7 +85,7 @@ impl TimedSample {
 ///
 /// ```
 /// use std::time::{Duration, Instant};
-/// use tui_rs::components::TimeSeries;
+/// use dashboard_tui::components::TimeSeries;
 ///
 /// let mut ts = TimeSeries::with_capacity(120);
 /// let now = Instant::now();
@@ -112,7 +112,7 @@ impl TimeSeries {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// let ts = TimeSeries::with_capacity(300);
     /// assert!(ts.is_empty());
@@ -133,7 +133,7 @@ impl TimeSeries {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// let mut ts = TimeSeries::with_capacity(10);
     /// ts.push(100.0);
@@ -150,7 +150,7 @@ impl TimeSeries {
     ///
     /// ```
     /// use std::time::Instant;
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// let mut ts = TimeSeries::with_capacity(2);
     /// let now = Instant::now();
@@ -173,7 +173,7 @@ impl TimeSeries {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// let mut ts = TimeSeries::with_capacity(10);
     /// ts.push(10.0);
@@ -190,7 +190,7 @@ impl TimeSeries {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// let ts = TimeSeries::with_capacity(10);
     /// assert_eq!(ts.len(), 0);
@@ -206,7 +206,7 @@ impl TimeSeries {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// assert!(TimeSeries::default().is_empty());
     /// ```
@@ -221,7 +221,7 @@ impl TimeSeries {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// assert_eq!(TimeSeries::with_capacity(64).capacity(), 64);
     /// ```
@@ -236,7 +236,7 @@ impl TimeSeries {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// let mut ts = TimeSeries::default();
     /// assert_eq!(ts.latest_value(), 0.0);
@@ -259,7 +259,7 @@ impl TimeSeries {
     ///
     /// ```
     /// use std::time::{Duration, Instant};
-    /// use tui_rs::components::TimeSeries;
+    /// use dashboard_tui::components::TimeSeries;
     ///
     /// let mut ts = TimeSeries::with_capacity(16);
     /// let now = Instant::now();
@@ -343,7 +343,7 @@ impl TimeSeries {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::resample_slice_into;
+/// use dashboard_tui::components::resample_slice_into;
 ///
 /// let samples = [10.0, 20.0, 30.0];
 /// let mut out = [0.0; 5];
@@ -395,7 +395,7 @@ pub fn resample_slice_into(samples: &[f64], out: &mut [f64]) {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::resample_slice_scaled_into;
+/// use dashboard_tui::components::resample_slice_scaled_into;
 ///
 /// let samples = [10.0, 20.0, 30.0];
 /// let mut out = [0.0; 5];

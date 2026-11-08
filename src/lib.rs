@@ -1,4 +1,4 @@
-//! `tui-rs`: Zero-allocation Terminal User Interface (TUI) and 3-Tier Portable
+//! `dashboard-tui`: Zero-allocation Terminal User Interface (TUI) and 3-Tier Portable
 //! Dashboard Engine library in Rust.
 //!
 //! Architected according to `RULES.md` to power the full Rust rewrite of
@@ -42,7 +42,7 @@
 //! # Examples
 //!
 //! ```
-//! use tui_rs::prelude::*;
+//! use dashboard_tui::prelude::*;
 //!
 //! let backend = TestBackend::new(TerminalWidth::new(80), TerminalHeight::new(24));
 //! let mut session = TerminalSessionGuard::enter(backend, TerminalSessionConfig::default())?;

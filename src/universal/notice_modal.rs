@@ -19,7 +19,7 @@ use crate::widgets::scrollbar::{SubCellScrollbar, VerticalScrollState};
 /// # Examples
 ///
 /// ```
-/// use tui_rs::universal::NoticeModal;
+/// use dashboard_tui::universal::NoticeModal;
 ///
 /// let modal = NoticeModal::new(
 ///     "System Diagnostics",
@@ -41,7 +41,7 @@ impl NoticeModal {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::universal::NoticeModal;
+    /// use dashboard_tui::universal::NoticeModal;
     ///
     /// let modal = NoticeModal::new("Notice", vec!["Line 1".to_string()]);
     /// assert_eq!(modal.lines().len(), 1);
@@ -61,8 +61,8 @@ impl NoticeModal {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::QrCodeMatrix;
-    /// use tui_rs::universal::NoticeModal;
+    /// use dashboard_tui::components::QrCodeMatrix;
+    /// use dashboard_tui::universal::NoticeModal;
     ///
     /// let matrix = QrCodeMatrix::from_raw_modules(vec![true; 4], 2);
     /// let modal = NoticeModal::new("QR Notice", vec!["Scan below".to_string()])
@@ -86,10 +86,10 @@ impl NoticeModal {
     /// ```
     /// # #[cfg(feature = "qrcode")]
     /// # {
-    /// use tui_rs::universal::NoticeModal;
+    /// use dashboard_tui::universal::NoticeModal;
     ///
     /// let modal = NoticeModal::new("Documentation", vec!["Repo:".to_string()])
-    ///     .with_qr_text("https://github.com/vaultdrive/tui-rs")
+    ///     .with_qr_text("https://github.com/CeeSmag/dashboard-tui")
     ///     .unwrap();
     /// assert!(modal.qr_matrix().is_some());
     /// # }
@@ -106,7 +106,7 @@ impl NoticeModal {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::universal::NoticeModal;
+    /// use dashboard_tui::universal::NoticeModal;
     ///
     /// let modal = NoticeModal::new("Title", vec!["Hello".to_string()]);
     /// assert_eq!(modal.lines()[0], "Hello");
@@ -122,7 +122,7 @@ impl NoticeModal {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::universal::NoticeModal;
+    /// use dashboard_tui::universal::NoticeModal;
     ///
     /// let modal = NoticeModal::new("Title", vec![]);
     /// assert!(modal.qr_matrix().is_none());

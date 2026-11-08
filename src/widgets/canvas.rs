@@ -14,8 +14,8 @@ use crate::widgets::plot::{DotPlotter, Marker, scale_to_dots};
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::Style;
-/// use tui_rs::widgets::Shape;
+/// use dashboard_tui::core::Style;
+/// use dashboard_tui::widgets::Shape;
 ///
 /// let line = Shape::Line { from: (0.0, 0.0), to: (10.0, 5.0), style: Style::DEFAULT };
 /// assert!(matches!(line, Shape::Line { .. }));
@@ -70,8 +70,8 @@ pub enum Shape<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Style, Widget};
-/// use tui_rs::widgets::{Canvas, Shape};
+/// use dashboard_tui::core::{Buffer, Rect, Style, Widget};
+/// use dashboard_tui::widgets::{Canvas, Shape};
 ///
 /// let area = Rect::from_xywh(0, 0, 10, 5);
 /// let mut buffer = Buffer::empty(area);

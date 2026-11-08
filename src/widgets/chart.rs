@@ -13,7 +13,7 @@ use crate::widgets::plot::{DotPlotter, Marker, round_to_i64, scale_to_dots};
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::GraphType;
+/// use dashboard_tui::widgets::GraphType;
 /// assert_eq!(GraphType::default(), GraphType::Scatter);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -31,8 +31,8 @@ pub enum GraphType {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::Style;
-/// use tui_rs::widgets::{Dataset, GraphType};
+/// use dashboard_tui::core::Style;
+/// use dashboard_tui::widgets::{Dataset, GraphType};
 ///
 /// let data = [(0.0, 1.0), (1.0, 3.0)];
 /// let dataset = Dataset::new("cpu", &data).graph_type(GraphType::Line).style(Style::new().bold());
@@ -93,7 +93,7 @@ impl<'a> Dataset<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::Axis;
+/// use dashboard_tui::widgets::Axis;
 ///
 /// let axis = Axis::new([0.0, 60.0]).labels(["0s", "30s", "60s"]).title("time");
 /// assert_eq!(axis.bounds(), [0.0, 60.0]);
@@ -151,8 +151,8 @@ impl<'a> Axis<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Style, Widget};
-/// use tui_rs::widgets::{Axis, Chart, Dataset, GraphType};
+/// use dashboard_tui::core::{Buffer, Rect, Style, Widget};
+/// use dashboard_tui::widgets::{Axis, Chart, Dataset, GraphType};
 ///
 /// let data = [(0.0, 0.0), (5.0, 10.0), (10.0, 5.0)];
 /// let area = Rect::from_xywh(0, 0, 30, 8);

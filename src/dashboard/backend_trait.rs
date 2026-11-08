@@ -16,8 +16,8 @@ use crate::error::TuiError;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment, Style};
-/// use tui_rs::dashboard::DashboardBackend;
+/// use dashboard_tui::core::{Color, PrioritySegment, Style};
+/// use dashboard_tui::dashboard::DashboardBackend;
 ///
 /// struct MockVaultBackend;
 ///

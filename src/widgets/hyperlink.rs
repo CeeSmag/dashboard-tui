@@ -21,12 +21,12 @@ use crate::core::text::Span;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-/// use tui_rs::widgets::Hyperlink;
+/// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::widgets::Hyperlink;
 ///
 /// let area = Rect::from_size(TerminalWidth::new(30), TerminalHeight::new(1));
 /// let mut buf = Buffer::empty(area);
-/// let link = Hyperlink::new("https://github.com/vaultdrive/tui-rs", "VaultDrive Docs");
+/// let link = Hyperlink::new("https://github.com/CeeSmag/dashboard-tui", "VaultDrive Docs");
 /// link.render(&mut buf, ColumnIndex::new(0), RowIndex::new(0), 30);
 /// assert!(buf.to_visual_lines()[0].contains("VaultDrive Docs"));
 /// ```
@@ -45,7 +45,7 @@ impl<'a> Hyperlink<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::Hyperlink;
+    /// use dashboard_tui::widgets::Hyperlink;
     ///
     /// let link = Hyperlink::new("https://github.com", "GitHub");
     /// assert_eq!(link.url(), "https://github.com");
@@ -65,8 +65,8 @@ impl<'a> Hyperlink<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, Style};
-    /// use tui_rs::widgets::Hyperlink;
+    /// use dashboard_tui::core::{Color, Style};
+    /// use dashboard_tui::widgets::Hyperlink;
     ///
     /// let link = Hyperlink::new("https://example.com", "Example")
     ///     .with_style(Style::new().fg(Color::Green).bold());
@@ -83,7 +83,7 @@ impl<'a> Hyperlink<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::Hyperlink;
+    /// use dashboard_tui::widgets::Hyperlink;
     ///
     /// let link = Hyperlink::new("https://github.com", "GitHub");
     /// assert_eq!(link.url(), "https://github.com");
@@ -98,7 +98,7 @@ impl<'a> Hyperlink<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::Hyperlink;
+    /// use dashboard_tui::widgets::Hyperlink;
     ///
     /// let link = Hyperlink::new("https://github.com", "GitHub");
     /// assert_eq!(link.text(), "GitHub");
@@ -113,10 +113,10 @@ impl<'a> Hyperlink<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::Hyperlink;
+    /// use dashboard_tui::widgets::Hyperlink;
     ///
     /// let link = Hyperlink::new("https://github.com", "GitHub");
-    /// assert!(link.style().modifiers().contains(tui_rs::core::Modifiers::UNDERLINED));
+    /// assert!(link.style().modifiers().contains(dashboard_tui::core::Modifiers::UNDERLINED));
     /// ```
     #[must_use]
     pub const fn style(&self) -> Style {
@@ -128,8 +128,8 @@ impl<'a> Hyperlink<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalWidth;
-    /// use tui_rs::widgets::Hyperlink;
+    /// use dashboard_tui::core::TerminalWidth;
+    /// use dashboard_tui::widgets::Hyperlink;
     ///
     /// let link = Hyperlink::new("https://github.com", "Docs");
     /// assert_eq!(link.width(), TerminalWidth::new(4));
@@ -144,8 +144,8 @@ impl<'a> Hyperlink<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Span;
-    /// use tui_rs::widgets::Hyperlink;
+    /// use dashboard_tui::core::Span;
+    /// use dashboard_tui::widgets::Hyperlink;
     ///
     /// let link = Hyperlink::new("https://github.com", "GitHub");
     /// let span: Span<'_> = link.to_span();
@@ -161,8 +161,8 @@ impl<'a> Hyperlink<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::Hyperlink;
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::Hyperlink;
     ///
     /// let area = Rect::from_size(TerminalWidth::new(20), TerminalHeight::new(1));
     /// let mut buf = Buffer::empty(area);

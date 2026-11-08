@@ -43,7 +43,7 @@ pub struct ModalContext<'a, B: DashboardBackend> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::ModalResult;
+/// use dashboard_tui::dashboard::ModalResult;
 ///
 /// let res = ModalResult::Close;
 /// assert!(matches!(res, ModalResult::Close));
@@ -76,8 +76,8 @@ pub enum ModalResult {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
-/// use tui_rs::dashboard::{DashboardBackend, KeyCode, KeyPress, Modal, ModalContext, ModalResult};
+/// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::dashboard::{DashboardBackend, KeyCode, KeyPress, Modal, ModalContext, ModalResult};
 ///
 /// struct SimpleNotice;
 ///
@@ -143,8 +143,8 @@ pub trait Modal<B: DashboardBackend> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, Rect, Style, TerminalHeight, TerminalWidth};
-/// use tui_rs::dashboard::dim_buffer_backdrop;
+/// use dashboard_tui::core::{Buffer, ColorPalette, Rect, Style, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::dashboard::dim_buffer_backdrop;
 ///
 /// let area = Rect::from_size(TerminalWidth::new(10), TerminalHeight::new(2));
 /// let mut buf = Buffer::empty(area);
@@ -172,8 +172,8 @@ pub fn dim_buffer_backdrop(buffer: &mut Buffer, area: Rect, palette: &ColorPalet
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Color, ColorPalette, PrioritySegment, Rect, TerminalHeight, TerminalWidth};
-/// use tui_rs::dashboard::{
+/// use dashboard_tui::core::{Buffer, Color, ColorPalette, PrioritySegment, Rect, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::dashboard::{
 ///     splice_modal_overlay, DashboardBackend, KeyPress, Modal, ModalContext, ModalResult,
 /// };
 ///

@@ -19,7 +19,7 @@ use crate::core::widget::Widget;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::WrapMode;
+/// use dashboard_tui::widgets::WrapMode;
 /// assert_eq!(WrapMode::default(), WrapMode::None);
 /// ```
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
@@ -114,8 +114,8 @@ fn skip_whitespace(spans: &[Span<'_>], cursor: Cursor) -> Cursor {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Style, TextAlignment, Widget};
-/// use tui_rs::widgets::{Paragraph, WrapMode};
+/// use dashboard_tui::core::{Buffer, Rect, Style, TextAlignment, Widget};
+/// use dashboard_tui::widgets::{Paragraph, WrapMode};
 ///
 /// let area = Rect::from_xywh(0, 0, 10, 3);
 /// let mut buffer = Buffer::empty(area);

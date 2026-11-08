@@ -18,7 +18,7 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{PrioritySegment, Style};
+/// use dashboard_tui::core::{PrioritySegment, Style};
 ///
 /// let seg = PrioritySegment::new("VaultDrive v2.2.0", Style::DEFAULT, 100);
 /// assert_eq!(seg.priority(), 100);
@@ -36,7 +36,7 @@ impl<'a> PrioritySegment<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{PrioritySegment, Style};
+    /// use dashboard_tui::core::{PrioritySegment, Style};
     /// let s = PrioritySegment::new("● MOUNTED", Style::DEFAULT, 90);
     /// assert_eq!(s.as_str(), "● MOUNTED");
     /// ```
@@ -54,7 +54,7 @@ impl<'a> PrioritySegment<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{PrioritySegment, Style};
+    /// use dashboard_tui::core::{PrioritySegment, Style};
     /// assert_eq!(PrioritySegment::new("A", Style::DEFAULT, 1).as_str(), "A");
     /// ```
     #[must_use]
@@ -67,7 +67,7 @@ impl<'a> PrioritySegment<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{PrioritySegment, Style};
+    /// use dashboard_tui::core::{PrioritySegment, Style};
     /// assert_eq!(PrioritySegment::new("A", Style::DEFAULT, 1).style(), Style::DEFAULT);
     /// ```
     #[must_use]
@@ -80,7 +80,7 @@ impl<'a> PrioritySegment<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{PrioritySegment, Style};
+    /// use dashboard_tui::core::{PrioritySegment, Style};
     /// assert_eq!(PrioritySegment::new("A", Style::DEFAULT, 50).priority(), 50);
     /// ```
     #[must_use]
@@ -93,7 +93,7 @@ impl<'a> PrioritySegment<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{PrioritySegment, Style, TerminalWidth};
+    /// use dashboard_tui::core::{PrioritySegment, Style, TerminalWidth};
     /// assert_eq!(PrioritySegment::new("1234", Style::DEFAULT, 1).width(), TerminalWidth(4));
     /// ```
     #[must_use]
@@ -109,7 +109,7 @@ impl<'a> PrioritySegment<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{fit_segment_indices, PrioritySegment, Style, TerminalWidth};
+/// use dashboard_tui::core::{fit_segment_indices, PrioritySegment, Style, TerminalWidth};
 ///
 /// let segs = [
 ///     PrioritySegment::new("VaultDrive", Style::DEFAULT, 100),
@@ -177,7 +177,7 @@ pub fn fit_segment_indices(segments: &[PrioritySegment<'_>], budget: TerminalWid
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColumnIndex, PrioritySegment, Rect, render_fitted_segments, RowIndex, Style, TerminalWidth};
+/// use dashboard_tui::core::{Buffer, ColumnIndex, PrioritySegment, Rect, render_fitted_segments, RowIndex, Style, TerminalWidth};
 ///
 /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 20, 1));
 /// let segs = [
@@ -220,7 +220,7 @@ pub fn render_fitted_segments(
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{KeyHint, Style};
+/// use dashboard_tui::core::{KeyHint, Style};
 ///
 /// let hint = KeyHint::new("q", "Quit", Style::DEFAULT, 100);
 /// assert_eq!(hint.key(), "q");
@@ -240,7 +240,7 @@ impl<'a> KeyHint<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{KeyHint, Style, TerminalWidth};
+    /// use dashboard_tui::core::{KeyHint, Style, TerminalWidth};
     /// let h = KeyHint::new("Tab", "Page", Style::DEFAULT, 80);
     /// // "[Tab] Page" = 5 + 1 + 4 = 10 columns
     /// assert_eq!(h.width(), TerminalWidth(10));
@@ -265,7 +265,7 @@ impl<'a> KeyHint<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{KeyHint, Style};
+    /// use dashboard_tui::core::{KeyHint, Style};
     /// assert_eq!(KeyHint::new("m", "Mount", Style::DEFAULT, 1).key(), "m");
     /// ```
     #[must_use]
@@ -278,7 +278,7 @@ impl<'a> KeyHint<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{KeyHint, Style};
+    /// use dashboard_tui::core::{KeyHint, Style};
     /// assert_eq!(KeyHint::new("m", "Mount", Style::DEFAULT, 1).label(), "Mount");
     /// ```
     #[must_use]
@@ -291,7 +291,7 @@ impl<'a> KeyHint<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{KeyHint, Style};
+    /// use dashboard_tui::core::{KeyHint, Style};
     /// assert_eq!(KeyHint::new("m", "Mount", Style::DEFAULT, 1).key_style(), Style::DEFAULT);
     /// ```
     #[must_use]
@@ -304,7 +304,7 @@ impl<'a> KeyHint<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{KeyHint, Style};
+    /// use dashboard_tui::core::{KeyHint, Style};
     /// assert_eq!(KeyHint::new("q", "Quit", Style::DEFAULT, 100).priority(), 100);
     /// ```
     #[must_use]
@@ -317,7 +317,7 @@ impl<'a> KeyHint<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{KeyHint, Style, TerminalWidth};
+    /// use dashboard_tui::core::{KeyHint, Style, TerminalWidth};
     /// assert_eq!(KeyHint::new("q", "Quit", Style::DEFAULT, 100).width(), TerminalWidth(8));
     /// ```
     #[must_use]
@@ -335,7 +335,7 @@ impl<'a> KeyHint<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{fit_hint_indices, KeyHint, Style, TerminalWidth};
+/// use dashboard_tui::core::{fit_hint_indices, KeyHint, Style, TerminalWidth};
 ///
 /// let hints = [
 ///     KeyHint::new("m", "Mount", Style::DEFAULT, 40),
@@ -398,7 +398,7 @@ pub fn fit_hint_indices(hints: &[KeyHint<'_>], budget: TerminalWidth) -> Vec<usi
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColumnIndex, KeyHint, Rect, render_fitted_hints, RowIndex, Style, TerminalWidth};
+/// use dashboard_tui::core::{Buffer, ColumnIndex, KeyHint, Rect, render_fitted_hints, RowIndex, Style, TerminalWidth};
 ///
 /// let mut buf = Buffer::empty(Rect::from_xywh(0, 0, 18, 1));
 /// let hints = [

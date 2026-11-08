@@ -23,9 +23,9 @@ pub type EditSubmitFn<B> = Box<dyn FnMut(&mut B, &str) -> Result<String, String>
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::EditModal;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::EditModal;
 ///
 /// struct App;
 /// impl DashboardBackend for App {

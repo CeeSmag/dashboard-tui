@@ -1,11 +1,11 @@
 //! `q` / `^Q` / `Ctrl+C` exit semantics and text-input modals (headless).
 
-use tui_rs::core::{Color, PrioritySegment};
-use tui_rs::dashboard::{
+use dashboard_tui::core::{Color, PrioritySegment};
+use dashboard_tui::dashboard::{
     AddonRegistry, DashboardBackend, DashboardEngine, EngineAction, KeyBindings, KeyCode, KeyPress,
     ModalContext, OptionOutcome, OptionSpec, SectionLayoutMode,
 };
-use tui_rs::universal::{ConfirmModal, EditModal};
+use dashboard_tui::universal::{ConfirmModal, EditModal};
 
 #[derive(Default)]
 struct App {

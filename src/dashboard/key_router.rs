@@ -12,7 +12,7 @@ use crate::core::StackStr;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::EventState;
+/// use dashboard_tui::dashboard::EventState;
 ///
 /// assert!(EventState::Consumed.is_consumed());
 /// assert!(!EventState::NotConsumed.is_consumed());
@@ -31,7 +31,7 @@ impl EventState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::EventState;
+    /// use dashboard_tui::dashboard::EventState;
     ///
     /// assert!(EventState::Consumed.is_consumed());
     /// ```
@@ -47,7 +47,7 @@ impl EventState {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::EngineAction;
+/// use dashboard_tui::dashboard::EngineAction;
 ///
 /// assert_eq!(EngineAction::Continue, EngineAction::Continue);
 /// ```
@@ -72,7 +72,7 @@ pub enum EngineAction {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::KeyCode;
+/// use dashboard_tui::dashboard::KeyCode;
 ///
 /// let key = KeyCode::Char('1');
 /// assert_eq!(key, KeyCode::Char('1'));
@@ -120,7 +120,7 @@ impl KeyCode {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyCode;
+    /// use dashboard_tui::dashboard::KeyCode;
     ///
     /// assert_eq!(KeyCode::from_hint("F1"), Some(KeyCode::F(1)));
     /// assert_eq!(KeyCode::from_hint("Tab"), Some(KeyCode::Tab));
@@ -196,7 +196,7 @@ impl KeyCode {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyCode;
+    /// use dashboard_tui::dashboard::KeyCode;
     ///
     /// assert_eq!(KeyCode::Tab.short_label().as_str(), "Tab");
     /// assert_eq!(KeyCode::Char('q').short_label().as_str(), "q");
@@ -240,7 +240,7 @@ impl KeyCode {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::{IntoKeyCode, KeyCode};
+/// use dashboard_tui::dashboard::{IntoKeyCode, KeyCode};
 ///
 /// assert_eq!('q'.into_key_code(), KeyCode::Char('q'));
 /// assert_eq!("Enter".into_key_code(), KeyCode::Enter);
@@ -277,7 +277,7 @@ impl IntoKeyCode for &str {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::{KeyCode, KeyPress};
+/// use dashboard_tui::dashboard::{KeyCode, KeyPress};
 ///
 /// let kp = KeyPress::char('q');
 /// assert_eq!(kp.code(), KeyCode::Char('q'));
@@ -296,7 +296,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyCode, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyCode, KeyPress};
     ///
     /// let kp = KeyPress::new(KeyCode::Enter);
     /// assert_eq!(kp.code(), KeyCode::Enter);
@@ -316,7 +316,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyCode, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyCode, KeyPress};
     ///
     /// let kp = KeyPress::char('5');
     /// assert_eq!(kp.code(), KeyCode::Char('5'));
@@ -332,7 +332,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyPress;
+    /// use dashboard_tui::dashboard::KeyPress;
     ///
     /// let kp = KeyPress::char('c').with_ctrl(true);
     /// assert!(kp.has_ctrl());
@@ -349,7 +349,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyPress;
+    /// use dashboard_tui::dashboard::KeyPress;
     ///
     /// let kp = KeyPress::char('x').with_alt(true);
     /// assert!(kp.has_alt());
@@ -366,7 +366,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyCode, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyCode, KeyPress};
     ///
     /// assert_eq!(KeyPress::new(KeyCode::Esc).code(), KeyCode::Esc);
     /// ```
@@ -381,7 +381,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyPress;
+    /// use dashboard_tui::dashboard::KeyPress;
     ///
     /// assert!(!KeyPress::char('a').has_ctrl());
     /// ```
@@ -396,7 +396,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyPress;
+    /// use dashboard_tui::dashboard::KeyPress;
     ///
     /// assert!(!KeyPress::char('a').has_alt());
     /// ```
@@ -411,7 +411,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyPress;
+    /// use dashboard_tui::dashboard::KeyPress;
     ///
     /// let kp1 = KeyPress::char('q').with_ctrl(true);
     /// let kp2 = KeyPress::char('Q').with_ctrl(true);
@@ -434,7 +434,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyCode, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyCode, KeyPress};
     ///
     /// assert_eq!(KeyPress::char('q').with_ctrl(true).short_label().as_str(), "^Q");
     /// assert_eq!(KeyPress::new(KeyCode::Right).short_label().as_str(), "→");
@@ -464,7 +464,7 @@ impl KeyPress {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyCode, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyCode, KeyPress};
     ///
     /// assert_eq!(KeyPress::from_hint("ctrl+q"), Some(KeyPress::char('q').with_ctrl(true)));
     /// assert_eq!(KeyPress::from_hint("^q"), Some(KeyPress::char('q').with_ctrl(true)));
@@ -557,7 +557,7 @@ impl KeyPress {
     ///
     /// ```
     /// use crossterm::event::{KeyCode as CtKeyCode, KeyEvent, KeyModifiers};
-    /// use tui_rs::dashboard::{KeyCode, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyCode, KeyPress};
     ///
     /// let ev = KeyEvent::new(CtKeyCode::Char('q'), KeyModifiers::NONE);
     /// let kp = KeyPress::from_crossterm(ev);
@@ -604,7 +604,7 @@ impl KeyPress {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::{IntoKeyPress, KeyCode, KeyPress};
+/// use dashboard_tui::dashboard::{IntoKeyPress, KeyCode, KeyPress};
 ///
 /// assert_eq!('q'.into_key_press(), KeyPress::char('q'));
 /// assert_eq!("ctrl+q".into_key_press(), KeyPress::char('q').with_ctrl(true));
@@ -663,7 +663,7 @@ impl IntoKeyPress for &String {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::{KeyBindings, KeyCode, KeyPress};
+/// use dashboard_tui::dashboard::{KeyBindings, KeyCode, KeyPress};
 ///
 /// let keys = KeyBindings::default()
 ///     .quit("ctrl+q")
@@ -714,7 +714,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyCode, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyCode, KeyPress};
     ///
     /// let keys = KeyBindings::new();
     /// assert_eq!(keys.quit_press(), KeyPress::char('q').with_ctrl(true));
@@ -753,7 +753,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyCode, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyCode, KeyPress};
     ///
     /// let keys = KeyBindings::default().quit("ctrl+x");
     /// assert_eq!(keys.quit_press(), KeyPress::char('x').with_ctrl(true));
@@ -770,7 +770,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyCode};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyCode};
     ///
     /// let keys = KeyBindings::default().page_cycle('<', '>');
     /// assert_eq!(keys.prev_page_key(), KeyCode::Char('<'));
@@ -788,7 +788,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyCode};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyCode};
     ///
     /// let keys = KeyBindings::default().section_cycle("Right", "Left");
     /// assert_eq!(keys.next_section_key(), KeyCode::Right);
@@ -806,7 +806,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyCode};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyCode};
     ///
     /// let keys = KeyBindings::default().up_down("Up", "Down");
     /// assert_eq!(keys.cursor_up_key(), KeyCode::Up);
@@ -823,7 +823,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyCode};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyCode};
     ///
     /// let keys = KeyBindings::default().vim_up_down('w', 's');
     /// assert_eq!(keys.alt_up_key(), Some(KeyCode::Char('w')));
@@ -840,7 +840,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyBindings;
+    /// use dashboard_tui::dashboard::KeyBindings;
     ///
     /// let keys = KeyBindings::default().without_vim_keys();
     /// assert!(keys.alt_up_key().is_none());
@@ -858,7 +858,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyCode};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyCode};
     ///
     /// let keys = KeyBindings::default().activate("Space");
     /// assert_eq!(keys.activate_key(), KeyCode::Char(' '));
@@ -874,7 +874,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyCode};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyCode};
     ///
     /// let keys = KeyBindings::default().cancel("Esc");
     /// assert_eq!(keys.cancel_key(), KeyCode::Esc);
@@ -890,11 +890,11 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{KeyBindings, KeyPress};
+    /// use dashboard_tui::dashboard::{KeyBindings, KeyPress};
     ///
     /// let keys = KeyBindings::default().alt_activate('l');
     /// assert!(keys.matches_activate(KeyPress::char('l')));
-    /// assert!(keys.matches_activate(KeyPress::new(tui_rs::dashboard::KeyCode::Enter)));
+    /// assert!(keys.matches_activate(KeyPress::new(dashboard_tui::dashboard::KeyCode::Enter)));
     /// ```
     #[must_use]
     pub fn alt_activate(mut self, key: impl IntoKeyPress) -> Self {
@@ -915,7 +915,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyBindings;
+    /// use dashboard_tui::dashboard::KeyBindings;
     ///
     /// let keys = KeyBindings::default().numeric_jump(false);
     /// assert!(!keys.is_numeric_jump_enabled());
@@ -933,7 +933,7 @@ impl KeyBindings {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::KeyBindings;
+    /// use dashboard_tui::dashboard::KeyBindings;
     ///
     /// let keys = KeyBindings::default().quit("ctrl+q").confirm_quit(true);
     /// assert!(keys.is_quit_confirmation_required());

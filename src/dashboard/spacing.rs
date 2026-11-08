@@ -18,7 +18,7 @@ use crate::core::rect::{Rect, Spacing4D};
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::SpacingLayer;
+/// use dashboard_tui::dashboard::SpacingLayer;
 ///
 /// assert_eq!(SpacingLayer::ALL.len(), 4);
 /// assert_eq!(SpacingLayer::TerminalPage.max_value(), 6);
@@ -50,7 +50,7 @@ impl SpacingLayer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingLayer;
+    /// use dashboard_tui::dashboard::SpacingLayer;
     ///
     /// assert_eq!(SpacingLayer::BetweenSections.label(), "Section <-> Section Gap");
     /// ```
@@ -70,7 +70,7 @@ impl SpacingLayer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingLayer;
+    /// use dashboard_tui::dashboard::SpacingLayer;
     ///
     /// assert!(!SpacingLayer::MenuOption.description().is_empty());
     /// ```
@@ -90,7 +90,7 @@ impl SpacingLayer {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingLayer;
+    /// use dashboard_tui::dashboard::SpacingLayer;
     ///
     /// assert_eq!(SpacingLayer::TerminalPage.max_value(), 6);
     /// assert_eq!(SpacingLayer::BetweenSections.max_value(), 10);
@@ -110,7 +110,7 @@ impl SpacingLayer {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::{SpacingConfig, SpacingLayer};
+/// use dashboard_tui::dashboard::{SpacingConfig, SpacingLayer};
 ///
 /// let mut spacing = SpacingConfig::default();
 /// spacing.set(SpacingLayer::BetweenSections, 2);
@@ -134,7 +134,7 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingConfig;
+    /// use dashboard_tui::dashboard::SpacingConfig;
     ///
     /// let cfg = SpacingConfig::new(1, 1, 2, 1);
     /// assert_eq!(cfg.section_gap(), 2);
@@ -172,7 +172,7 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{SpacingConfig, SpacingLayer};
+    /// use dashboard_tui::dashboard::{SpacingConfig, SpacingLayer};
     ///
     /// let cfg = SpacingConfig::new(1, 2, 3, 4);
     /// assert_eq!(cfg.get(SpacingLayer::BetweenSections), 3);
@@ -193,7 +193,7 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::{SpacingConfig, SpacingLayer};
+    /// use dashboard_tui::dashboard::{SpacingConfig, SpacingLayer};
     ///
     /// let mut cfg = SpacingConfig::default();
     /// cfg.set(SpacingLayer::TerminalPage, 99);
@@ -215,7 +215,7 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingConfig;
+    /// use dashboard_tui::dashboard::SpacingConfig;
     ///
     /// let mut cfg = SpacingConfig::new(2, 2, 2, 2);
     /// cfg.reset();
@@ -231,7 +231,7 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingConfig;
+    /// use dashboard_tui::dashboard::SpacingConfig;
     ///
     /// assert_eq!(SpacingConfig::default().terminal_page_gap(), 0);
     /// ```
@@ -246,7 +246,7 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingConfig;
+    /// use dashboard_tui::dashboard::SpacingConfig;
     ///
     /// assert_eq!(SpacingConfig::default().page_section_gap(), 0);
     /// ```
@@ -261,7 +261,7 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingConfig;
+    /// use dashboard_tui::dashboard::SpacingConfig;
     ///
     /// assert_eq!(SpacingConfig::default().section_gap(), 0);
     /// ```
@@ -276,7 +276,7 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::dashboard::SpacingConfig;
+    /// use dashboard_tui::dashboard::SpacingConfig;
     ///
     /// assert_eq!(SpacingConfig::default().section_option_gap(), 0);
     /// ```
@@ -293,8 +293,8 @@ impl SpacingConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, TerminalHeight, TerminalWidth};
-    /// use tui_rs::dashboard::SpacingConfig;
+    /// use dashboard_tui::core::{Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::dashboard::SpacingConfig;
     ///
     /// let raw = Rect::from_size(TerminalWidth::new(100), TerminalHeight::new(30));
     /// let cfg = SpacingConfig::new(1, 1, 0, 0);

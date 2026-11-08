@@ -27,7 +27,7 @@ const SUPERSCRIPT_DIGITS: [char; 10] = ['⁰', '¹', '²', '³', '⁴', '⁵', '
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::format_superscript_number;
+/// use dashboard_tui::widgets::format_superscript_number;
 ///
 /// assert_eq!(format_superscript_number(1).as_str(), "¹");
 /// assert_eq!(format_superscript_number(20).as_str(), "²⁰");
@@ -50,8 +50,8 @@ pub fn format_superscript_number(num: u8) -> StackStr<16> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
-/// use tui_rs::widgets::TabPanel;
+/// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::widgets::TabPanel;
 ///
 /// let area = Rect::from_size(TerminalWidth::new(40), TerminalHeight::new(6));
 /// let mut buf = Buffer::empty(area);
@@ -84,7 +84,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("Telemetry");
     /// assert!(!panel.is_focused());
@@ -110,7 +110,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("Settings").with_subtitle("Enter edit");
     /// ```
@@ -126,7 +126,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("Sync").with_badge("IDLE");
     /// ```
@@ -142,8 +142,8 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Color;
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::core::Color;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("Sync").with_badge("ACTIVE").with_badge_color(Color::Green);
     /// ```
@@ -159,8 +159,8 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Color;
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::core::Color;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("Alert").with_border_color(Color::Red);
     /// ```
@@ -176,7 +176,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("CPU").with_superscript_number(1);
     /// ```
@@ -192,7 +192,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("Menu").with_focused(true);
     /// assert!(panel.is_focused());
@@ -209,7 +209,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("TTY").with_tty_mode(true);
     /// assert!(panel.is_tty_mode());
@@ -226,7 +226,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let panel = TabPanel::new("Compact").with_horizontal_padding(0);
     /// ```
@@ -242,7 +242,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// assert!(!TabPanel::new("A").is_focused());
     /// ```
@@ -257,7 +257,7 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// assert!(!TabPanel::new("A").is_tty_mode());
     /// ```
@@ -272,8 +272,8 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::core::{Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let area = Rect::from_size(TerminalWidth::new(30), TerminalHeight::new(10));
     /// let inner = TabPanel::new("Test").inner_area(area);
@@ -293,8 +293,8 @@ impl<'a> TabPanel<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::TabPanel;
+    /// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::TabPanel;
     ///
     /// let area = Rect::from_size(TerminalWidth::new(30), TerminalHeight::new(5));
     /// let mut buf = Buffer::empty(area);

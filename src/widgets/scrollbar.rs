@@ -20,7 +20,7 @@ const LOWER_EIGHTHS: [&str; 8] = ["▁", "▂", "▃", "▄", "▅", "▆", "▇
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::VerticalScrollState;
+/// use dashboard_tui::widgets::VerticalScrollState;
 ///
 /// let mut scroll = VerticalScrollState::new();
 /// scroll.update(0, 50, 10);
@@ -40,7 +40,7 @@ impl VerticalScrollState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::VerticalScrollState;
+    /// use dashboard_tui::widgets::VerticalScrollState;
     ///
     /// let state = VerticalScrollState::new();
     /// assert_eq!(state.top(), 0);
@@ -56,7 +56,7 @@ impl VerticalScrollState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::VerticalScrollState;
+    /// use dashboard_tui::widgets::VerticalScrollState;
     ///
     /// assert_eq!(VerticalScrollState::new().top(), 0);
     /// ```
@@ -71,7 +71,7 @@ impl VerticalScrollState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::VerticalScrollState;
+    /// use dashboard_tui::widgets::VerticalScrollState;
     ///
     /// let mut s = VerticalScrollState::new();
     /// s.update(0, 30, 10);
@@ -88,7 +88,7 @@ impl VerticalScrollState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::VerticalScrollState;
+    /// use dashboard_tui::widgets::VerticalScrollState;
     ///
     /// let mut s = VerticalScrollState::new();
     /// assert_eq!(s.update(99, 25, 10), 15);
@@ -105,7 +105,7 @@ impl VerticalScrollState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::VerticalScrollState;
+    /// use dashboard_tui::widgets::VerticalScrollState;
     ///
     /// let mut s = VerticalScrollState::new();
     /// s.ensure_visible(12, 30, 10);
@@ -143,7 +143,7 @@ impl VerticalScrollState {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::VerticalScrollState;
+    /// use dashboard_tui::widgets::VerticalScrollState;
     ///
     /// let mut s = VerticalScrollState::new();
     /// assert_eq!(s.center_on(10, 30, 10), 5);
@@ -172,8 +172,8 @@ impl VerticalScrollState {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-/// use tui_rs::widgets::SubCellScrollbar;
+/// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::widgets::SubCellScrollbar;
 ///
 /// let area = Rect::from_size(TerminalWidth::new(5), TerminalHeight::new(8));
 /// let mut buf = Buffer::empty(area);
@@ -194,7 +194,7 @@ impl SubCellScrollbar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::SubCellScrollbar;
+    /// use dashboard_tui::widgets::SubCellScrollbar;
     ///
     /// let sb = SubCellScrollbar::new(50, 10, 5);
     /// assert!(sb.should_render());
@@ -216,7 +216,7 @@ impl SubCellScrollbar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::SubCellScrollbar;
+    /// use dashboard_tui::widgets::SubCellScrollbar;
     ///
     /// let sb = SubCellScrollbar::new(50, 10, 0).with_tty_mode(true);
     /// ```
@@ -232,7 +232,7 @@ impl SubCellScrollbar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::SubCellScrollbar;
+    /// use dashboard_tui::widgets::SubCellScrollbar;
     ///
     /// assert!(!SubCellScrollbar::new(10, 10, 0).should_render());
     /// assert!(SubCellScrollbar::new(11, 10, 0).should_render());
@@ -248,8 +248,8 @@ impl SubCellScrollbar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::SubCellScrollbar;
+    /// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::SubCellScrollbar;
     ///
     /// let area = Rect::from_size(TerminalWidth::new(2), TerminalHeight::new(6));
     /// let mut buf = Buffer::empty(area);

@@ -24,7 +24,7 @@ use crate::widgets::panel::TabPanel;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::SectionRole;
+/// use dashboard_tui::dashboard::SectionRole;
 ///
 /// assert_eq!(SectionRole::Display, SectionRole::Display);
 /// ```
@@ -41,7 +41,7 @@ pub enum SectionRole {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::SectionFocusStyle;
+/// use dashboard_tui::dashboard::SectionFocusStyle;
 ///
 /// assert_eq!(SectionFocusStyle::default(), SectionFocusStyle::Full);
 /// ```
@@ -59,7 +59,7 @@ pub enum SectionFocusStyle {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::dashboard::SectionVisibility;
+/// use dashboard_tui::dashboard::SectionVisibility;
 ///
 /// assert_eq!(SectionVisibility::default(), SectionVisibility::Always);
 /// ```
@@ -126,8 +126,8 @@ pub type ActionFn<B> = Box<dyn FnMut(&mut ModalContext<'_, B>) -> OptionOutcome<
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
 ///
 /// struct MyBackend;
 /// impl DashboardBackend for MyBackend {
@@ -170,8 +170,8 @@ impl<B: DashboardBackend> OptionSpec<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -207,8 +207,8 @@ impl<B: DashboardBackend> OptionSpec<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, KeyPress, OptionOutcome, OptionSpec};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, KeyPress, OptionOutcome, OptionSpec};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -240,8 +240,8 @@ impl<B: DashboardBackend> OptionSpec<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -271,8 +271,8 @@ impl<B: DashboardBackend> OptionSpec<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -298,8 +298,8 @@ impl<B: DashboardBackend> OptionSpec<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -325,8 +325,8 @@ impl<B: DashboardBackend> OptionSpec<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -349,8 +349,8 @@ impl<B: DashboardBackend> OptionSpec<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, OptionOutcome, OptionSpec};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -531,8 +531,8 @@ impl<B: DashboardBackend> Section<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, Section};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, Section};
     ///
     /// struct App;
     /// impl DashboardBackend for App {
@@ -556,8 +556,8 @@ impl<B: DashboardBackend> Section<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::{DashboardBackend, Section};
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::{DashboardBackend, Section};
     ///
     /// struct App;
     /// impl DashboardBackend for App {

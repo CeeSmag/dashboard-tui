@@ -18,7 +18,7 @@ use crate::error::TuiError;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::backend::{Backend, CrosstermBackend};
+/// use dashboard_tui::backend::{Backend, CrosstermBackend};
 ///
 /// let backend = CrosstermBackend::with_writer(Vec::<u8>::new());
 /// let (w, h) = backend.dimensions();
@@ -38,7 +38,7 @@ impl<W: Write> CrosstermBackend<W> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::CrosstermBackend;
+    /// use dashboard_tui::backend::CrosstermBackend;
     ///
     /// let backend = CrosstermBackend::with_writer(Vec::<u8>::new());
     /// assert!(backend.writer().is_empty());
@@ -54,7 +54,7 @@ impl<W: Write> CrosstermBackend<W> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::{Backend, CrosstermBackend, TerminalCapabilities};
+    /// use dashboard_tui::backend::{Backend, CrosstermBackend, TerminalCapabilities};
     ///
     /// let backend = CrosstermBackend::with_capabilities(Vec::<u8>::new(), TerminalCapabilities::default());
     /// assert_eq!(backend.capabilities(), TerminalCapabilities::default());
@@ -78,7 +78,7 @@ impl<W: Write> CrosstermBackend<W> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::CrosstermBackend;
+    /// use dashboard_tui::backend::CrosstermBackend;
     /// let b = CrosstermBackend::with_writer(Vec::<u8>::new());
     /// assert!(b.writer().is_empty());
     /// ```
@@ -92,7 +92,7 @@ impl<W: Write> CrosstermBackend<W> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::backend::CrosstermBackend;
+    /// use dashboard_tui::backend::CrosstermBackend;
     /// let b = CrosstermBackend::with_writer(Vec::<u8>::new());
     /// let out = b.into_writer();
     /// assert!(out.is_empty());

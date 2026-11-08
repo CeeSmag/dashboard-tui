@@ -17,8 +17,8 @@ use crate::core::style::Style;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::SliderBar;
-/// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::components::SliderBar;
+/// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
 ///
 /// let area = Rect::from_size(TerminalWidth::new(50), TerminalHeight::new(1));
 /// let mut buf = Buffer::empty(area);
@@ -40,7 +40,7 @@ impl SliderBar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SliderBar;
+    /// use dashboard_tui::components::SliderBar;
     ///
     /// let slider = SliderBar::new(4, 0, 10);
     /// assert_eq!(slider.value(), 4);
@@ -70,7 +70,7 @@ impl SliderBar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SliderBar;
+    /// use dashboard_tui::components::SliderBar;
     ///
     /// let slider = SliderBar::new(1, 0, 6).with_tty_mode(true);
     /// assert!(slider.is_tty_mode());
@@ -87,7 +87,7 @@ impl SliderBar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SliderBar;
+    /// use dashboard_tui::components::SliderBar;
     ///
     /// assert_eq!(SliderBar::new(99, 0, 6).value(), 6);
     /// ```
@@ -102,7 +102,7 @@ impl SliderBar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SliderBar;
+    /// use dashboard_tui::components::SliderBar;
     ///
     /// assert!(!SliderBar::new(1, 0, 6).is_tty_mode());
     /// ```
@@ -118,8 +118,8 @@ impl SliderBar {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::SliderBar;
-    /// use tui_rs::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::components::SliderBar;
+    /// use dashboard_tui::core::{Buffer, ColorPalette, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
     ///
     /// let area = Rect::from_size(TerminalWidth::new(40), TerminalHeight::new(1));
     /// let mut buf = Buffer::empty(area);

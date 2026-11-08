@@ -29,8 +29,8 @@ use crate::widgets::scrollbar::VerticalScrollState;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::Color;
-/// use tui_rs::widgets::MenuItem;
+/// use dashboard_tui::core::Color;
+/// use dashboard_tui::widgets::MenuItem;
 ///
 /// let item = MenuItem::new(1, "Mount Encrypted Vault")
 ///     .with_badge("MOUNTED")
@@ -54,7 +54,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// let item = MenuItem::new(2, "Start Background Sync");
     /// assert!(item.is_enabled());
@@ -77,7 +77,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// let item = MenuItem::new(1, "Docs").with_hyperlink("https://github.com");
     /// assert_eq!(item.hyperlink(), Some("https://github.com"));
@@ -101,7 +101,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// let item = MenuItem::new(1, "Theme").with_badge("Catppuccin");
     /// assert_eq!(item.badge(), "Catppuccin");
@@ -118,8 +118,8 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Color;
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::core::Color;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// let item = MenuItem::new(1, "Status").with_badge("OK").with_badge_color(Color::Green);
     /// assert_eq!(item.badge_color(), Some(Color::Green));
@@ -136,7 +136,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// let item = MenuItem::new(1, "Locked").with_enabled(false);
     /// assert!(!item.is_enabled());
@@ -153,7 +153,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// assert_eq!(MenuItem::new(7, "Logs").number(), 7);
     /// ```
@@ -168,7 +168,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// assert_eq!(MenuItem::new(7, "Logs").label(), "Logs");
     /// ```
@@ -183,7 +183,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// assert_eq!(MenuItem::new(1, "A").with_badge("ON").badge(), "ON");
     /// ```
@@ -198,7 +198,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// assert_eq!(MenuItem::new(1, "A").badge_color(), None);
     /// ```
@@ -213,7 +213,7 @@ impl<'a> MenuItem<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuItem;
+    /// use dashboard_tui::widgets::MenuItem;
     ///
     /// assert!(MenuItem::new(1, "A").is_enabled());
     /// ```
@@ -230,8 +230,8 @@ impl<'a> MenuItem<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
-/// use tui_rs::widgets::{MenuItem, MenuList};
+/// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::widgets::{MenuItem, MenuList};
 ///
 /// let items = [
 ///     MenuItem::new(1, "Mount Encrypted Vault").with_badge("MOUNTED"),
@@ -258,7 +258,7 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuList;
+    /// use dashboard_tui::widgets::MenuList;
     ///
     /// let list = MenuList::new(&[]);
     /// assert_eq!(list.option_gap(), 0);
@@ -279,7 +279,7 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuList;
+    /// use dashboard_tui::widgets::MenuList;
     ///
     /// let list = MenuList::new(&[]).with_cursor(Some(2));
     /// assert_eq!(list.cursor(), Some(2));
@@ -296,7 +296,7 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuList;
+    /// use dashboard_tui::widgets::MenuList;
     ///
     /// let list = MenuList::new(&[]).with_option_gap(2);
     /// assert_eq!(list.option_gap(), 2);
@@ -313,7 +313,7 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuList;
+    /// use dashboard_tui::widgets::MenuList;
     ///
     /// let list = MenuList::new(&[]).with_tty_mode(true);
     /// assert!(list.is_tty_mode());
@@ -330,7 +330,7 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuList;
+    /// use dashboard_tui::widgets::MenuList;
     ///
     /// assert_eq!(MenuList::new(&[]).cursor(), None);
     /// ```
@@ -345,7 +345,7 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuList;
+    /// use dashboard_tui::widgets::MenuList;
     ///
     /// assert_eq!(MenuList::new(&[]).option_gap(), 0);
     /// ```
@@ -360,7 +360,7 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::widgets::MenuList;
+    /// use dashboard_tui::widgets::MenuList;
     ///
     /// assert!(!MenuList::new(&[]).is_tty_mode());
     /// ```
@@ -375,8 +375,8 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Rect, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::MenuList;
+    /// use dashboard_tui::core::{Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::MenuList;
     ///
     /// let area = Rect::from_size(TerminalWidth::new(50), TerminalHeight::new(10));
     /// let inset = MenuList::new(&[]).with_option_gap(1).inset_area(area);
@@ -411,8 +411,8 @@ impl<'a> MenuList<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
-    /// use tui_rs::widgets::{MenuItem, MenuList};
+    /// use dashboard_tui::core::{Buffer, ColorPalette, Rect, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::widgets::{MenuItem, MenuList};
     ///
     /// let items = [MenuItem::new(1, "Configure Remote").with_badge("rclone")];
     /// let area = Rect::from_size(TerminalWidth::new(40), TerminalHeight::new(4));

@@ -16,7 +16,7 @@ const TTY_BLOCKS: [&str; 9] = [" ", ".", ".", ":", ":", "i", "i", "I", "#"];
 /// # Examples
 ///
 /// ```
-/// use tui_rs::widgets::Bar;
+/// use dashboard_tui::widgets::Bar;
 ///
 /// let bar = Bar::new("cpu", 70);
 /// assert_eq!(bar.value(), 70);
@@ -58,8 +58,8 @@ impl<'a> Bar<'a> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Buffer, Rect, Widget};
-/// use tui_rs::widgets::{Bar, BarChart};
+/// use dashboard_tui::core::{Buffer, Rect, Widget};
+/// use dashboard_tui::widgets::{Bar, BarChart};
 ///
 /// let area = Rect::from_xywh(0, 0, 9, 3);
 /// let mut buffer = Buffer::empty(area);

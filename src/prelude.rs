@@ -1,9 +1,9 @@
-//! Ergonomic prelude re-exporting the most commonly used types and traits in `tui-rs`.
+//! Ergonomic prelude re-exporting the most commonly used types and traits in `dashboard-tui`.
 //!
 //! # Examples
 //!
 //! ```
-//! use tui_rs::prelude::*;
+//! use dashboard_tui::prelude::*;
 //!
 //! let area = Rect::from_size(TerminalWidth::new(80), TerminalHeight::new(24));
 //! let buf = Buffer::empty(area);

@@ -23,7 +23,7 @@ const LABEL_COLUMNS: u16 = 9;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::universal::StatusValue;
+/// use dashboard_tui::universal::StatusValue;
 ///
 /// let value = StatusValue::Meter(42.0);
 /// assert_eq!(value, StatusValue::Meter(42.0));
@@ -55,9 +55,9 @@ pub type StatusDetailFn<B> = Box<dyn Fn(&B, &mut StackStr<32>)>;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::{StatusRow, StatusValue};
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::{StatusRow, StatusValue};
 ///
 /// struct App { cpu: f64 }
 /// impl DashboardBackend for App {
@@ -103,9 +103,9 @@ impl<B: DashboardBackend> StatusRow<B> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, PrioritySegment};
-    /// use tui_rs::dashboard::DashboardBackend;
-    /// use tui_rs::universal::StatusRow;
+    /// use dashboard_tui::core::{Color, PrioritySegment};
+    /// use dashboard_tui::dashboard::DashboardBackend;
+    /// use dashboard_tui::universal::StatusRow;
     ///
     /// struct App { cpu: f64 }
     /// impl DashboardBackend for App {
@@ -165,9 +165,9 @@ pub type PanelBadgeFn<B> = fn(&B) -> (&'static str, Option<Color>);
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::{DashboardBackend, Section};
-/// use tui_rs::universal::StatusPanel;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::{DashboardBackend, Section};
+/// use dashboard_tui::universal::StatusPanel;
 ///
 /// struct App { cpu: f64 }
 /// impl DashboardBackend for App {
@@ -417,9 +417,9 @@ pub type SeriesFn<B> = fn(&B) -> &[f64];
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::{DashboardBackend, Section};
-/// use tui_rs::universal::ThroughputPanel;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::{DashboardBackend, Section};
+/// use dashboard_tui::universal::ThroughputPanel;
 ///
 /// struct App { up: Vec<f64>, down: Vec<f64> }
 /// impl DashboardBackend for App {

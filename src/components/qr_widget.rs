@@ -19,7 +19,7 @@ use crate::dashboard::{DashboardBackend, SectionWidget};
 /// ```
 /// # #[cfg(feature = "qrcode")]
 /// # {
-/// use tui_rs::components::QrWidget;
+/// use dashboard_tui::components::QrWidget;
 ///
 /// let widget = QrWidget::from_text("MOBILE PAIRING", "https://vaultdrive.local/pair").unwrap();
 /// assert_eq!(widget.title_str(), "MOBILE PAIRING");
@@ -38,7 +38,7 @@ impl QrWidget {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{QrCodeMatrix, QrWidget};
+    /// use dashboard_tui::components::{QrCodeMatrix, QrWidget};
     ///
     /// let matrix = QrCodeMatrix::from_raw_modules(vec![true; 4], 2);
     /// let widget = QrWidget::new("STATUS", matrix);
@@ -64,7 +64,7 @@ impl QrWidget {
     /// ```
     /// # #[cfg(feature = "qrcode")]
     /// # {
-    /// use tui_rs::components::QrWidget;
+    /// use dashboard_tui::components::QrWidget;
     ///
     /// let widget = QrWidget::from_text("DOCS", "https://github.com").unwrap();
     /// assert_eq!(widget.title_str(), "DOCS");
@@ -84,7 +84,7 @@ impl QrWidget {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{QrCodeMatrix, QrWidget};
+    /// use dashboard_tui::components::{QrCodeMatrix, QrWidget};
     ///
     /// let matrix = QrCodeMatrix::from_raw_modules(vec![true; 4], 2);
     /// let widget = QrWidget::new("STATUS", matrix).with_subtitle("Scan to pair");
@@ -100,7 +100,7 @@ impl QrWidget {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{QrCodeMatrix, QrWidget};
+    /// use dashboard_tui::components::{QrCodeMatrix, QrWidget};
     ///
     /// let matrix = QrCodeMatrix::from_raw_modules(vec![true; 4], 2);
     /// let widget = QrWidget::new("PAIR", matrix);
@@ -116,7 +116,7 @@ impl QrWidget {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{QrCodeMatrix, QrWidget};
+    /// use dashboard_tui::components::{QrCodeMatrix, QrWidget};
     ///
     /// let matrix = QrCodeMatrix::from_raw_modules(vec![true; 4], 2);
     /// let widget = QrWidget::new("PAIR", matrix);

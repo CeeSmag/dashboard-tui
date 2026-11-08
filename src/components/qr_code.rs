@@ -50,9 +50,9 @@ impl From<QrErrorCorrection> for qrcode::EcLevel {
 /// ```
 /// # #[cfg(feature = "qrcode")]
 /// # {
-/// use tui_rs::components::QrCodeMatrix;
+/// use dashboard_tui::components::QrCodeMatrix;
 ///
-/// let qr = QrCodeMatrix::from_text("https://github.com/vaultdrive/tui-rs").unwrap();
+/// let qr = QrCodeMatrix::from_text("https://github.com/CeeSmag/dashboard-tui").unwrap();
 /// assert!(qr.dimension() >= 21);
 /// assert!(qr.rendered_width() >= 25);
 /// # }
@@ -79,9 +79,9 @@ impl QrCodeMatrix {
     /// ```
     /// # #[cfg(feature = "qrcode")]
     /// # {
-    /// use tui_rs::components::QrCodeMatrix;
+    /// use dashboard_tui::components::QrCodeMatrix;
     ///
-    /// let qr = QrCodeMatrix::from_text("https://github.com/vaultdrive/tui-rs").unwrap();
+    /// let qr = QrCodeMatrix::from_text("https://github.com/CeeSmag/dashboard-tui").unwrap();
     /// assert!(qr.dimension() > 0);
     /// # }
     /// ```
@@ -101,7 +101,7 @@ impl QrCodeMatrix {
     /// ```
     /// # #[cfg(feature = "qrcode")]
     /// # {
-    /// use tui_rs::components::{QrCodeMatrix, QrErrorCorrection};
+    /// use dashboard_tui::components::{QrCodeMatrix, QrErrorCorrection};
     ///
     /// let qr = QrCodeMatrix::from_text_with_ecc("https://github.com", QrErrorCorrection::High).unwrap();
     /// assert!(qr.dimension() >= 21);
@@ -126,7 +126,7 @@ impl QrCodeMatrix {
     /// ```
     /// # #[cfg(feature = "qrcode")]
     /// # {
-    /// use tui_rs::components::{QrCodeMatrix, QrErrorCorrection};
+    /// use dashboard_tui::components::{QrCodeMatrix, QrErrorCorrection};
     ///
     /// let qr = QrCodeMatrix::from_bytes(b"otpauth://totp/VaultDrive?secret=TEST", QrErrorCorrection::Quartile).unwrap();
     /// assert!(qr.dimension() > 0);
@@ -162,7 +162,7 @@ impl QrCodeMatrix {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::QrCodeMatrix;
+    /// use dashboard_tui::components::QrCodeMatrix;
     ///
     /// let matrix = QrCodeMatrix::from_raw_modules(vec![true, false, false, true], 2);
     /// assert_eq!(matrix.dimension(), 2);
@@ -183,7 +183,7 @@ impl QrCodeMatrix {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::QrCodeMatrix;
+    /// use dashboard_tui::components::QrCodeMatrix;
     ///
     /// let m = QrCodeMatrix::from_raw_modules(vec![true], 1).with_quiet_zone(1);
     /// assert_eq!(m.quiet_zone(), 1);
@@ -200,8 +200,8 @@ impl QrCodeMatrix {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::QrCodeMatrix;
-    /// use tui_rs::core::Color;
+    /// use dashboard_tui::components::QrCodeMatrix;
+    /// use dashboard_tui::core::Color;
     ///
     /// let m = QrCodeMatrix::from_raw_modules(vec![true], 1).with_colors(Color::Black, Color::White);
     /// assert_eq!(m.dimension(), 1);
@@ -261,7 +261,7 @@ impl QrCodeMatrix {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::QrCodeMatrix;
+    /// use dashboard_tui::components::QrCodeMatrix;
     ///
     /// let m = QrCodeMatrix::from_raw_modules(vec![true; 4], 2);
     /// assert_eq!(m.as_half_block().dimension(), 2);
@@ -278,8 +278,8 @@ impl QrCodeMatrix {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::QrCodeMatrix;
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::components::QrCodeMatrix;
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
     ///
     /// let mut buf = Buffer::empty(Rect::from_size(TerminalWidth::new(10), TerminalHeight::new(6)));
     /// let m = QrCodeMatrix::from_raw_modules(vec![true; 4], 2);
@@ -295,8 +295,8 @@ impl QrCodeMatrix {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::HalfBlockQr;
-/// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+/// use dashboard_tui::components::HalfBlockQr;
+/// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
 ///
 /// let modules = [
 ///     true,  false, true,
@@ -330,7 +330,7 @@ impl<'a> HalfBlockQr<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::HalfBlockQr;
+    /// use dashboard_tui::components::HalfBlockQr;
     ///
     /// let qr = HalfBlockQr::new(&[true, false, false, true], 2);
     /// assert_eq!(qr.dimension(), 2);
@@ -352,7 +352,7 @@ impl<'a> HalfBlockQr<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{HalfBlockQr, QrCodeMatrix};
+    /// use dashboard_tui::components::{HalfBlockQr, QrCodeMatrix};
     ///
     /// let matrix = QrCodeMatrix::from_raw_modules(vec![true; 9], 3);
     /// let qr = HalfBlockQr::from_matrix(&matrix);
@@ -374,7 +374,7 @@ impl<'a> HalfBlockQr<'a> {
     /// ```
     /// # #[cfg(feature = "qrcode")]
     /// # {
-    /// use tui_rs::components::HalfBlockQr;
+    /// use dashboard_tui::components::HalfBlockQr;
     ///
     /// let qr = HalfBlockQr::from_text("https://github.com").unwrap();
     /// assert!(qr.dimension() >= 21);
@@ -390,7 +390,7 @@ impl<'a> HalfBlockQr<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::HalfBlockQr;
+    /// use dashboard_tui::components::HalfBlockQr;
     ///
     /// let qr = HalfBlockQr::new(&[true], 1).with_quiet_zone(1);
     /// assert_eq!(qr.rendered_width(), 3);
@@ -407,8 +407,8 @@ impl<'a> HalfBlockQr<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::HalfBlockQr;
-    /// use tui_rs::core::Color;
+    /// use dashboard_tui::components::HalfBlockQr;
+    /// use dashboard_tui::core::Color;
     ///
     /// let qr = HalfBlockQr::new(&[true], 1).with_colors(Color::Black, Color::White);
     /// ```
@@ -425,7 +425,7 @@ impl<'a> HalfBlockQr<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::HalfBlockQr;
+    /// use dashboard_tui::components::HalfBlockQr;
     ///
     /// assert_eq!(HalfBlockQr::new(&[true; 9], 3).dimension(), 3);
     /// ```
@@ -440,7 +440,7 @@ impl<'a> HalfBlockQr<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::HalfBlockQr;
+    /// use dashboard_tui::components::HalfBlockQr;
     ///
     /// let qr = HalfBlockQr::new(&[true; 9], 3).with_quiet_zone(2);
     /// assert_eq!(qr.rendered_width(), 7);
@@ -459,7 +459,7 @@ impl<'a> HalfBlockQr<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::HalfBlockQr;
+    /// use dashboard_tui::components::HalfBlockQr;
     ///
     /// let qr = HalfBlockQr::new(&[true; 9], 3).with_quiet_zone(2);
     /// assert_eq!(qr.rendered_height(), 4);
@@ -493,8 +493,8 @@ impl<'a> HalfBlockQr<'a> {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::HalfBlockQr;
-    /// use tui_rs::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
+    /// use dashboard_tui::components::HalfBlockQr;
+    /// use dashboard_tui::core::{Buffer, ColumnIndex, Rect, RowIndex, TerminalHeight, TerminalWidth};
     ///
     /// let area = Rect::from_size(TerminalWidth::new(10), TerminalHeight::new(6));
     /// let mut buf = Buffer::empty(area);

@@ -36,7 +36,7 @@ macro_rules! background_colors {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, Span, Style, Stylize};
+/// use dashboard_tui::core::{Color, Span, Style, Stylize};
 ///
 /// let span: Span<'_> = "ERROR".red().bold();
 /// assert_eq!(span.style(), Style::new().fg(Color::Red).bold());

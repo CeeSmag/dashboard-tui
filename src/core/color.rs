@@ -10,7 +10,7 @@ use crate::error::TuiError;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, ColorDepth};
+/// use dashboard_tui::core::{Color, ColorDepth};
 ///
 /// let rgb = Color::Rgb(56, 189, 248);
 /// assert_eq!(rgb.degrade(ColorDepth::NoColor), Color::Reset);
@@ -34,7 +34,7 @@ pub enum ColorDepth {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::Color;
+/// use dashboard_tui::core::Color;
 ///
 /// let cyan = Color::from_hex("#38BDF8").unwrap();
 /// assert_eq!(cyan, Color::Rgb(56, 189, 248));
@@ -94,7 +94,7 @@ impl Color {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Color;
+    /// use dashboard_tui::core::Color;
     ///
     /// assert_eq!(Color::from_hex("#00B4D8").unwrap(), Color::Rgb(0, 180, 216));
     /// assert_eq!(Color::from_hex("14").unwrap(), Color::LightCyan);
@@ -127,7 +127,7 @@ impl Color {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::Color;
+    /// use dashboard_tui::core::Color;
     ///
     /// assert_eq!(Color::from_ansi_index(10), Color::LightGreen);
     /// assert_eq!(Color::from_ansi_index(200), Color::Indexed(200));
@@ -163,7 +163,7 @@ impl Color {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::{Color, ColorDepth};
+    /// use dashboard_tui::core::{Color, ColorDepth};
     ///
     /// let teal = Color::Rgb(0, 180, 216);
     /// assert!(matches!(teal.degrade(ColorDepth::Ansi256), Color::Indexed(_)));

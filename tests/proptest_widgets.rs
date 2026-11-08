@@ -3,13 +3,15 @@
 //! Every widget must render into arbitrary (including degenerate, oversized, and partly
 //! off-buffer) areas with arbitrary data without panicking or overflowing.
 
-use proptest::prelude::*;
-use tui_rs::core::{Buffer, Constraint, Line, Rect, StatefulWidget, Style, TextAlignment, Widget};
-use tui_rs::widgets::{
+use dashboard_tui::core::{
+    Buffer, Constraint, Line, Rect, StatefulWidget, Style, TextAlignment, Widget,
+};
+use dashboard_tui::widgets::{
     Axis, Bar, BarChart, Calendar, Canvas, Chart, Clear, Dataset, Gauge, GraphType, LineGauge,
     List, ListState, Marker, Paragraph, Row, Shape, Sparkline, Table, TableState, Tabs, WeekStart,
     WrapMode,
 };
+use proptest::prelude::*;
 
 proptest! {
     #![proptest_config(ProptestConfig::with_cases(128))]

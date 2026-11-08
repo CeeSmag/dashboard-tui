@@ -30,8 +30,8 @@ const CHOICES: [(&str, &str, TerminalBackground); 2] = [
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::TerminalBackground;
-/// use tui_rs::universal::TerminalBackgroundModal;
+/// use dashboard_tui::core::TerminalBackground;
+/// use dashboard_tui::universal::TerminalBackgroundModal;
 ///
 /// let modal = TerminalBackgroundModal::new(TerminalBackground::Theme);
 /// assert_eq!(modal.cursor(), 1);
@@ -141,9 +141,9 @@ impl<B: DashboardBackend> Modal<B> for TerminalBackgroundModal {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::terminal_background_option;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::terminal_background_option;
 ///
 /// struct App;
 /// impl DashboardBackend for App {

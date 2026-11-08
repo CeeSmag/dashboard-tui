@@ -16,7 +16,7 @@ use crate::core::coordinates::TerminalWidth;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{display_width, TerminalWidth};
+/// use dashboard_tui::core::{display_width, TerminalWidth};
 ///
 /// assert_eq!(display_width("VaultDrive"), TerminalWidth::new(10));
 /// assert_eq!(display_width("日本"), TerminalWidth::new(4));
@@ -38,7 +38,7 @@ pub fn display_width(text: &str) -> TerminalWidth {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::grapheme_width;
+/// use dashboard_tui::core::grapheme_width;
 ///
 /// assert_eq!(grapheme_width("a"), 1);
 /// assert_eq!(grapheme_width("界"), 2);
@@ -65,7 +65,7 @@ pub fn grapheme_width(grapheme: &str) -> u16 {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{clip_to_width, TerminalWidth};
+/// use dashboard_tui::core::{clip_to_width, TerminalWidth};
 ///
 /// assert_eq!(clip_to_width("Hello World", TerminalWidth(5)), "Hello");
 /// // Wide 2-column CJK characters will not split mid-character:
@@ -99,7 +99,7 @@ pub fn clip_to_width(text: &str, max_width: TerminalWidth) -> &str {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{clip_from_left, TerminalWidth};
+/// use dashboard_tui::core::{clip_from_left, TerminalWidth};
 ///
 /// assert_eq!(clip_from_left("Hello World", TerminalWidth(5)), "World");
 /// ```
@@ -131,7 +131,7 @@ pub fn clip_from_left(text: &str, max_width: TerminalWidth) -> &str {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{truncate_with_ellipsis_parts, TerminalWidth};
+/// use dashboard_tui::core::{truncate_with_ellipsis_parts, TerminalWidth};
 ///
 /// let (prefix, ellipsis, width) = truncate_with_ellipsis_parts("VaultDrive Service", TerminalWidth(10));
 /// assert_eq!(prefix, "VaultDriv");
@@ -166,7 +166,7 @@ pub fn truncate_with_ellipsis_parts(
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{wrap_lines_iter, TerminalWidth};
+/// use dashboard_tui::core::{wrap_lines_iter, TerminalWidth};
 ///
 /// let lines: Vec<&str> = wrap_lines_iter("Mount virtual drive now", TerminalWidth(12)).collect();
 /// assert_eq!(lines, vec!["Mount", "virtual", "drive now"]);

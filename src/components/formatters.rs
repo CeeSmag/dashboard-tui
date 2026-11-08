@@ -16,7 +16,7 @@ const SPINNER_FRAMES: [&str; 10] = ["⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "�
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::spinner_frame;
+/// use dashboard_tui::components::spinner_frame;
 ///
 /// assert_eq!(spinner_frame(0), "⠋");
 /// assert_eq!(spinner_frame(10), "⠋");
@@ -33,7 +33,7 @@ pub const fn spinner_frame(tick: usize) -> &'static str {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::format_bytes;
+/// use dashboard_tui::components::format_bytes;
 ///
 /// assert_eq!(format_bytes(0).as_str(), "0 B");
 /// assert_eq!(format_bytes(512).as_str(), "512 B");
@@ -71,7 +71,7 @@ pub fn format_bytes(bytes: u64) -> StackStr<32> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::format_rate;
+/// use dashboard_tui::components::format_rate;
 ///
 /// assert_eq!(format_rate(0.0).as_str(), "0 B/s");
 /// assert_eq!(format_rate(1024.0 * 500.0).as_str(), "500 KB/s");
@@ -108,7 +108,7 @@ pub fn format_rate(bytes_per_sec: f64) -> StackStr<32> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::format_rate_short;
+/// use dashboard_tui::components::format_rate_short;
 ///
 /// assert_eq!(format_rate_short(256.0 * 1024.0).as_str(), "≤256K");
 /// assert_eq!(format_rate_short(10.0 * 1024.0 * 1024.0).as_str(), "≤10M");

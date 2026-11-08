@@ -18,16 +18,16 @@
 use std::io::Write;
 use std::time::Duration;
 
-use tui_rs::backend::{Backend, TestBackend};
-use tui_rs::core::{
+use dashboard_tui::backend::{Backend, TestBackend};
+use dashboard_tui::core::{
     Buffer, Color, PrioritySegment, Rect, Style, TerminalHeight, TerminalWidth, diff_buffers,
 };
-use tui_rs::dashboard::{
+use dashboard_tui::dashboard::{
     AddonRegistry, DashboardBackend, DashboardEngine, KeyBindings, OptionOutcome, OptionSpec,
     PageSubView, Section, SectionLayoutMode,
 };
-use tui_rs::prelude::{LogBuffer, LogViewSubView, RateHistory, SettingsModal};
-use tui_rs::universal::{ConfirmModal, StatusPanel, ThroughputPanel};
+use dashboard_tui::prelude::{LogBuffer, LogViewSubView, RateHistory, SettingsModal};
+use dashboard_tui::universal::{ConfirmModal, StatusPanel, ThroughputPanel};
 
 /// The only application-specific part: plain data the dashboard reads.
 struct WebServer {
@@ -223,7 +223,7 @@ fn build_engine() -> DashboardEngine<WebServer> {
         .build_engine(WebServer::new())
 }
 
-fn run_headless_check() -> Result<(), tui_rs::error::TuiError> {
+fn run_headless_check() -> Result<(), dashboard_tui::error::TuiError> {
     let mut engine = build_engine();
     for _ in 0..30 {
         engine.tick();
@@ -239,7 +239,7 @@ fn run_headless_check() -> Result<(), tui_rs::error::TuiError> {
     Ok(())
 }
 
-fn main() -> Result<(), tui_rs::error::TuiError> {
+fn main() -> Result<(), dashboard_tui::error::TuiError> {
     if std::env::args().any(|arg| arg == "--headless-check") {
         return run_headless_check();
     }

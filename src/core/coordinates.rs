@@ -10,7 +10,7 @@ use core::fmt;
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::ColumnIndex;
+/// use dashboard_tui::core::ColumnIndex;
 ///
 /// let col = ColumnIndex::new(5).saturating_add(10);
 /// assert_eq!(col.as_u16(), 15);
@@ -28,7 +28,7 @@ impl ColumnIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::ColumnIndex;
+    /// use dashboard_tui::core::ColumnIndex;
     ///
     /// let col = ColumnIndex::new(42);
     /// assert_eq!(col.as_u16(), 42);
@@ -43,7 +43,7 @@ impl ColumnIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::ColumnIndex;
+    /// use dashboard_tui::core::ColumnIndex;
     ///
     /// assert_eq!(ColumnIndex::new(7).as_u16(), 7);
     /// ```
@@ -64,7 +64,7 @@ impl ColumnIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::ColumnIndex;
+    /// use dashboard_tui::core::ColumnIndex;
     ///
     /// assert_eq!(ColumnIndex::new(7).as_usize(), 7usize);
     /// ```
@@ -78,7 +78,7 @@ impl ColumnIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::ColumnIndex;
+    /// use dashboard_tui::core::ColumnIndex;
     ///
     /// assert_eq!(ColumnIndex::new(u16::MAX).saturating_add(5), ColumnIndex::new(u16::MAX));
     /// ```
@@ -92,7 +92,7 @@ impl ColumnIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::ColumnIndex;
+    /// use dashboard_tui::core::ColumnIndex;
     ///
     /// assert_eq!(ColumnIndex::new(2).saturating_sub(10), ColumnIndex::ZERO);
     /// ```
@@ -119,7 +119,7 @@ impl From<u16> for ColumnIndex {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::RowIndex;
+/// use dashboard_tui::core::RowIndex;
 ///
 /// let row = RowIndex::new(3).saturating_add(4);
 /// assert_eq!(row.as_u16(), 7);
@@ -137,7 +137,7 @@ impl RowIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::RowIndex;
+    /// use dashboard_tui::core::RowIndex;
     ///
     /// assert_eq!(RowIndex::new(12).as_u16(), 12);
     /// ```
@@ -151,7 +151,7 @@ impl RowIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::RowIndex;
+    /// use dashboard_tui::core::RowIndex;
     ///
     /// assert_eq!(RowIndex::new(4).as_u16(), 4);
     /// ```
@@ -172,7 +172,7 @@ impl RowIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::RowIndex;
+    /// use dashboard_tui::core::RowIndex;
     ///
     /// assert_eq!(RowIndex::new(4).as_usize(), 4usize);
     /// ```
@@ -186,7 +186,7 @@ impl RowIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::RowIndex;
+    /// use dashboard_tui::core::RowIndex;
     ///
     /// assert_eq!(RowIndex::new(5).saturating_add(3), RowIndex::new(8));
     /// ```
@@ -200,7 +200,7 @@ impl RowIndex {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::RowIndex;
+    /// use dashboard_tui::core::RowIndex;
     ///
     /// assert_eq!(RowIndex::new(5).saturating_sub(9), RowIndex::ZERO);
     /// ```
@@ -227,7 +227,7 @@ impl From<u16> for RowIndex {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::TerminalWidth;
+/// use dashboard_tui::core::TerminalWidth;
 ///
 /// let width = TerminalWidth::new(80);
 /// assert!(!width.is_zero());
@@ -246,7 +246,7 @@ impl TerminalWidth {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalWidth;
+    /// use dashboard_tui::core::TerminalWidth;
     ///
     /// assert_eq!(TerminalWidth::new(120).as_u16(), 120);
     /// ```
@@ -260,7 +260,7 @@ impl TerminalWidth {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalWidth;
+    /// use dashboard_tui::core::TerminalWidth;
     ///
     /// assert!(TerminalWidth::ZERO.is_zero());
     /// assert!(!TerminalWidth::new(1).is_zero());
@@ -275,7 +275,7 @@ impl TerminalWidth {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalWidth;
+    /// use dashboard_tui::core::TerminalWidth;
     ///
     /// assert_eq!(TerminalWidth::new(40).as_u16(), 40);
     /// ```
@@ -296,7 +296,7 @@ impl TerminalWidth {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalWidth;
+    /// use dashboard_tui::core::TerminalWidth;
     ///
     /// assert_eq!(TerminalWidth::new(40).as_usize(), 40usize);
     /// ```
@@ -310,7 +310,7 @@ impl TerminalWidth {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalWidth;
+    /// use dashboard_tui::core::TerminalWidth;
     ///
     /// assert_eq!(TerminalWidth::new(10).saturating_add(5).as_u16(), 15);
     /// ```
@@ -324,7 +324,7 @@ impl TerminalWidth {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalWidth;
+    /// use dashboard_tui::core::TerminalWidth;
     ///
     /// assert_eq!(TerminalWidth::new(1).saturating_sub(4), TerminalWidth::ZERO);
     /// ```
@@ -351,7 +351,7 @@ impl From<u16> for TerminalWidth {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::TerminalHeight;
+/// use dashboard_tui::core::TerminalHeight;
 ///
 /// let height = TerminalHeight::new(24);
 /// assert!(!height.is_zero());
@@ -370,7 +370,7 @@ impl TerminalHeight {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalHeight;
+    /// use dashboard_tui::core::TerminalHeight;
     ///
     /// assert_eq!(TerminalHeight::new(30).as_u16(), 30);
     /// ```
@@ -384,7 +384,7 @@ impl TerminalHeight {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalHeight;
+    /// use dashboard_tui::core::TerminalHeight;
     ///
     /// assert!(TerminalHeight::ZERO.is_zero());
     /// ```
@@ -398,7 +398,7 @@ impl TerminalHeight {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalHeight;
+    /// use dashboard_tui::core::TerminalHeight;
     ///
     /// assert_eq!(TerminalHeight::new(24).as_u16(), 24);
     /// ```
@@ -419,7 +419,7 @@ impl TerminalHeight {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalHeight;
+    /// use dashboard_tui::core::TerminalHeight;
     ///
     /// assert_eq!(TerminalHeight::new(24).as_usize(), 24usize);
     /// ```
@@ -433,7 +433,7 @@ impl TerminalHeight {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalHeight;
+    /// use dashboard_tui::core::TerminalHeight;
     ///
     /// assert_eq!(TerminalHeight::new(10).saturating_add(2).as_u16(), 12);
     /// ```
@@ -447,7 +447,7 @@ impl TerminalHeight {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::core::TerminalHeight;
+    /// use dashboard_tui::core::TerminalHeight;
     ///
     /// assert_eq!(TerminalHeight::new(2).saturating_sub(5), TerminalHeight::ZERO);
     /// ```

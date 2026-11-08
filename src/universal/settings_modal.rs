@@ -41,9 +41,9 @@ enum SettingKind {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::SettingField;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::SettingField;
 ///
 /// struct App { workers: i32, hw_accel: bool }
 /// impl DashboardBackend for App {
@@ -180,9 +180,9 @@ impl<B: DashboardBackend> SettingField<B> {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::SettingsModal;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::SettingsModal;
 ///
 /// struct App { workers: i32, quality: usize }
 /// impl DashboardBackend for App {

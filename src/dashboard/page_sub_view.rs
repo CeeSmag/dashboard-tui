@@ -28,8 +28,8 @@ use crate::dashboard::sub_view::{SubView, SubViewAction, SubViewResult};
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::{
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::{
 ///     DashboardBackend, OptionOutcome, OptionSpec, PageSubView, Section,
 /// };
 ///

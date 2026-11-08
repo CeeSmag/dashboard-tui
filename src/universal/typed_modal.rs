@@ -19,9 +19,9 @@ use crate::widgets::text_input::{TextInput, TextInputState};
 /// # Examples
 ///
 /// ```
-/// use tui_rs::core::{Color, PrioritySegment};
-/// use tui_rs::dashboard::DashboardBackend;
-/// use tui_rs::universal::TypedModal;
+/// use dashboard_tui::core::{Color, PrioritySegment};
+/// use dashboard_tui::dashboard::DashboardBackend;
+/// use dashboard_tui::universal::TypedModal;
 ///
 /// struct App;
 /// impl DashboardBackend for App {

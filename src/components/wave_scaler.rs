@@ -18,7 +18,7 @@ use std::time::{Duration, Instant};
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::WaveScalerConfig;
+/// use dashboard_tui::components::WaveScalerConfig;
 ///
 /// let config = WaveScalerConfig::new(256.0 * 1024.0);
 /// assert_eq!(config.min_scale(), 262_144.0);
@@ -50,7 +50,7 @@ impl WaveScalerConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScalerConfig;
+    /// use dashboard_tui::components::WaveScalerConfig;
     ///
     /// let cfg = WaveScalerConfig::new(1024.0);
     /// assert_eq!(cfg.min_scale(), 1024.0);
@@ -75,7 +75,7 @@ impl WaveScalerConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScalerConfig;
+    /// use dashboard_tui::components::WaveScalerConfig;
     ///
     /// let cfg = WaveScalerConfig::new(1024.0).with_headroom(1.25);
     /// assert_eq!(cfg.headroom(), 1.25);
@@ -94,7 +94,7 @@ impl WaveScalerConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScalerConfig;
+    /// use dashboard_tui::components::WaveScalerConfig;
     ///
     /// let cfg = WaveScalerConfig::new(1024.0).with_down_ratio(0.15);
     /// assert_eq!(cfg.down_ratio(), 0.15);
@@ -113,7 +113,7 @@ impl WaveScalerConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScalerConfig;
+    /// use dashboard_tui::components::WaveScalerConfig;
     ///
     /// let cfg = WaveScalerConfig::new(1024.0).with_down_limit(8);
     /// assert_eq!(cfg.down_limit(), 8);
@@ -132,7 +132,7 @@ impl WaveScalerConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScalerConfig;
+    /// use dashboard_tui::components::WaveScalerConfig;
     ///
     /// assert_eq!(WaveScalerConfig::new(500.0).min_scale(), 500.0);
     /// ```
@@ -147,7 +147,7 @@ impl WaveScalerConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScalerConfig;
+    /// use dashboard_tui::components::WaveScalerConfig;
     ///
     /// assert_eq!(WaveScalerConfig::default().headroom(), 1.30);
     /// ```
@@ -162,7 +162,7 @@ impl WaveScalerConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScalerConfig;
+    /// use dashboard_tui::components::WaveScalerConfig;
     ///
     /// assert_eq!(WaveScalerConfig::default().down_ratio(), 0.10);
     /// ```
@@ -177,7 +177,7 @@ impl WaveScalerConfig {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScalerConfig;
+    /// use dashboard_tui::components::WaveScalerConfig;
     ///
     /// assert_eq!(WaveScalerConfig::default().down_limit(), 5);
     /// ```
@@ -193,7 +193,7 @@ impl WaveScalerConfig {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::{WaveScaler, WaveScalerConfig};
+/// use dashboard_tui::components::{WaveScaler, WaveScalerConfig};
 ///
 /// let mut scaler = WaveScaler::new(WaveScalerConfig::new(1000.0));
 /// let scale = scaler.update(&[500.0, 2000.0, 1500.0]);
@@ -220,7 +220,7 @@ impl WaveScaler {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{WaveScaler, WaveScalerConfig};
+    /// use dashboard_tui::components::{WaveScaler, WaveScalerConfig};
     ///
     /// let scaler = WaveScaler::new(WaveScalerConfig::new(1024.0));
     /// assert_eq!(scaler.current_scale(), 1024.0);
@@ -241,7 +241,7 @@ impl WaveScaler {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::WaveScaler;
+    /// use dashboard_tui::components::WaveScaler;
     ///
     /// let scaler = WaveScaler::default();
     /// assert!(scaler.current_scale() > 0.0);
@@ -257,7 +257,7 @@ impl WaveScaler {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{WaveScaler, WaveScalerConfig};
+    /// use dashboard_tui::components::{WaveScaler, WaveScalerConfig};
     ///
     /// let mut scaler = WaveScaler::new(WaveScalerConfig::new(1000.0));
     /// let _ = scaler.update(&[50_000.0]);
@@ -276,7 +276,7 @@ impl WaveScaler {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{WaveScaler, WaveScalerConfig};
+    /// use dashboard_tui::components::{WaveScaler, WaveScalerConfig};
     ///
     /// let mut scaler = WaveScaler::new(WaveScalerConfig::new(100.0));
     /// let ceiling = scaler.update(&[10.0, 500.0, 200.0]);
@@ -309,7 +309,7 @@ impl WaveScaler {
     /// # Examples
     ///
     /// ```
-    /// use tui_rs::components::{WaveScaler, WaveScalerConfig};
+    /// use dashboard_tui::components::{WaveScaler, WaveScalerConfig};
     ///
     /// let mut scaler = WaveScaler::new(WaveScalerConfig::new(100.0));
     /// let ceiling = scaler.update_sync(&[200.0], &[800.0]);
@@ -390,7 +390,7 @@ impl WaveScaler {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::round_scale;
+/// use dashboard_tui::components::round_scale;
 ///
 /// assert_eq!(round_scale(100.0, 500.0), 500.0);
 /// assert!(round_scale(1234.0, 100.0) >= 1234.0);
@@ -418,7 +418,7 @@ pub fn round_scale(val: f64, floor: f64) -> f64 {
 /// # Examples
 ///
 /// ```
-/// use tui_rs::components::nice_ceil;
+/// use dashboard_tui::components::nice_ceil;
 ///
 /// assert_eq!(nice_ceil(150.0, 100.0), 200.0);
 /// assert_eq!(nice_ceil(350.0, 100.0), 500.0);
