@@ -3,6 +3,17 @@
 All notable changes to `dashboard-tui` are recorded here. Versions follow [SemVer](https://semver.org);
 the entry for a version is written in the same commit that raises it (`RULES.md` §8).
 
+## [0.4.2] - 2026-11-08
+
+### Changed
+- Internal: `dashboard::key_router` is split into `events`, `key_code`, `key_press` and
+  `bindings` submodules (public paths unchanged).
+
+### Fixed
+- `vaultdrive_dashboard` example and `AI_GUIDE.md` fed `WaveScaler` only the newest sample; they now
+  call `update_sync` with the whole visible window of both series, so the ceiling no longer decays
+  while old peaks are still on screen.
+
 ## [0.4.1] - 2026-11-08
 
 ### Added

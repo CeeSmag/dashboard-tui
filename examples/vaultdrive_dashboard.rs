@@ -89,7 +89,7 @@ impl Default for VaultDriveMockBackend {
             down.push(d);
         }
         let mut scaler = WaveScaler::new(WaveScalerConfig::new(65_536.0));
-        let _ = scaler.update(&down);
+        let _ = scaler.update_sync(&up, &down);
         Self {
             mounted: true,
             syncing: false,
@@ -157,8 +157,9 @@ impl DashboardBackend for VaultDriveMockBackend {
         }
         self.up_samples.push(next_up);
         self.down_samples.push(next_down);
-        let peak = next_up.max(next_down);
-        let _ = self.scaler.update(&[peak]);
+        // The scaler must see the whole visible window of BOTH series (shared ceiling), not just
+        // the newest sample, or the ceiling decays while old peaks are still on screen.
+        let _ = self.scaler.update_sync(&self.up_samples, &self.down_samples);
     }
 }
 
@@ -371,7 +372,10 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
             // Developers can configure any ctrl+[key] to their liking (e.g. "ctrl+q", "^q", "ctrl-x", "ctrl+w")
             .quit("ctrl+q")
             .confirm_quit(true) // warning popup: Enter confirms, q cancels
-            .quit_popup("Quit VaultDrive", "Active transfers will be stopped. Quit anyway?")
+            .quit_popup(
+                "Quit VaultDrive",
+                "Active transfers will be stopped. Quit anyway?",
+            )
             .page_cycle("Shift+Tab", "Tab")
             .section_cycle("Right", "Left")
             .up_down("Up", "Down")

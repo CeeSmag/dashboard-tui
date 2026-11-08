@@ -231,9 +231,8 @@ impl DashboardBackend for VaultDriveApp {
     /// Called automatically on every frame tick (e.g. every 250ms).
     fn on_tick(&mut self) {
         // Push latest upload/download throughput samples and update WaveScaler:
-        let peak = self.up_samples.last().copied().unwrap_or(0.0)
-            .max(self.down_samples.last().copied().unwrap_or(0.0));
-        let _ = self.scaler.update(&[peak]);
+        // Feed the whole visible window of BOTH series (shared ceiling), never just the newest sample:
+        let _ = self.scaler.update_sync(&self.up_samples, &self.down_samples);
     }
 
     /// Optional: persist theme/spacing changes when the user presses Enter in [19] or [20].
