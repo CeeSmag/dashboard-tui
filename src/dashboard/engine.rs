@@ -19,12 +19,14 @@ use crate::core::rect::{Rect, TerminalHeight};
 use crate::dashboard::backend_trait::DashboardBackend;
 use crate::dashboard::chrome::{render_footer_bar, render_header_bar};
 use crate::dashboard::key_router::{EngineAction, IntoKeyPress, KeyBindings, KeyCode, KeyPress};
-use crate::dashboard::modal::{Modal, ModalContext, ModalResult, splice_modal_overlay};
+use crate::dashboard::modal::{
+    Modal, ModalContext, ModalResult, splice_modal_overlay_with_backend,
+};
 use crate::dashboard::navigation::{DigitDispatch, PrefixJumpState};
 use crate::dashboard::page::Page;
 use crate::dashboard::section::{ActionFn, OptionOutcome, Section, SectionRole};
 use crate::dashboard::spacing::SpacingConfig;
-use crate::dashboard::sub_view::{SubView, SubViewResult};
+use crate::dashboard::sub_view::{SubView, SubViewAction, SubViewResult};
 use crate::universal::ConfirmModal;
 
 /// Duration (`2.5s`) a footer *hint* flash stays visible (a nudge such as "no shortcut for x").
@@ -582,8 +584,9 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         }
 
         if let Some(modal) = &self.modal {
-            splice_modal_overlay(
+            splice_modal_overlay_with_backend(
                 modal.as_ref(),
+                &self.backend,
                 buffer,
                 body_area,
                 &self.palette,
@@ -649,6 +652,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                 palette: &mut self.palette,
                 theme_index: &mut self.theme_index,
                 tty_mode: self.tty_mode,
+                keys: &self.keys,
             };
             match modal.on_key(key, &mut ctx) {
                 ModalResult::Continue => {
@@ -670,17 +674,30 @@ impl<B: DashboardBackend> DashboardEngine<B> {
 
         // 2. Active SubView on top of stack owns keys next
         if let Some(mut sub_view) = self.sub_views.pop() {
-            match sub_view.on_key(&mut self.backend, key) {
-                SubViewResult::Continue => {
-                    if self.keys.matches_cancel(key) {
-                        // SubView dismissed via global cancel ('q' / Esc)
-                    } else {
+            let action = {
+                let mut ctx = ModalContext {
+                    backend: &mut self.backend,
+                    spacing: &mut self.spacing,
+                    palette: &mut self.palette,
+                    theme_index: &mut self.theme_index,
+                    tty_mode: self.tty_mode,
+                    keys: &self.keys,
+                };
+                sub_view.on_key_with_context(key, &mut ctx)
+            };
+            match action {
+                SubViewAction::Result(SubViewResult::Continue) => {
+                    if !self.keys.matches_cancel(key) {
                         self.sub_views.push(sub_view);
                     }
                 }
-                SubViewResult::Pop => {}
-                SubViewResult::PopWithToast { message, is_error } => {
+                SubViewAction::Result(SubViewResult::Pop) => {}
+                SubViewAction::Result(SubViewResult::PopWithToast { message, is_error }) => {
                     self.show_toast(message, is_error);
+                }
+                SubViewAction::Outcome(outcome) => {
+                    self.sub_views.push(sub_view);
+                    return self.apply_option_outcome(outcome);
                 }
             }
             return EngineAction::Continue;
@@ -736,6 +753,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                     palette: &mut self.palette,
                     theme_index: &mut self.theme_index,
                     tty_mode: self.tty_mode,
+                    keys: &self.keys,
                 };
                 (self.key_actions[action_idx].1)(&mut ctx)
             };
@@ -899,6 +917,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                             palette: &mut self.palette,
                             theme_index: &mut self.theme_index,
                             tty_mode: self.tty_mode,
+                            keys: &self.keys,
                         };
                         opt.trigger(&mut ctx)
                     };
@@ -947,6 +966,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                 palette: &mut self.palette,
                 theme_index: &mut self.theme_index,
                 tty_mode: self.tty_mode,
+                keys: &self.keys,
             };
             sec.options_mut()[opt_idx].trigger(&mut ctx)
         };

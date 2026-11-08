@@ -956,7 +956,7 @@ fn log_viewer_lists_newest_first_scrolls_and_pops() -> Result<(), tui_rs::error:
 
 #[test]
 fn status_and_throughput_panels_render_live_backend_data() -> Result<(), tui_rs::error::TuiError> {
-    use tui_rs::universal::{StatusPanel, StatusRow, StatusValue, ThroughputPanel};
+    use tui_rs::universal::{StatusPanel, ThroughputPanel};
 
     let system = StatusPanel::<MockVaultBackend>::new("Vault System")
         .with_subtitle("vault.service")
@@ -967,18 +967,15 @@ fn status_and_throughput_panels_render_live_backend_data() -> Result<(), tui_rs:
                 ("● OFFLINE", Some(Color::Red))
             }
         })
-        .with_row(
-            StatusRow::new("CPU", |_| StatusValue::Meter(42.5)).with_detail(|_, out| {
+        .with_meter_detail(
+            "CPU",
+            |_| 42.5,
+            |_, out| {
                 let _ = core::fmt::Write::write_str(out, "(8 cores)");
-            }),
+            },
         )
-        .with_row(StatusRow::new("Daemon", |backend| {
-            StatusValue::Text(backend.remote_name.as_str())
-        }))
-        .with_row(StatusRow::new("Net", |_| StatusValue::Rates {
-            up_bytes_per_sec: 2048.0,
-            down_bytes_per_sec: 3.0 * 1024.0 * 1024.0,
-        }));
+        .with_text("Daemon", |backend| backend.remote_name.as_str())
+        .with_rates("Net", |_| (2048.0, 3.0 * 1024.0 * 1024.0));
     let traffic = ThroughputPanel::<MockVaultBackend>::dual(
         "Network Monitor",
         "Up",
@@ -1007,5 +1004,155 @@ fn status_and_throughput_panels_render_live_backend_data() -> Result<(), tui_rs:
     assert!(grid.contains("Up ") && grid.contains("Down "), "{grid}");
     // Latest sample is 64_000 B/s up, 128_000 B/s down => badge ACTIVE
     assert!(grid.contains("● ACTIVE"), "{grid}");
+    Ok(())
+}
+
+#[test]
+fn page_sub_view_runs_options_modals_and_goes_back() -> Result<(), tui_rs::error::TuiError> {
+    use tui_rs::dashboard::PageSubView;
+
+    let mut root_menu = Section::menu("Main", "", Vec::new()).with_heights(5, 8);
+    root_menu.push_option(OptionSpec::new(
+        1,
+        "Network",
+        move |_ctx: &mut ModalContext<'_, MockVaultBackend>| {
+            let mut lan = Section::menu("Network", "1-12 run", Vec::new()).with_heights(6, 8);
+            lan.push_option(OptionSpec::new(
+                1,
+                "Enable LAN",
+                |ctx: &mut ModalContext<'_, MockVaultBackend>| {
+                    ctx.backend.saved_count += 1;
+                    OptionOutcome::Toast {
+                        message: "LAN on".to_string(),
+                        is_error: false,
+                    }
+                },
+            ));
+            lan.push_option(
+                OptionSpec::new(
+                    12,
+                    "Danger",
+                    |_ctx: &mut ModalContext<'_, MockVaultBackend>| {
+                        OptionOutcome::OpenModal(Box::new(ConfirmModal::warning(
+                            "Sure?",
+                            "Really?",
+                            |_b: &mut MockVaultBackend| Ok(String::new()),
+                        )))
+                    },
+                )
+                .with_shortkey('d'),
+            );
+            OptionOutcome::PushSubView(Box::new(
+                PageSubView::new("Local Network").with_section(lan),
+            ))
+        },
+    ));
+    let mut page = Page::new("Main", "F1");
+    page.push_section(root_menu);
+    let mut engine = DashboardEngine::new(MockVaultBackend::default(), vec![page]);
+
+    // Open the sub-page from the root option
+    let _ = engine.handle_key(KeyPress::char('1'));
+    assert!(engine.has_sub_view());
+    let grid = render_engine_grid(&mut engine, 80, 16)?;
+    assert!(
+        grid.contains("Enable LAN") && grid.contains("Danger"),
+        "{grid}"
+    );
+
+    // `1` fires option 1 immediately? No: 12 also starts with 1 => waits; Enter commits.
+    let _ = engine.handle_key(KeyPress::char('1'));
+    assert_eq!(engine.backend().saved_count, 0);
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Enter));
+    assert_eq!(engine.backend().saved_count, 1);
+    assert_eq!(engine.flash_message(), Some("LAN on"));
+    assert!(engine.has_sub_view());
+
+    // Shortkey opens a modal over the sub-page; q cancels only the modal
+    let _ = engine.handle_key(KeyPress::char('d'));
+    assert!(engine.has_modal());
+    let _ = engine.handle_key(KeyPress::char('q'));
+    assert!(!engine.has_modal() && engine.has_sub_view());
+
+    // Typing 12 jumps straight to option 12
+    let _ = engine.handle_key(KeyPress::char('1'));
+    let _ = engine.handle_key(KeyPress::char('2'));
+    assert!(engine.has_modal());
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Esc));
+
+    // Esc goes back to the root page
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Esc));
+    assert!(!engine.has_sub_view());
+    Ok(())
+}
+
+fn settings_engine() -> DashboardEngine<MockVaultBackend> {
+    use tui_rs::universal::{SettingField, SettingsModal};
+
+    let mut menu = Section::menu("Settings", "", Vec::new()).with_heights(5, 8);
+    menu.push_option(OptionSpec::new(
+        1,
+        "Transfer Settings",
+        |_ctx: &mut ModalContext<'_, MockVaultBackend>| {
+            OptionOutcome::OpenModal(Box::new(
+                SettingsModal::new("Transfer Settings")
+                    .with_field(
+                        SettingField::number(
+                            "Workers",
+                            0,
+                            10,
+                            |b: &MockVaultBackend| i32::try_from(b.saved_count).unwrap_or(0),
+                            |b, v| b.saved_count = usize::try_from(v).unwrap_or(0),
+                        )
+                        .with_step(2),
+                    )
+                    .with_toggle("Mounted", |b| b.mounted, |b, on| b.mounted = on)
+                    .on_save(|_b| Ok("Settings saved".to_string())),
+            ))
+        },
+    ));
+    let mut page = Page::new("Main", "F1");
+    page.push_section(menu);
+    DashboardEngine::new(MockVaultBackend::default(), vec![page])
+}
+
+#[test]
+fn settings_modal_previews_live_reverts_on_cancel_and_saves() -> Result<(), tui_rs::error::TuiError>
+{
+    let mut engine = settings_engine();
+    let _ = engine.handle_key(KeyPress::char('1'));
+    assert!(engine.has_modal());
+    let grid = render_engine_grid(&mut engine, 90, 20)?;
+    assert!(
+        grid.contains("Transfer Settings") && grid.contains("Workers"),
+        "{grid}"
+    );
+    assert!(
+        grid.contains("0 / 10") && grid.contains("Mounted") && grid.contains("On"),
+        "{grid}"
+    );
+
+    // Right on the first field: number steps by 2 and previews immediately
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Right));
+    assert_eq!(engine.backend().saved_count, 2);
+    assert!(render_engine_grid(&mut engine, 90, 20)?.contains("2 / 10"));
+    // Down, Space toggles the second field
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Down));
+    let _ = engine.handle_key(KeyPress::char(' '));
+    assert!(!engine.backend().mounted);
+
+    // Esc restores both originals
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Esc));
+    assert!(!engine.has_modal());
+    assert_eq!(engine.backend().saved_count, 0);
+    assert!(engine.backend().mounted);
+
+    // Enter keeps the changes and toasts
+    let _ = engine.handle_key(KeyPress::char('1'));
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Right));
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Enter));
+    assert!(!engine.has_modal());
+    assert_eq!(engine.backend().saved_count, 2);
+    assert_eq!(engine.flash_message(), Some("Settings saved"));
     Ok(())
 }

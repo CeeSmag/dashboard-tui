@@ -119,6 +119,101 @@ impl LogEntry {
     }
 }
 
+/// Bounded in-memory log the host can write to and show with [`LogViewSubView`].
+///
+/// # Examples
+///
+/// ```
+/// use tui_rs::universal::{LogBuffer, LogLevel};
+///
+/// let mut log = LogBuffer::new(2);
+/// log.info("sync", "started");
+/// log.warn("sync", "slow");
+/// log.error("sync", "failed");
+/// assert_eq!(log.len(), 2);
+/// assert_eq!(log.as_slice()[1].level(), LogLevel::Error);
+/// ```
+#[derive(Debug, Clone, PartialEq, Eq, Default)]
+pub struct LogBuffer {
+    entries: Vec<LogEntry>,
+    capacity: usize,
+}
+
+impl LogBuffer {
+    /// Creates a log keeping at most `capacity` entries (minimum 1).
+    #[must_use]
+    pub fn new(capacity: usize) -> Self {
+        let capacity = capacity.max(1);
+        Self {
+            entries: Vec::with_capacity(capacity.min(1024)),
+            capacity,
+        }
+    }
+
+    /// Appends an entry, dropping the oldest one when full.
+    pub fn push(
+        &mut self,
+        level: LogLevel,
+        category: impl Into<String>,
+        message: impl Into<String>,
+    ) {
+        if self.capacity == 0 {
+            self.capacity = 1000;
+        }
+        if self.entries.len() >= self.capacity {
+            self.entries.remove(0);
+        }
+        self.entries.push(LogEntry::new(level, category, message));
+    }
+
+    /// Appends a [`LogLevel::Debug`] entry.
+    pub fn debug(&mut self, category: impl Into<String>, message: impl Into<String>) {
+        self.push(LogLevel::Debug, category, message);
+    }
+
+    /// Appends a [`LogLevel::Info`] entry.
+    pub fn info(&mut self, category: impl Into<String>, message: impl Into<String>) {
+        self.push(LogLevel::Info, category, message);
+    }
+
+    /// Appends a [`LogLevel::Warn`] entry.
+    pub fn warn(&mut self, category: impl Into<String>, message: impl Into<String>) {
+        self.push(LogLevel::Warn, category, message);
+    }
+
+    /// Appends a [`LogLevel::Error`] entry.
+    pub fn error(&mut self, category: impl Into<String>, message: impl Into<String>) {
+        self.push(LogLevel::Error, category, message);
+    }
+
+    /// Returns the entries, oldest first (the shape [`LogViewSubView`] expects).
+    #[must_use]
+    #[inline]
+    pub fn as_slice(&self) -> &[LogEntry] {
+        &self.entries
+    }
+
+    /// Returns the number of entries.
+    #[must_use]
+    #[inline]
+    pub fn len(&self) -> usize {
+        self.entries.len()
+    }
+
+    /// Returns `true` if the log is empty.
+    #[must_use]
+    #[inline]
+    pub fn is_empty(&self) -> bool {
+        self.entries.is_empty()
+    }
+
+    /// Returns how many entries have the given `level`.
+    #[must_use]
+    pub fn count_level(&self, level: LogLevel) -> usize {
+        self.entries.iter().filter(|e| e.level() == level).count()
+    }
+}
+
 /// Accessor returning the host's chronological (oldest first) log entries.
 pub type LogEntriesFn<B> = fn(&B) -> &[LogEntry];
 

@@ -129,6 +129,7 @@ Use this table to jump directly to the exact file in `src/` for any task without
         ├── edit_modal.rs              # EditModal<B> (text input modal with validation callback)
         ├── confirm_modal.rs           # ConfirmModal<B> (Yes/No confirmation modal)
         ├── typed_modal.rs             # TypedModal<B> (destructive action modal requiring exact phrase match)
+        ├── settings_modal.rs          # SettingsModal + SettingField (data-driven multi-field form, live preview, revert on cancel)
         ├── status_panels.rs           # StatusPanel (meter/text/rate rows) + ThroughputPanel (live braille waveform)
         ├── log_view.rs                # LogViewSubView + LogEntry/LogLevel (scrollable, newest-first log page)
         └── notice_modal.rs            # NoticeModal (multi-line informational alert modal)
@@ -706,6 +707,32 @@ page.push_section(Section::display(Box::new(system)).with_heights(8, 10));
 ```
 
 The host appends one sample per `DashboardBackend::on_tick` to its own `Vec<f64>`; the panels read the newest samples and pick a "nice" scale from the visible peak.
+
+#### Settings forms, drill-down pages, and helper types
+
+```rust
+// Multi-field form: edits preview live, Esc/q restores every value, Enter runs the save hook.
+OptionOutcome::OpenModal(Box::new(
+    SettingsModal::<App>::new("Server Settings")
+        .with_number("Workers", 1..=32, |a| a.workers, |a, v| a.workers = v)
+        .with_toggle("TLS", |a| a.tls, |a, on| a.tls = on)
+        .with_choice("Log level", ["Debug", "Info", "Warn"], |a| a.level, |a, i| a.level = i)
+        .on_save(|a| a.write_config().map(|()| "Saved".into()).map_err(|e| e.to_string())),
+))
+
+// Drill-down page made of ordinary sections/options (options may open modals or deeper pages):
+let mut net = Section::menu("Network", "1 run", Vec::new()).with_heights(5, 8);
+net.push_option(OptionSpec::new(1, "Show address", |_| OptionOutcome::Toast { message: "0.0.0.0:80".into(), is_error: false }));
+OptionOutcome::PushSubView(Box::new(PageSubView::new("Network").with_section(net)))
+
+// Helpers so the host keeps no ring-buffer code:
+RateHistory::new(120)   // .push(sample) each tick; .as_slice() feeds ThroughputPanel; .latest()
+LogBuffer::new(500)     // .info/.warn/.error(cat, msg); .as_slice() feeds LogViewSubView; .count_level(..)
+```
+
+- `Space` is a second default activate key (`KeyBindings::alt_activate(..)` / `without_alt_activate()`).
+- Custom `Modal`s can override `render_with_backend` to draw live backend values, and `SubView`s can override `on_key_with_context` to open modals or push deeper sub-views via `SubViewAction::Outcome(OptionOutcome)`. `ModalContext::keys` exposes the active `KeyBindings`.
+- A complete second dashboard for an unrelated app lives in `examples/webserver_dashboard.rs` (~120 lines of declarations); copy it as a starting point.
 
 - **`selectable` (`true` / `false`) Section Focus**: Cycle focus (`→ / ←`) **only** among sections on the current page that have `selectable = true` (configured via `.with_display_section(..., selectable)`, `.with_menu_section(..., selectable)`, or `Section::with_selectable(bool)`). Purely informative visual sections with `selectable = false` are never selected.
 - **`1`..`99` Numeric Direct Jump**:

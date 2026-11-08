@@ -45,10 +45,10 @@ pub enum StatusValue<'a> {
 }
 
 /// Accessor producing the current [`StatusValue`] of a row.
-pub type StatusValueFn<B> = for<'a> fn(&'a B) -> StatusValue<'a>;
+pub type StatusValueFn<B> = Box<dyn for<'a> Fn(&'a B) -> StatusValue<'a>>;
 
 /// Writes optional detail text (e.g. `"(16.0G)"`) shown after a meter's percentage.
-pub type StatusDetailFn<B> = fn(&B, &mut StackStr<32>);
+pub type StatusDetailFn<B> = Box<dyn Fn(&B, &mut StackStr<32>)>;
 
 /// One labelled row of a [`StatusPanel`].
 ///
@@ -87,18 +87,65 @@ impl<B: DashboardBackend> core::fmt::Debug for StatusRow<B> {
 impl<B: DashboardBackend> StatusRow<B> {
     /// Creates a row labelled `label` whose value is read through `value`.
     #[must_use]
-    pub fn new(label: impl Into<String>, value: StatusValueFn<B>) -> Self {
+    pub fn new<F>(label: impl Into<String>, value: F) -> Self
+    where
+        F: for<'a> Fn(&'a B) -> StatusValue<'a> + 'static,
+    {
         Self {
             label: label.into(),
-            value,
+            value: Box::new(value),
             detail: None,
         }
     }
 
+    /// A meter row filled to `percent(backend)` (`0.0..=100.0`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::DashboardBackend;
+    /// use tui_rs::universal::StatusRow;
+    ///
+    /// struct App { cpu: f64 }
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let _row = StatusRow::<App>::meter("CPU", |app| app.cpu);
+    /// ```
+    #[must_use]
+    pub fn meter(label: impl Into<String>, percent: impl Fn(&B) -> f64 + 'static) -> Self {
+        Self::new(label, move |backend| StatusValue::Meter(percent(backend)))
+    }
+
+    /// A plain text row showing a string borrowed from the backend.
+    #[must_use]
+    pub fn text<F>(label: impl Into<String>, text: F) -> Self
+    where
+        F: for<'a> Fn(&'a B) -> &'a str + 'static,
+    {
+        Self::new(label, move |backend| StatusValue::Text(text(backend)))
+    }
+
+    /// An up/down rate row; `rates` returns `(upload, download)` in bytes per second.
+    #[must_use]
+    pub fn rates(label: impl Into<String>, rates: impl Fn(&B) -> (f64, f64) + 'static) -> Self {
+        Self::new(label, move |backend| {
+            let (up_bytes_per_sec, down_bytes_per_sec) = rates(backend);
+            StatusValue::Rates {
+                up_bytes_per_sec,
+                down_bytes_per_sec,
+            }
+        })
+    }
+
     /// Adds detail text written after a [`StatusValue::Meter`] percentage.
     #[must_use]
-    pub fn with_detail(mut self, detail: StatusDetailFn<B>) -> Self {
-        self.detail = Some(detail);
+    pub fn with_detail(mut self, detail: impl Fn(&B, &mut StackStr<32>) + 'static) -> Self {
+        self.detail = Some(Box::new(detail));
         self
     }
 
@@ -120,7 +167,7 @@ pub type PanelBadgeFn<B> = fn(&B) -> (&'static str, Option<Color>);
 /// ```
 /// use tui_rs::core::{Color, PrioritySegment};
 /// use tui_rs::dashboard::{DashboardBackend, Section};
-/// use tui_rs::universal::{StatusPanel, StatusRow, StatusValue};
+/// use tui_rs::universal::StatusPanel;
 ///
 /// struct App { cpu: f64 }
 /// impl DashboardBackend for App {
@@ -132,8 +179,8 @@ pub type PanelBadgeFn<B> = fn(&B) -> (&'static str, Option<Color>);
 /// let panel = StatusPanel::<App>::new("System")
 ///     .with_subtitle("app.service")
 ///     .with_badge(|_| ("● ONLINE", Some(Color::Green)))
-///     .with_row(StatusRow::new("CPU", |app| StatusValue::Meter(app.cpu)))
-///     .with_row(StatusRow::new("Daemon", |_| StatusValue::Text("running")));
+///     .with_meter("CPU", |app| app.cpu)
+///     .with_text("Daemon", |_| "running");
 /// let _section = Section::display(Box::new(panel));
 /// ```
 pub struct StatusPanel<B: DashboardBackend> {
@@ -178,11 +225,51 @@ impl<B: DashboardBackend> StatusPanel<B> {
         self
     }
 
-    /// Appends a row.
+    /// Appends a prepared row (for custom [`StatusValue`] logic or meter details).
     #[must_use]
     pub fn with_row(mut self, row: StatusRow<B>) -> Self {
         self.rows.push(row);
         self
+    }
+
+    /// Appends a meter row filled to `percent(backend)` (`0.0..=100.0`).
+    #[must_use]
+    pub fn with_meter(
+        self,
+        label: impl Into<String>,
+        percent: impl Fn(&B) -> f64 + 'static,
+    ) -> Self {
+        self.with_row(StatusRow::meter(label, percent))
+    }
+
+    /// Appends a meter row followed by detail text such as `(16.0G)`.
+    #[must_use]
+    pub fn with_meter_detail(
+        self,
+        label: impl Into<String>,
+        percent: impl Fn(&B) -> f64 + 'static,
+        detail: impl Fn(&B, &mut StackStr<32>) + 'static,
+    ) -> Self {
+        self.with_row(StatusRow::meter(label, percent).with_detail(detail))
+    }
+
+    /// Appends a text row showing a string borrowed from the backend.
+    #[must_use]
+    pub fn with_text<F>(self, label: impl Into<String>, text: F) -> Self
+    where
+        F: for<'a> Fn(&'a B) -> &'a str + 'static,
+    {
+        self.with_row(StatusRow::text(label, text))
+    }
+
+    /// Appends an up/down rate row; `rates` returns `(upload, download)` in bytes per second.
+    #[must_use]
+    pub fn with_rates(
+        self,
+        label: impl Into<String>,
+        rates: impl Fn(&B) -> (f64, f64) + 'static,
+    ) -> Self {
+        self.with_row(StatusRow::rates(label, rates))
     }
 }
 
@@ -264,7 +351,7 @@ impl<B: DashboardBackend> SectionWidget<B> for StatusPanel<B> {
                     let clamped = percent.clamp(0.0, 100.0);
                     let mut tail = StackStr::<48>::new();
                     let _ = write!(tail, "  {clamped:5.1}%");
-                    if let Some(detail) = status_row.detail {
+                    if let Some(detail) = &status_row.detail {
                         let mut detail_text = StackStr::<32>::new();
                         detail(backend, &mut detail_text);
                         let _ = write!(tail, " {}", detail_text.as_str());

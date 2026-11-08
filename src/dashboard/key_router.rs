@@ -688,6 +688,7 @@ pub struct KeyBindings {
     alt_up: Option<KeyPress>,
     alt_down: Option<KeyPress>,
     activate: KeyPress,
+    alt_activate: Option<KeyPress>,
     cancel: KeyPress,
     numeric_jump: bool,
     confirm_quit: bool,
@@ -737,6 +738,7 @@ impl KeyBindings {
             alt_up: Some(KeyPress::char('k')),
             alt_down: Some(KeyPress::char('j')),
             activate: KeyPress::new(KeyCode::Enter),
+            alt_activate: Some(KeyPress::char(' ')),
             cancel: KeyPress::char('q'),
             numeric_jump: true,
             confirm_quit: false,
@@ -880,6 +882,31 @@ impl KeyBindings {
     #[must_use]
     pub fn cancel(mut self, key: impl IntoKeyPress) -> Self {
         self.cancel = key.into_key_press();
+        self
+    }
+
+    /// Sets the secondary activation key (default: `Space`).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::dashboard::{KeyBindings, KeyPress};
+    ///
+    /// let keys = KeyBindings::default().alt_activate('l');
+    /// assert!(keys.matches_activate(KeyPress::char('l')));
+    /// assert!(keys.matches_activate(KeyPress::new(tui_rs::dashboard::KeyCode::Enter)));
+    /// ```
+    #[must_use]
+    pub fn alt_activate(mut self, key: impl IntoKeyPress) -> Self {
+        self.alt_activate = Some(key.into_key_press());
+        self
+    }
+
+    /// Removes the secondary activation key, leaving only the primary one.
+    #[must_use]
+    #[inline]
+    pub const fn without_alt_activate(mut self) -> Self {
+        self.alt_activate = None;
         self
     }
 
@@ -1145,6 +1172,6 @@ impl KeyBindings {
     /// Returns `true` if `key` matches the configured option activation key.
     #[must_use]
     pub fn matches_activate(&self, key: KeyPress) -> bool {
-        key.matches(self.activate)
+        key.matches(self.activate) || self.alt_activate.is_some_and(|alt| key.matches(alt))
     }
 }

@@ -16,8 +16,9 @@ pub use crate::backend::{
 };
 pub use crate::components::{
     DualWaveform, GradientMeter, GraphSymbolMode, HalfBlockQr, QrCodeMatrix, QrErrorCorrection,
-    QrWidget, SingleWaveform, SliderBar, TimeSeries, WaveScaler, WaveScalerConfig, format_bytes,
-    format_rate, format_rate_short, resample_slice_into, resample_slice_scaled_into, spinner_frame,
+    QrWidget, RateHistory, SingleWaveform, SliderBar, TimeSeries, WaveScaler, WaveScalerConfig,
+    format_bytes, format_rate, format_rate_short, resample_slice_into, resample_slice_scaled_into,
+    spinner_frame,
 };
 pub use crate::core::{
     Buffer, Cell, Color, ColorDepth, ColorPalette, ColumnIndex, Constraint, GradientLut, KeyHint,
@@ -27,9 +28,9 @@ pub use crate::core::{
 pub use crate::dashboard::{
     AddonOptionEntry, AddonPageEntry, AddonRegistry, AddonSectionEntry, DashboardBackend,
     DashboardEngine, EngineAction, EventState, IntoKeyCode, IntoKeyPress, KeyBindings, KeyCode,
-    KeyPress, Modal, ModalContext, ModalResult, OptionOutcome, OptionSpec, Page, Section,
-    SectionFocusStyle, SectionLayoutMode, SectionRole, SectionVisibility, SectionWidget,
-    SpacingConfig, SpacingLayer, SubView, SubViewResult,
+    KeyPress, Modal, ModalContext, ModalResult, OptionOutcome, OptionSpec, Page, PageSubView,
+    Section, SectionFocusStyle, SectionLayoutMode, SectionRole, SectionVisibility, SectionWidget,
+    SpacingConfig, SpacingLayer, SubView, SubViewAction, SubViewResult,
 };
 pub use crate::error::TuiError;
 pub use crate::terminal::{
@@ -37,8 +38,9 @@ pub use crate::terminal::{
     restore_terminal_emergency,
 };
 pub use crate::universal::{
-    ColorThemeModal, ConfirmModal, EditModal, LogEntry, LogLevel, LogViewSubView, NoticeModal,
-    SectionGapModal, TypedModal, color_theme_option, section_gap_option,
+    ColorThemeModal, ConfirmModal, EditModal, LogBuffer, LogEntry, LogLevel, LogViewSubView,
+    NoticeModal, SectionGapModal, SettingField, SettingsModal, StatusPanel, StatusRow, StatusValue,
+    ThroughputPanel, TypedModal, color_theme_option, section_gap_option,
 };
 pub use crate::widgets::{
     ChoiceRow, Hyperlink, LabeledDivider, MenuItem, MenuList, SubCellScrollbar, TabPanel,

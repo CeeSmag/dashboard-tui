@@ -12,7 +12,7 @@ use crate::core::palette::ColorPalette;
 use crate::core::rect::{Rect, TerminalHeight, TerminalWidth};
 use crate::core::style::Style;
 use crate::dashboard::backend_trait::DashboardBackend;
-use crate::dashboard::key_router::KeyPress;
+use crate::dashboard::key_router::{KeyBindings, KeyPress};
 use crate::dashboard::spacing::SpacingConfig;
 use crate::widgets::panel::TabPanel;
 
@@ -30,6 +30,9 @@ pub struct ModalContext<'a, B: DashboardBackend> {
     pub theme_index: &'a mut usize,
     /// Whether Linux TTY safe glyph mode is active.
     pub tty_mode: bool,
+    /// The engine's active global shortkeys, so custom modals and sub-views can honour
+    /// the developer's `up`/`down`/`activate`/`cancel` choices.
+    pub keys: &'a KeyBindings,
 }
 
 /// Outcome returned by [`Modal::on_key`].
@@ -109,6 +112,23 @@ pub trait Modal<B: DashboardBackend> {
     /// Renders the modal's inner body into `inner` inside `buffer`.
     fn render(&self, buffer: &mut Buffer, inner: Rect, palette: &ColorPalette, tty_mode: bool);
 
+    /// Renders the modal body with read access to the host `backend`.
+    ///
+    /// The engine calls this one. Override it when the body shows live backend values (as
+    /// [`SettingsModal`](crate::universal::SettingsModal) does); the default forwards to
+    /// [`Modal::render`].
+    fn render_with_backend(
+        &self,
+        backend: &B,
+        buffer: &mut Buffer,
+        inner: Rect,
+        palette: &ColorPalette,
+        tty_mode: bool,
+    ) {
+        let _ = backend;
+        self.render(buffer, inner, palette, tty_mode);
+    }
+
     /// Processes a keyboard press while the modal is active.
     fn on_key(&mut self, key: KeyPress, ctx: &mut ModalContext<'_, B>) -> ModalResult;
 }
@@ -184,6 +204,46 @@ pub fn splice_modal_overlay<B: DashboardBackend>(
     palette: &ColorPalette,
     tty_mode: bool,
 ) {
+    splice_modal_frame(
+        modal,
+        buffer,
+        backdrop_area,
+        palette,
+        tty_mode,
+        |modal, buffer, inner| modal.render(buffer, inner, palette, tty_mode),
+    );
+}
+
+/// Same as [`splice_modal_overlay`], but draws the body through
+/// [`Modal::render_with_backend`] so modals can show live backend values.
+pub fn splice_modal_overlay_with_backend<B: DashboardBackend>(
+    modal: &dyn Modal<B>,
+    backend: &B,
+    buffer: &mut Buffer,
+    backdrop_area: Rect,
+    palette: &ColorPalette,
+    tty_mode: bool,
+) {
+    splice_modal_frame(
+        modal,
+        buffer,
+        backdrop_area,
+        palette,
+        tty_mode,
+        |modal, buffer, inner| {
+            modal.render_with_backend(backend, buffer, inner, palette, tty_mode);
+        },
+    );
+}
+
+fn splice_modal_frame<B: DashboardBackend>(
+    modal: &dyn Modal<B>,
+    buffer: &mut Buffer,
+    backdrop_area: Rect,
+    palette: &ColorPalette,
+    tty_mode: bool,
+    draw_body: impl FnOnce(&dyn Modal<B>, &mut Buffer, Rect),
+) {
     if backdrop_area.is_empty() {
         return;
     }
@@ -206,6 +266,6 @@ pub fn splice_modal_overlay<B: DashboardBackend>(
         .with_tty_mode(tty_mode);
     let inner = panel.render(buffer, modal_rect, palette);
     if !inner.is_empty() {
-        modal.render(buffer, inner, palette, tty_mode);
+        draw_body(modal, buffer, inner);
     }
 }

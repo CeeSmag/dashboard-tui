@@ -22,6 +22,7 @@ pub mod key_router;
 pub mod modal;
 pub mod navigation;
 pub mod page;
+pub mod page_sub_view;
 pub mod registry;
 pub mod section;
 pub mod spacing;
@@ -33,13 +34,17 @@ pub use engine::DashboardEngine;
 pub use key_router::{
     EngineAction, EventState, IntoKeyCode, IntoKeyPress, KeyBindings, KeyCode, KeyPress,
 };
-pub use modal::{Modal, ModalContext, ModalResult, dim_buffer_backdrop, splice_modal_overlay};
+pub use modal::{
+    Modal, ModalContext, ModalResult, dim_buffer_backdrop, splice_modal_overlay,
+    splice_modal_overlay_with_backend,
+};
 pub use navigation::{DigitDispatch, MULTI_DIGIT_TIMEOUT, PrefixJumpState};
 pub use page::{Page, ResolvedSectionRect, SectionLayoutMode};
+pub use page_sub_view::PageSubView;
 pub use registry::{AddonOptionEntry, AddonPageEntry, AddonRegistry, AddonSectionEntry};
 pub use section::{
     ActionFn, BadgeFn, EnabledFn, OptionOutcome, OptionSpec, Section, SectionFocusStyle,
     SectionRole, SectionVisibility, SectionWidget,
 };
 pub use spacing::{SpacingConfig, SpacingLayer};
-pub use sub_view::{SubView, SubViewResult};
+pub use sub_view::{SubView, SubViewAction, SubViewResult};

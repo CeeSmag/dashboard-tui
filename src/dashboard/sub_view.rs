@@ -12,6 +12,8 @@ use crate::core::rect::Rect;
 use crate::core::style::Style;
 use crate::dashboard::backend_trait::DashboardBackend;
 use crate::dashboard::key_router::KeyPress;
+use crate::dashboard::modal::ModalContext;
+use crate::dashboard::section::OptionOutcome;
 
 /// Outcome returned by [`SubView::on_key`].
 ///
@@ -35,6 +37,24 @@ pub enum SubViewResult {
         /// `true` if error/warning, `false` if success/info.
         is_error: bool,
     },
+}
+
+/// What a [`SubView`] asks the engine to do after a key press (see
+/// [`SubView::on_key_with_context`]).
+pub enum SubViewAction<B: DashboardBackend> {
+    /// A plain [`SubViewResult`]: stay, pop, or pop with a toast.
+    Result(SubViewResult),
+    /// Stay open and apply an [`OptionOutcome`] (toast, modal, deeper sub-view, quit).
+    Outcome(OptionOutcome<B>),
+}
+
+impl<B: DashboardBackend> core::fmt::Debug for SubViewAction<B> {
+    fn fmt(&self, f: &mut core::fmt::Formatter<'_>) -> core::fmt::Result {
+        match self {
+            Self::Result(result) => f.debug_tuple("Result").field(result).finish(),
+            Self::Outcome(outcome) => f.debug_tuple("Outcome").field(outcome).finish(),
+        }
+    }
 }
 
 /// Trait implemented by full-area drill-down sub-views pushed onto the
@@ -78,6 +98,18 @@ pub trait SubView<B: DashboardBackend> {
 
     /// Handles a key press while this sub-view is on top of the stack.
     fn on_key(&mut self, backend: &mut B, key: KeyPress) -> SubViewResult;
+
+    /// Context-aware variant of [`SubView::on_key`]. The engine calls this one. Override it
+    /// when the sub-view needs the active [`KeyBindings`](crate::dashboard::KeyBindings),
+    /// spacing or palette, or wants to open a modal / push a deeper sub-view through an
+    /// [`OptionOutcome`]. The default simply forwards to [`SubView::on_key`].
+    fn on_key_with_context(
+        &mut self,
+        key: KeyPress,
+        ctx: &mut ModalContext<'_, B>,
+    ) -> SubViewAction<B> {
+        SubViewAction::Result(self.on_key(ctx.backend, key))
+    }
 
     /// Returns context-sensitive key hints displayed in the bottom footer bar
     /// while this sub-view is active.
