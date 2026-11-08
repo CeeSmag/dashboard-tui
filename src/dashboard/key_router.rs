@@ -51,11 +51,19 @@ impl EventState {
 ///
 /// assert_eq!(EngineAction::Continue, EngineAction::Continue);
 /// ```
+///
+/// The two exit variants let a host distinguish *leaving the UI* from *terminating the whole
+/// application*: a `q`/`Esc` at the dashboard root (and `Ctrl+C`) is [`Self::Back`], the
+/// configured quit shortkey (`^Q` by default) is [`Self::Quit`].
 #[derive(Debug, Clone, Copy, PartialEq, Eq, Hash)]
+#[non_exhaustive]
 pub enum EngineAction {
     /// Continue running the dashboard event loop.
     Continue,
-    /// The user requested to exit the dashboard (e.g., `q` or `Ctrl+C`).
+    /// The user asked to go back from the dashboard root (the cancel key with nothing left to
+    /// cancel) or pressed `Ctrl+C`. Hosts normally leave the UI but keep their services running.
+    Back,
+    /// The user pressed the configured quit shortkey. Hosts normally stop their services and exit.
     Quit,
 }
 

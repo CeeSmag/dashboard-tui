@@ -537,10 +537,12 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// let mut engine = AddonRegistry::<App>::new()
     ///     .with_page(0, "Monitor", "F1", SectionLayoutMode::Auto)
     ///     .build_engine(App);
-    /// engine.run_interactive(Duration::from_millis(250))?;
+    /// let reason = engine.run_interactive(Duration::from_millis(250))?;
+    /// // `Back`: leave the UI; `Quit`: terminate the whole application.
+    /// # let _ = reason;
     /// # Ok::<(), tui_rs::TuiError>(())
     /// ```
-    pub fn run_interactive(&mut self, tick_rate: Duration) -> Result<(), TuiError> {
+    pub fn run_interactive(&mut self, tick_rate: Duration) -> Result<EngineAction, TuiError> {
         install_panic_restoration_hook();
         let backend = CrosstermBackend::with_writer(std::io::stdout());
         let is_tty = backend.capabilities().is_tty_console();
@@ -557,10 +559,11 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             if crossterm::event::poll(timeout)? {
                 match crossterm::event::read()? {
                     crossterm::event::Event::Key(key_ev) => {
-                        if let Some(kp) = KeyPress::from_crossterm(key_ev)
-                            && self.handle_key(kp) == EngineAction::Quit
-                        {
-                            break;
+                        if let Some(kp) = KeyPress::from_crossterm(key_ev) {
+                            match self.handle_key(kp) {
+                                EngineAction::Continue => {}
+                                exit => return Ok(exit),
+                            }
                         }
                     }
                     crossterm::event::Event::Resize(_, _) => continue,
@@ -573,7 +576,5 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                 last_tick = Instant::now();
             }
         }
-
-        Ok(())
     }
 }

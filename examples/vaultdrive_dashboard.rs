@@ -727,7 +727,7 @@ fn main() -> Result<(), tui_rs::error::TuiError> {
             match crossterm::event::read()? {
                 crossterm::event::Event::Key(key_ev) => {
                     if let Some(kp) = KeyPress::from_crossterm(key_ev)
-                        && engine.handle_key(kp) == EngineAction::Quit
+                        && engine.handle_key(kp) != EngineAction::Continue
                     {
                         break;
                     }

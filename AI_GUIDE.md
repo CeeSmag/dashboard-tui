@@ -621,10 +621,13 @@ Every shortkey in the dashboard can be configured concisely in the dashboard pro
 |:---|:---|
 | `→ / ←` (Right / Left Arrows) | Move between sections on the active page |
 | `Tab / Shift+Tab` | Move between pages (F1 ↔ F2 ↔ F3) |
-| `q` | Cancel (closes modals, pops sub-views, clears inputs/toasts) |
-| `^Q` (`Ctrl+Q`) | Quit / Shutdown the app |
+| `q` | Cancel: closes a modal, pops a sub-view; at the dashboard root `handle_key` returns `EngineAction::Back` (leave the UI, keep services running) |
+| `^Q` (`Ctrl+Q`) | `EngineAction::Quit`: terminate the whole app (host stops its services) |
+| `Ctrl+C` | `EngineAction::Back` |
 | `↑ / ↓` (or `k / j`) | Move cursor between options inside the active section |
 | `Enter` | Activate selected option |
+
+`run_interactive` returns the `EngineAction` that ended the loop (`Back` or `Quit`), so the host decides what each means. Text-input modals return `ModalResult::Consumed` for typed characters, so the cancel key (`q`) can be typed into a field instead of closing it; custom text modals should do the same. `DashboardEngine::has_sub_view()` and `focused_section()` expose read-only UI state for hosts and tests.
 
 Developers can enter any `ctrl+[key]` of their liking in the dashboard project file using intuitive strings (e.g. `"ctrl+q"`, `"^q"`, `"ctrl-x"`, `"ctrl+w"`), characters, or `KeyPress`:
 

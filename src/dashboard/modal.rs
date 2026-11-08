@@ -43,9 +43,13 @@ pub struct ModalContext<'a, B: DashboardBackend> {
 /// assert!(matches!(res, ModalResult::Close));
 /// ```
 #[derive(Debug, Clone, PartialEq, Eq)]
+#[non_exhaustive]
 pub enum ModalResult {
-    /// Keep the modal open.
+    /// Keep the modal open. The global cancel key (`q` by default) still closes it.
     Continue,
+    /// The key was consumed as input (for example a typed character): keep the modal open and do
+    /// **not** apply the global cancel key, so a text field can receive the letter `q`.
+    Consumed,
     /// Close the modal without a toast notification.
     Close,
     /// Close the modal and display a temporary toast message in the footer bar.

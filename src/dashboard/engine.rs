@@ -229,6 +229,22 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         self.modal.is_some()
     }
 
+    /// Returns `true` if a full-screen [`SubView`] is currently on top of the page.
+    #[must_use]
+    #[inline]
+    pub fn has_sub_view(&self) -> bool {
+        !self.sub_views.is_empty()
+    }
+
+    /// Returns the zero-based index of the focused section on the active page.
+    #[must_use]
+    pub fn focused_section(&self) -> usize {
+        self.focused_sections
+            .get(self.active_page)
+            .copied()
+            .unwrap_or(0)
+    }
+
     /// Opens a [`Modal`] overlay on top of the active page.
     pub fn open_modal(&mut self, modal: Box<dyn Modal<B>>) {
         self.prefix_jump.clear();
@@ -377,9 +393,13 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         reason = "single central 4-tier key dispatcher"
     )]
     pub fn handle_key(&mut self, key: KeyPress) -> EngineAction {
-        // Immediate hard quit: SIGINT (Ctrl+C) or configured quit (^Q / Ctrl+Q)
-        if (key.has_ctrl() && key.code() == KeyCode::Char('c')) || self.keys.matches_quit(key) {
+        // Configured quit shortkey (^Q by default): terminate everything.
+        if self.keys.matches_quit(key) {
             return EngineAction::Quit;
+        }
+        // SIGINT (Ctrl+C): leave the UI immediately, like pressing the cancel key at the root.
+        if key.has_ctrl() && key.code() == KeyCode::Char('c') {
+            return EngineAction::Back;
         }
 
         // Clear any visible toast on user key press
@@ -402,6 +422,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                         self.modal = Some(modal);
                     }
                 }
+                ModalResult::Consumed => self.modal = Some(modal),
                 ModalResult::Close => {}
                 ModalResult::CloseWithToast { message, is_error } => {
                     self.show_toast(message, is_error);
@@ -460,9 +481,9 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             }
         }
 
-        // 4. Cancel key at dashboard root level (clears transient toast/state)
+        // 4. Cancel key at dashboard root level: nothing is left to cancel, so go back.
         if self.keys.matches_cancel(key) {
-            return EngineAction::Continue;
+            return EngineAction::Back;
         }
 
         // 5. Page & Section global navigation (using customizable `self.keys`)

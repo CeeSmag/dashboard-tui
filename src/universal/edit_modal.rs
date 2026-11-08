@@ -212,7 +212,7 @@ impl<B: DashboardBackend> Modal<B> for EditModal<B> {
             KeyCode::Char(ch) if !key.has_ctrl() && !key.has_alt() => {
                 self.error_message.clear();
                 self.input.insert_char(ch);
-                ModalResult::Continue
+                ModalResult::Consumed
             }
             _ => ModalResult::Continue,
         }

@@ -487,10 +487,12 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
     assert!(!engine.has_modal());
     assert_eq!(engine.backend().saved_count, 1);
 
-    // Press 'q' at root dashboard: cancels transient state, does NOT quit
+    // Press 'q' at root dashboard: nothing left to cancel, so the host is told to go back
+    assert_eq!(engine.handle_key(KeyPress::char('q')), EngineAction::Back);
+    // Ctrl+C also goes back (leave the UI) rather than terminating the host
     assert_eq!(
-        engine.handle_key(KeyPress::char('q')),
-        EngineAction::Continue
+        engine.handle_key(KeyPress::char('c').with_ctrl(true)),
+        EngineAction::Back
     );
 
     // Press ^Q (Ctrl+Q) to quit
@@ -507,10 +509,7 @@ fn dashboard_engine_end_to_end_navigation_modals_and_sub_views()
             .section_cycle("Right", "Left")
             .activate("Space"),
     );
-    assert_eq!(
-        engine.handle_key(KeyPress::char('q')),
-        EngineAction::Continue
-    );
+    assert_eq!(engine.handle_key(KeyPress::char('q')), EngineAction::Back);
     assert_eq!(
         engine.handle_key(KeyPress::char('<')),
         EngineAction::Continue
