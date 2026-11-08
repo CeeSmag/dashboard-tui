@@ -129,6 +129,7 @@ Use this table to jump directly to the exact file in `src/` for any task without
         ├── edit_modal.rs              # EditModal<B> (text input modal with validation callback)
         ├── confirm_modal.rs           # ConfirmModal<B> (Yes/No confirmation modal)
         ├── typed_modal.rs             # TypedModal<B> (destructive action modal requiring exact phrase match)
+        ├── log_view.rs                # LogViewSubView + LogEntry/LogLevel (scrollable, newest-first log page)
         └── notice_modal.rs            # NoticeModal (multi-line informational alert modal)
 ```
 
@@ -640,6 +641,46 @@ KeyBindings::default()
     .vim_up_down('k', 'j')           // Vim-style secondary cursor movement
     .activate("Enter")               // Option activation
     .cancel('q')                     // Cancel modal / pop subview / clear toast
+```
+
+#### Warning popups on a key & extra option shortkeys
+
+```rust
+// Warn before quitting: Enter confirms, q / Esc cancels (Ctrl+C always leaves at once (`Back`)).
+KeyBindings::default().quit("ctrl+q").confirm_quit(true)
+
+// Put a warning popup on ANY key. Enter runs the closure, q / Esc cancels.
+registry.bind_confirmed_key("ctrl+x", "Wipe Cache", "This cannot be undone.", |app: &mut App| {
+    app.wipe_cache();
+    Ok("Cache wiped".to_string())      // Ok(msg) -> success toast, Err(msg) -> error toast
+});
+
+// Full control (any OptionOutcome: Toast, OpenModal, PushSubView, Quit):
+registry.bind_key("ctrl+r", |_ctx| OptionOutcome::Quit);
+
+// Extra shortkey for a menu option; it KEEPS its number (`7` and `o` both run it):
+OptionSpec::new(7, "Open Storage", |_ctx| OptionOutcome::None).with_shortkey('o')
+```
+
+`ConfirmModal::warning(..)` (Enter pre-selects Yes) and `ConfirmModal::quit(..)` are available for custom flows via `OptionOutcome::OpenModal`. Bound keys and option shortkeys apply only on the dashboard root (no modal or sub-view open) and take priority over page/section keys, so avoid reusing `Tab`, arrows, or `q`.
+
+#### Tab badges, footer flashes, and the log viewer
+
+```rust
+// Live badge beside the ACTIVE page's tab, e.g. " [F2:Logs 3 errors] " (empty string hides it).
+Page::new("Logs", "F2").with_tab_badge(|app: &App| match app.error_count() {
+    0 => String::new(),
+    n => format!("{n} errors"),
+})
+registry.with_tab_badge(1, |app| ...)          // same, for a registry page index
+
+// Scrollable newest-first log page (read-only view over YOUR Vec<LogEntry>; no copying):
+OptionOutcome::PushSubView(Box::new(LogViewSubView::new("Live Logs", |app: &App| app.log.as_slice())))
+
+// Footer feedback: `show_toast` = result (stays 6s), `show_hint` = nudge (stays 2.5s).
+// Pressing an unmapped key shows "No shortcut for 'x'. Use …"; `?` shows a one-line help.
+engine.with_invalid_key_hint(|key| Some(format!("{} does nothing", key.short_label().as_str())))
+engine.with_invalid_key_hints(false)           // silence the default hint
 ```
 
 - **`selectable` (`true` / `false`) Section Focus**: Cycle focus (`→ / ←`) **only** among sections on the current page that have `selectable = true` (configured via `.with_display_section(..., selectable)`, `.with_menu_section(..., selectable)`, or `Section::with_selectable(bool)`). Purely informative visual sections with `selectable = false` are never selected.

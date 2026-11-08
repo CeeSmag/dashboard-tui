@@ -8,6 +8,7 @@
 //! - Centered [`Modal`] overlays with dimmed backdrop splicing
 //! - 4-layer hierarchical [`SpacingConfig`] and live [`ColorPalette`] theming
 
+use std::rc::Rc;
 use std::time::{Duration, Instant};
 
 use crate::core::buffer::Buffer;
@@ -17,16 +18,38 @@ use crate::core::priority_strip::KeyHint;
 use crate::core::rect::{Rect, TerminalHeight};
 use crate::dashboard::backend_trait::DashboardBackend;
 use crate::dashboard::chrome::{render_footer_bar, render_header_bar};
-use crate::dashboard::key_router::{EngineAction, KeyBindings, KeyCode, KeyPress};
+use crate::dashboard::key_router::{EngineAction, IntoKeyPress, KeyBindings, KeyCode, KeyPress};
 use crate::dashboard::modal::{Modal, ModalContext, ModalResult, splice_modal_overlay};
 use crate::dashboard::navigation::{DigitDispatch, PrefixJumpState};
 use crate::dashboard::page::Page;
-use crate::dashboard::section::{OptionOutcome, Section, SectionRole};
+use crate::dashboard::section::{ActionFn, OptionOutcome, Section, SectionRole};
 use crate::dashboard::spacing::SpacingConfig;
 use crate::dashboard::sub_view::{SubView, SubViewResult};
+use crate::universal::ConfirmModal;
 
-/// Default duration (`4s`) that a footer toast notification stays visible.
-const TOAST_DURATION: Duration = Duration::from_secs(4);
+/// Duration (`2.5s`) a footer *hint* flash stays visible (a nudge such as "no shortcut for x").
+const HINT_FLASH_DURATION: Duration = Duration::from_millis(2500);
+
+/// Duration (`6s`) a footer *result* toast stays visible (something worth reading twice).
+const RESULT_FLASH_DURATION: Duration = Duration::from_secs(6);
+
+/// One footer flash message with its own lifetime.
+#[derive(Debug)]
+struct Flash {
+    message: String,
+    is_error: bool,
+    shown_at: Instant,
+    lifetime: Duration,
+}
+
+impl Flash {
+    fn is_expired(&self, now: Instant) -> bool {
+        now.saturating_duration_since(self.shown_at) >= self.lifetime
+    }
+}
+
+/// Callback producing a custom hint for an unmapped key (`None` stays silent).
+type InvalidKeyHintFn = Box<dyn Fn(KeyPress) -> Option<String>>;
 
 /// Tier 1 Portable Dashboard Engine parameterized over a [`DashboardBackend`].
 pub struct DashboardEngine<B: DashboardBackend> {
@@ -39,9 +62,12 @@ pub struct DashboardEngine<B: DashboardBackend> {
     theme_index: usize,
     tty_mode: bool,
     keys: KeyBindings,
+    key_actions: Vec<(KeyPress, ActionFn<B>)>,
     modal: Option<Box<dyn Modal<B>>>,
     sub_views: Vec<Box<dyn SubView<B>>>,
-    toast: Option<(String, bool, Instant)>,
+    toast: Option<Flash>,
+    invalid_key_hint: Option<InvalidKeyHintFn>,
+    invalid_key_hints_enabled: bool,
     prefix_jump: PrefixJumpState,
     tick_count: usize,
     last_viewport_width: u16,
@@ -90,9 +116,12 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             theme_index: 0,
             tty_mode: false,
             keys: KeyBindings::new(),
+            key_actions: Vec::new(),
             modal: None,
             sub_views: Vec::new(),
             toast: None,
+            invalid_key_hint: None,
+            invalid_key_hints_enabled: true,
             prefix_jump: PrefixJumpState::new(),
             tick_count: 0,
             last_viewport_width: 120,
@@ -118,6 +147,82 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     #[inline]
     pub const fn keys(&self) -> &KeyBindings {
         &self.keys
+    }
+
+    /// Binds a global `key` (e.g. `"ctrl+x"`, `'o'`, `"F5"`) to an `action` that runs on the
+    /// dashboard root (no modal or sub-view open). Return [`OptionOutcome::OpenModal`] to pop a dialog.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine, OptionOutcome};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let engine = DashboardEngine::new(App, Vec::new()).bind_key("ctrl+r", |_ctx| {
+    ///     OptionOutcome::Toast { message: "refreshed".to_string(), is_error: false }
+    /// });
+    /// ```
+    #[must_use]
+    pub fn bind_key<F>(mut self, key: impl IntoKeyPress, action: F) -> Self
+    where
+        F: FnMut(&mut ModalContext<'_, B>) -> OptionOutcome<B> + 'static,
+    {
+        self.key_actions
+            .push((key.into_key_press(), Box::new(action)));
+        self
+    }
+
+    /// Binds a global `key` to a warning popup: `Enter` runs `on_confirm`, `q` / `Esc` cancels.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let engine = DashboardEngine::new(App, Vec::new()).bind_confirmed_key(
+    ///     "ctrl+x",
+    ///     "Wipe Cache",
+    ///     "This cannot be undone.",
+    ///     |_app: &mut App| Ok("Cache wiped".to_string()),
+    /// );
+    /// ```
+    #[must_use]
+    pub fn bind_confirmed_key<F>(
+        self,
+        key: impl IntoKeyPress,
+        title: impl Into<String>,
+        warning: impl Into<String>,
+        on_confirm: F,
+    ) -> Self
+    where
+        F: Fn(&mut B) -> Result<String, String> + 'static,
+    {
+        let title = title.into();
+        let warning = warning.into();
+        let shared_confirm = Rc::new(on_confirm);
+        self.bind_key(key, move |_ctx| {
+            let confirm = Rc::clone(&shared_confirm);
+            OptionOutcome::OpenModal(Box::new(ConfirmModal::warning(
+                title.clone(),
+                warning.clone(),
+                move |backend: &mut B| confirm(backend),
+            )))
+        })
     }
 
     /// Sets the initial 4-layer [`SpacingConfig`].
@@ -268,8 +373,124 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     }
 
     /// Displays a temporary toast notification in the bottom footer bar.
+    ///
+    /// Result toasts stay visible for 6 seconds; see [`Self::show_hint`] for short nudges.
     pub fn show_toast(&mut self, message: impl Into<String>, is_error: bool) {
-        self.toast = Some((message.into(), is_error, Instant::now()));
+        self.toast = Some(Flash {
+            message: message.into(),
+            is_error,
+            shown_at: Instant::now(),
+            lifetime: RESULT_FLASH_DURATION,
+        });
+    }
+
+    /// Displays a short-lived (2.5 seconds) hint flash in the bottom footer bar.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let mut engine = DashboardEngine::new(App, Vec::new());
+    /// engine.show_hint("Press ? for help");
+    /// assert_eq!(engine.flash_message(), Some("Press ? for help"));
+    /// ```
+    pub fn show_hint(&mut self, message: impl Into<String>) {
+        self.toast = Some(Flash {
+            message: message.into(),
+            is_error: true,
+            shown_at: Instant::now(),
+            lifetime: HINT_FLASH_DURATION,
+        });
+    }
+
+    /// Returns the text of the footer flash currently shown, if any.
+    #[must_use]
+    pub fn flash_message(&self) -> Option<&str> {
+        self.toast.as_ref().map(|flash| flash.message.as_str())
+    }
+
+    /// Replaces the default "No shortcut for …" hint with a custom one. Return `None`
+    /// from `hint` to stay silent for a given key.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let _engine = DashboardEngine::new(App, Vec::new())
+    ///     .with_invalid_key_hint(|key| Some(format!("{} does nothing here", key.short_label().as_str())));
+    /// ```
+    #[must_use]
+    pub fn with_invalid_key_hint<F>(mut self, hint: F) -> Self
+    where
+        F: Fn(KeyPress) -> Option<String> + 'static,
+    {
+        self.invalid_key_hint = Some(Box::new(hint));
+        self
+    }
+
+    /// Turns the unmapped-key hint flash on or off (default: on).
+    #[must_use]
+    #[inline]
+    pub const fn with_invalid_key_hints(mut self, enabled: bool) -> Self {
+        self.invalid_key_hints_enabled = enabled;
+        self
+    }
+
+    fn show_invalid_key_hint(&mut self, key: KeyPress) {
+        if !self.invalid_key_hints_enabled {
+            return;
+        }
+        let message = match &self.invalid_key_hint {
+            Some(custom) => custom(key),
+            None => Some(format!(
+                "No shortcut for '{}'. Use {}, {} (open), {} (next page) or {} (quit).",
+                key.short_label().as_str(),
+                self.up_down_label(),
+                self.keys.activate_press().short_label().as_str(),
+                self.keys.next_page_press().short_label().as_str(),
+                self.keys.quit_press().short_label().as_str(),
+            )),
+        };
+        if let Some(text) = message {
+            self.show_hint(text);
+        }
+    }
+
+    fn up_down_label(&self) -> String {
+        format!(
+            "{}{}",
+            self.keys.cursor_up_press().short_label().as_str(),
+            self.keys.cursor_down_press().short_label().as_str()
+        )
+    }
+
+    fn show_help_flash(&mut self) {
+        let text = format!(
+            "{} move · {} open · {} page · numbers jump · {} quit",
+            self.up_down_label(),
+            self.keys.activate_press().short_label().as_str(),
+            self.keys.next_page_press().short_label().as_str(),
+            self.keys.quit_press().short_label().as_str(),
+        );
+        self.show_toast(text, false);
     }
 
     /// Advances the engine tick counter, notifies `backend.on_tick()`, and
@@ -278,10 +499,12 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         self.tick_count = self.tick_count.wrapping_add(1);
         self.backend.on_tick();
         let now = Instant::now();
-        if let Some((_, _, stamped)) = &self.toast {
-            if now.saturating_duration_since(*stamped) >= TOAST_DURATION {
-                self.toast = None;
-            }
+        if self
+            .toast
+            .as_ref()
+            .is_some_and(|flash| flash.is_expired(now))
+        {
+            self.toast = None;
         }
         if let Some(digit) = self.prefix_jump.poll_expired(now) {
             let _ = self.execute_option_by_number(digit);
@@ -296,10 +519,12 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         }
         self.last_viewport_width = area.width().get();
         let now = Instant::now();
-        if let Some((_, _, stamped)) = &self.toast {
-            if now.saturating_duration_since(*stamped) >= TOAST_DURATION {
-                self.toast = None;
-            }
+        if self
+            .toast
+            .as_ref()
+            .is_some_and(|flash| flash.is_expired(now))
+        {
+            self.toast = None;
         }
         if let Some(digit) = self.prefix_jump.poll_expired(now) {
             let _ = self.execute_option_by_number(digit);
@@ -372,7 +597,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         let active_toast = self
             .toast
             .as_ref()
-            .map(|(msg, is_err, _)| (msg.as_str(), *is_err));
+            .map(|flash| (flash.message.as_str(), flash.is_error));
         render_footer_bar(
             buffer,
             area.x(),
@@ -393,9 +618,20 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         reason = "single central 4-tier key dispatcher"
     )]
     pub fn handle_key(&mut self, key: KeyPress) -> EngineAction {
-        // Configured quit shortkey (^Q by default): terminate everything.
+        // Configured quit shortkey (^Q by default): terminate everything, optionally after
+        // a warning popup (`KeyBindings::confirm_quit`).
         if self.keys.matches_quit(key) {
-            return EngineAction::Quit;
+            if !self.keys.is_quit_confirmation_required() {
+                return EngineAction::Quit;
+            }
+            if self.modal.is_none() {
+                self.toast = None;
+                self.open_modal(Box::new(ConfirmModal::quit(
+                    "Quit",
+                    "Are you sure you want to quit?",
+                )));
+                return EngineAction::Continue;
+            }
         }
         // SIGINT (Ctrl+C): leave the UI immediately, like pressing the cancel key at the root.
         if key.has_ctrl() && key.code() == KeyCode::Char('c') {
@@ -424,6 +660,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                 }
                 ModalResult::Consumed => self.modal = Some(modal),
                 ModalResult::Close => {}
+                ModalResult::Quit => return EngineAction::Quit,
                 ModalResult::CloseWithToast { message, is_error } => {
                     self.show_toast(message, is_error);
                 }
@@ -486,6 +723,25 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             return EngineAction::Back;
         }
 
+        // 4b. Developer-bound global keys (`bind_key` / `bind_confirmed_key`)
+        if let Some(action_idx) = self
+            .key_actions
+            .iter()
+            .position(|(bound, _)| bound.matches(key))
+        {
+            let outcome = {
+                let mut ctx = ModalContext {
+                    backend: &mut self.backend,
+                    spacing: &mut self.spacing,
+                    palette: &mut self.palette,
+                    theme_index: &mut self.theme_index,
+                    tty_mode: self.tty_mode,
+                };
+                (self.key_actions[action_idx].1)(&mut ctx)
+            };
+            return self.apply_option_outcome(outcome);
+        }
+
         // 5. Page & Section global navigation (using customizable `self.keys`)
         let code = key.code();
         if !key.has_ctrl() && !key.has_alt() {
@@ -523,6 +779,25 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             self.cycle_section_focus(false);
             return EngineAction::Continue;
         }
+        if let Some(page) = self.pages.get(self.active_page) {
+            let shortkey_target = page
+                .sections()
+                .iter()
+                .enumerate()
+                .find_map(|(sec_idx, sec)| {
+                    sec.options()
+                        .iter()
+                        .position(|opt| opt.shortkey().is_some_and(|bound| bound.matches(key)))
+                        .map(|opt_idx| (sec_idx, opt_idx))
+                });
+            if let Some((sec_idx, opt_idx)) = shortkey_target {
+                return self.trigger_option_at(sec_idx, opt_idx);
+            }
+        }
+        if key.code() == KeyCode::Char('?') && !key.has_ctrl() && !key.has_alt() {
+            self.show_help_flash();
+            return EngineAction::Continue;
+        }
         if self.keys.is_numeric_jump_enabled()
             && !key.has_ctrl()
             && !key.has_alt()
@@ -540,7 +815,11 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         }
 
         // 6. Focused section routing
-        self.route_to_focused_section(key)
+        if let Some(action) = self.route_to_focused_section(key) {
+            return action;
+        }
+        self.show_invalid_key_hint(key);
+        EngineAction::Continue
     }
 
     fn active_page_max_option(&self) -> u16 {
@@ -584,34 +863,32 @@ impl<B: DashboardBackend> DashboardEngine<B> {
         }
     }
 
-    fn route_to_focused_section(&mut self, key: KeyPress) -> EngineAction {
+    fn route_to_focused_section(&mut self, key: KeyPress) -> Option<EngineAction> {
         let focused_sec = self
             .focused_sections
             .get(self.active_page)
             .copied()
             .unwrap_or(0);
 
-        let Some(page) = self.pages.get_mut(self.active_page) else {
-            return EngineAction::Continue;
-        };
-        let Some(sec) = page.sections_mut().get_mut(focused_sec) else {
-            return EngineAction::Continue;
-        };
+        let page = self.pages.get_mut(self.active_page)?;
+        let sec = page.sections_mut().get_mut(focused_sec)?;
         if !sec.is_selectable() {
-            return EngineAction::Continue;
+            return None;
         }
 
         if sec.role() == SectionRole::Display
             && sec.on_widget_key(&mut self.backend, key).is_consumed()
         {
-            return EngineAction::Continue;
+            return Some(EngineAction::Continue);
         }
 
         if sec.role() == SectionRole::Menu {
             if self.keys.is_up(key) {
                 let _ = sec.cursor_up();
+                return Some(EngineAction::Continue);
             } else if self.keys.is_down(key) {
                 let _ = sec.cursor_down();
+                return Some(EngineAction::Continue);
             } else if self.keys.matches_activate(key) {
                 let cursor_idx = sec.cursor();
                 if let Some(opt) = sec.options_mut().get_mut(cursor_idx) {
@@ -625,11 +902,11 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                         };
                         opt.trigger(&mut ctx)
                     };
-                    return self.apply_option_outcome(outcome);
+                    return Some(self.apply_option_outcome(outcome));
                 }
             }
         }
-        EngineAction::Continue
+        None
     }
 
     /// Finds the option with `number` on the active page, focuses its section and
@@ -651,7 +928,13 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             self.show_toast(format!("No option [{number}] on this page"), true);
             return EngineAction::Continue;
         };
+        self.trigger_option_at(sec_idx, opt_idx)
+    }
 
+    fn trigger_option_at(&mut self, sec_idx: usize, opt_idx: usize) -> EngineAction {
+        let Some(page) = self.pages.get_mut(self.active_page) else {
+            return EngineAction::Continue;
+        };
         if let Some(slot) = self.focused_sections.get_mut(self.active_page) {
             *slot = sec_idx;
         }

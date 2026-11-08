@@ -41,6 +41,7 @@ pub struct ConfirmModal<B: DashboardBackend> {
     title: String,
     question: String,
     yes_selected: bool,
+    quits_on_confirm: bool,
     on_confirm: ConfirmActionFn<B>,
 }
 
@@ -64,8 +65,66 @@ impl<B: DashboardBackend> ConfirmModal<B> {
             title: title.into(),
             question: question.into(),
             yes_selected: false,
+            quits_on_confirm: false,
             on_confirm: Box::new(on_confirm),
         }
+    }
+
+    /// Creates a warning popup where `Enter` (or `y`) confirms and `q` / `Esc` / `n` cancels.
+    ///
+    /// Unlike [`ConfirmModal::new`], `[ Yes ]` is pre-selected so a single `Enter`
+    /// confirms. Ideal for guarding a key such as `ctrl+x` behind a warning.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::DashboardBackend;
+    /// use tui_rs::universal::ConfirmModal;
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let modal = ConfirmModal::<App>::warning("Wipe", "This cannot be undone.", |_b| Ok(String::new()));
+    /// assert!(modal.is_yes_selected());
+    /// ```
+    #[must_use]
+    pub fn warning<F>(title: impl Into<String>, question: impl Into<String>, on_confirm: F) -> Self
+    where
+        F: FnMut(&mut B) -> Result<String, String> + 'static,
+    {
+        Self::new(title, question, on_confirm).with_default_yes(true)
+    }
+
+    /// Creates a warning popup that terminates the dashboard when confirmed
+    /// (`Enter` confirms, `q` / `Esc` cancels).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::DashboardBackend;
+    /// use tui_rs::universal::ConfirmModal;
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let modal = ConfirmModal::<App>::quit("Quit", "Really quit?");
+    /// assert!(modal.is_yes_selected());
+    /// ```
+    #[must_use]
+    pub fn quit(title: impl Into<String>, question: impl Into<String>) -> Self {
+        let mut modal = Self::warning(title, question, |_backend| Ok(String::new()));
+        modal.quits_on_confirm = true;
+        modal
     }
 
     /// Configures whether `[ Yes ]` is initially focused instead of `[ No ]`.
@@ -84,6 +143,9 @@ impl<B: DashboardBackend> ConfirmModal<B> {
     }
 
     fn execute_confirm(&mut self, backend: &mut B) -> ModalResult {
+        if self.quits_on_confirm {
+            return ModalResult::Quit;
+        }
         match (self.on_confirm)(backend) {
             Ok(msg) => {
                 if msg.is_empty() {
@@ -109,6 +171,9 @@ impl<B: DashboardBackend> Modal<B> for ConfirmModal<B> {
     }
 
     fn subtitle(&self) -> &'static str {
+        if self.quits_on_confirm {
+            return "Enter confirm • q/Esc cancel";
+        }
         "←→/Tab toggle • y/n • Enter confirm • Esc cancel"
     }
 

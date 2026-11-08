@@ -370,6 +370,7 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
         KeyBindings::default()
             // Developers can configure any ctrl+[key] to their liking (e.g. "ctrl+q", "^q", "ctrl-x", "ctrl+w")
             .quit("ctrl+q")
+            .confirm_quit(true) // warning popup: Enter confirms, q cancels
             .page_cycle("Shift+Tab", "Tab")
             .section_cycle("Right", "Left")
             .up_down("Up", "Down")
@@ -477,7 +478,7 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
         0,
         2,
         OptionSpec::new(4, "Purge VFS Disk Cache", |_ctx| {
-            OptionOutcome::OpenModal(Box::new(ConfirmModal::new(
+            OptionOutcome::OpenModal(Box::new(ConfirmModal::warning(
                 "Purge VFS Cache",
                 "Evict all clean cached chunks from local NVMe storage?",
                 |b: &mut VaultDriveMockBackend| {
@@ -485,7 +486,8 @@ fn build_vaultdrive_engine() -> DashboardEngine<VaultDriveMockBackend> {
                     Ok("Purged VFS cache down to 64.0 MB".to_string())
                 },
             )))
-        }),
+        })
+        .with_shortkey('p'), // `4` and `p` both run it
     ));
     registry.register_option(AddonOptionEntry::new(
         0,

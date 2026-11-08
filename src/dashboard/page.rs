@@ -57,12 +57,15 @@ pub struct ResolvedSectionRect {
     pub rect: Rect,
 }
 
+pub(crate) type TabBadgeFn<B> = Box<dyn Fn(&B) -> String>;
+
 /// A top-level dashboard page switched via `F1`..`F12` (or `[` / `]`).
 pub struct Page<B: DashboardBackend> {
     title: String,
     key_hint: String,
     layout_mode: SectionLayoutMode,
     sections: Vec<Section<B>>,
+    tab_badge: Option<TabBadgeFn<B>>,
 }
 
 impl<B: DashboardBackend> core::fmt::Debug for Page<B> {
@@ -72,6 +75,7 @@ impl<B: DashboardBackend> core::fmt::Debug for Page<B> {
             .field("key_hint", &self.key_hint)
             .field("layout_mode", &self.layout_mode)
             .field("sections_len", &self.sections.len())
+            .field("has_tab_badge", &self.tab_badge.is_some())
             .finish()
     }
 }
@@ -104,6 +108,7 @@ impl<B: DashboardBackend> Page<B> {
             key_hint: key_hint.into(),
             layout_mode: SectionLayoutMode::Auto,
             sections: Vec::new(),
+            tab_badge: None,
         }
     }
 
@@ -113,6 +118,49 @@ impl<B: DashboardBackend> Page<B> {
     pub const fn with_layout_mode(mut self, mode: SectionLayoutMode) -> Self {
         self.layout_mode = mode;
         self
+    }
+
+    /// Shows a live badge (e.g. `"●3"` or `"2 errors"`) beside this page's tab while it is
+    /// the active page. Return an empty string to hide the badge.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{DashboardBackend, Page};
+    ///
+    /// struct App { errors: usize }
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let page = Page::<App>::new("Logs", "F2").with_tab_badge(|app| {
+    ///     if app.errors == 0 { String::new() } else { format!("{} errors", app.errors) }
+    /// });
+    /// assert_eq!(page.tab_badge(&App { errors: 2 }), "2 errors");
+    /// assert_eq!(page.tab_badge(&App { errors: 0 }), "");
+    /// ```
+    #[must_use]
+    pub fn with_tab_badge<F>(mut self, badge: F) -> Self
+    where
+        F: Fn(&B) -> String + 'static,
+    {
+        self.tab_badge = Some(Box::new(badge));
+        self
+    }
+
+    pub(crate) fn set_tab_badge_boxed(&mut self, badge: TabBadgeFn<B>) {
+        self.tab_badge = Some(badge);
+    }
+
+    /// Evaluates the tab badge text for `backend` (empty when none is set).
+    #[must_use]
+    pub fn tab_badge(&self, backend: &B) -> String {
+        self.tab_badge
+            .as_ref()
+            .map_or_else(String::new, |f| f(backend))
     }
 
     /// Appends a [`Section`] to this page during builder construction.

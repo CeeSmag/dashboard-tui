@@ -13,7 +13,7 @@ use crate::core::color::Color;
 use crate::core::palette::ColorPalette;
 use crate::core::rect::Rect;
 use crate::dashboard::backend_trait::DashboardBackend;
-use crate::dashboard::key_router::{EventState, KeyPress};
+use crate::dashboard::key_router::{EventState, IntoKeyPress, KeyPress};
 use crate::dashboard::modal::{Modal, ModalContext};
 use crate::dashboard::sub_view::SubView;
 use crate::widgets::menu_list::{MenuItem, MenuList};
@@ -152,6 +152,7 @@ pub struct OptionSpec<B: DashboardBackend> {
     enabled_fn: Option<EnabledFn<B>>,
     action_fn: ActionFn<B>,
     hyperlink: Option<String>,
+    shortkey: Option<KeyPress>,
 }
 
 impl<B: DashboardBackend> core::fmt::Debug for OptionSpec<B> {
@@ -194,7 +195,44 @@ impl<B: DashboardBackend> OptionSpec<B> {
             enabled_fn: None,
             action_fn: Box::new(action),
             hyperlink: None,
+            shortkey: None,
         }
+    }
+
+    /// Adds an extra shortkey (e.g. `'o'`, `"ctrl+o"`, `"F5"`) that runs this option
+    /// while it keeps its original number.
+    ///
+    /// Applies while the option's page is active and no modal or sub-view is open.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{DashboardBackend, KeyPress, OptionOutcome, OptionSpec};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let opt = OptionSpec::<App>::new(3, "Open Storage", |_| OptionOutcome::None)
+    ///     .with_shortkey('o');
+    /// assert_eq!(opt.number(), 3);
+    /// assert_eq!(opt.shortkey(), Some(KeyPress::char('o')));
+    /// ```
+    #[must_use]
+    pub fn with_shortkey(mut self, key: impl IntoKeyPress) -> Self {
+        self.shortkey = Some(key.into_key_press());
+        self
+    }
+
+    /// Returns the extra shortkey, if any.
+    #[must_use]
+    #[inline]
+    pub const fn shortkey(&self) -> Option<KeyPress> {
+        self.shortkey
     }
 
     /// Attaches an optional OSC 8 clickable target URL to this menu option.

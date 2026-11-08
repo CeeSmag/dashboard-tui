@@ -17,6 +17,47 @@ use crate::core::style::Style;
 use crate::dashboard::backend_trait::DashboardBackend;
 use crate::dashboard::page::Page;
 
+/// Writes the active tab label `" [F1:Monitor] "`, or `" [F1:Monitor <badge>] "` when a badge is set.
+fn write_active_tab_label<B: DashboardBackend>(
+    out: &mut StackStr<96>,
+    page: &Page<B>,
+    badge: &str,
+) {
+    if badge.is_empty() {
+        let _ = write!(out, " [{}:{}] ", page.key_hint(), page.title());
+    } else {
+        let _ = write!(out, " [{}:{} {}] ", page.key_hint(), page.title(), badge);
+    }
+}
+
+/// Measures the total column width of the right-aligned page tab strip.
+///
+/// Active tab: `" [F1:Monitor] "` (plus `" <badge>"` when set); inactive: `" F2:Settings "`.
+fn measure_page_tabs_width<B: DashboardBackend>(
+    pages: &[Page<B>],
+    active_page: usize,
+    active_badge: &str,
+) -> usize {
+    let badge_width = if active_badge.is_empty() {
+        0
+    } else {
+        display_width(active_badge).as_usize().saturating_add(1)
+    };
+    pages.iter().enumerate().fold(0_usize, |total, (idx, p)| {
+        let decoration = if idx == active_page {
+            4_usize.saturating_add(badge_width)
+        } else {
+            2
+        };
+        let tab_len = display_width(p.key_hint())
+            .as_usize()
+            .saturating_add(1)
+            .saturating_add(display_width(p.title()).as_usize())
+            .saturating_add(decoration);
+        total.saturating_add(tab_len)
+    })
+}
+
 /// Renders the 1-line top dashboard header bar at `row` across `width` columns.
 #[expect(
     clippy::cast_possible_truncation,
@@ -39,16 +80,11 @@ pub fn render_header_bar<B: DashboardBackend>(
     let right_edge = col.get().saturating_add(width);
 
     // Measure right-aligned page tabs first so we know how much space remains for telemetry
-    let mut tabs_width = 0_usize;
-    for (idx, p) in pages.iter().enumerate() {
-        // Active: " [F1:Monitor] ", Inactive: " F2:Settings "
-        let tab_len = display_width(p.key_hint())
-            .as_usize()
-            .saturating_add(1)
-            .saturating_add(display_width(p.title()).as_usize())
-            .saturating_add(if idx == active_page { 4 } else { 2 });
-        tabs_width = tabs_width.saturating_add(tab_len);
-    }
+    let active_badge = pages
+        .get(active_page)
+        .map(|p| p.tab_badge(backend))
+        .unwrap_or_default();
+    let tabs_width = measure_page_tabs_width(pages, active_page, &active_badge);
 
     let app_title = backend.app_title();
     let (badge_text, badge_color) = backend.status_badge();
@@ -114,9 +150,9 @@ pub fn render_header_bar<B: DashboardBackend>(
     if tabs_fit && !pages.is_empty() {
         let mut tx = ColumnIndex::new(right_edge.saturating_sub(tabs_width as u16));
         for (idx, p) in pages.iter().enumerate() {
-            let mut tab_str = StackStr::<48>::new();
+            let mut tab_str = StackStr::<96>::new();
             if idx == active_page {
-                let _ = write!(tab_str, " [{}:{}] ", p.key_hint(), p.title());
+                write_active_tab_label(&mut tab_str, p, &active_badge);
                 let active_style = Style::new().with_fg(palette.accent2).bold();
                 tx = buffer.set_string(
                     tx,

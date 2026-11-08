@@ -38,7 +38,7 @@ use crate::error::TuiError;
 /// let backend = MockVaultBackend;
 /// assert_eq!(backend.app_title(), "VaultDrive");
 /// ```
-pub trait DashboardBackend {
+pub trait DashboardBackend: 'static {
     /// Returns the short application name displayed on the left of the top header bar.
     fn app_title(&self) -> &str;
 

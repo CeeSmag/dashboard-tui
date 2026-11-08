@@ -690,6 +690,7 @@ pub struct KeyBindings {
     activate: KeyPress,
     cancel: KeyPress,
     numeric_jump: bool,
+    confirm_quit: bool,
 }
 
 impl Default for KeyBindings {
@@ -738,6 +739,7 @@ impl KeyBindings {
             activate: KeyPress::new(KeyCode::Enter),
             cancel: KeyPress::char('q'),
             numeric_jump: true,
+            confirm_quit: false,
         }
     }
 
@@ -896,6 +898,31 @@ impl KeyBindings {
     pub const fn numeric_jump(mut self, enabled: bool) -> Self {
         self.numeric_jump = enabled;
         self
+    }
+
+    /// Makes the quit key open a warning popup first: `Enter` confirms the quit,
+    /// `q` / `Esc` cancels (default: `false`, quit immediately). `Ctrl+C` always leaves at once ([`EngineAction::Back`]).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::dashboard::KeyBindings;
+    ///
+    /// let keys = KeyBindings::default().quit("ctrl+q").confirm_quit(true);
+    /// assert!(keys.is_quit_confirmation_required());
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn confirm_quit(mut self, required: bool) -> Self {
+        self.confirm_quit = required;
+        self
+    }
+
+    /// Returns `true` if the quit key must be confirmed through a warning popup.
+    #[must_use]
+    #[inline]
+    pub const fn is_quit_confirmation_required(&self) -> bool {
+        self.confirm_quit
     }
 
     /// Returns the configured quit [`KeyCode`].

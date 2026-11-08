@@ -59,6 +59,9 @@ pub enum ModalResult {
         /// `true` if the toast represents an error/warning, `false` for success/info.
         is_error: bool,
     },
+    /// Close the modal and request clean termination of the dashboard loop
+    /// (see [`EngineAction::Quit`](crate::dashboard::EngineAction::Quit)).
+    Quit,
 }
 
 /// Trait implemented by interactive modal overlays (`EditModal`, `ConfirmModal`,

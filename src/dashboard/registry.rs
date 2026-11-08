@@ -11,9 +11,10 @@ use std::time::{Duration, Instant};
 use crate::backend::{Backend, CrosstermBackend};
 use crate::dashboard::backend_trait::DashboardBackend;
 use crate::dashboard::engine::DashboardEngine;
-use crate::dashboard::key_router::{EngineAction, KeyBindings, KeyPress};
+use crate::dashboard::key_router::{EngineAction, IntoKeyPress, KeyBindings, KeyPress};
+use crate::dashboard::modal::ModalContext;
 use crate::dashboard::page::{Page, SectionLayoutMode};
-use crate::dashboard::section::{OptionSpec, Section, SectionWidget};
+use crate::dashboard::section::{OptionOutcome, OptionSpec, Section, SectionWidget};
 use crate::error::TuiError;
 use crate::terminal::{
     TerminalSessionConfig, TerminalSessionGuard, install_panic_restoration_hook,
@@ -149,6 +150,10 @@ impl<B: DashboardBackend> AddonOptionEntry<B> {
     }
 }
 
+type TabBadgeFn<B> = Box<dyn Fn(&B) -> String>;
+
+type EngineHook<B> = Box<dyn FnOnce(DashboardEngine<B>) -> DashboardEngine<B>>;
+
 /// Builder and assembler for wiring Tier 2 and Tier 3 add-ons into [`Page`] trees.
 ///
 /// # Examples
@@ -188,6 +193,8 @@ pub struct AddonRegistry<B: DashboardBackend> {
     sections: Vec<AddonSectionEntry<B>>,
     options: Vec<AddonOptionEntry<B>>,
     keys: KeyBindings,
+    engine_hooks: Vec<EngineHook<B>>,
+    tab_badges: Vec<(usize, TabBadgeFn<B>)>,
 }
 
 impl<B: DashboardBackend> core::fmt::Debug for AddonRegistry<B> {
@@ -197,6 +204,8 @@ impl<B: DashboardBackend> core::fmt::Debug for AddonRegistry<B> {
             .field("sections_len", &self.sections.len())
             .field("options_len", &self.options.len())
             .field("keys", &self.keys)
+            .field("engine_hooks_len", &self.engine_hooks.len())
+            .field("tab_badges_len", &self.tab_badges.len())
             .finish()
     }
 }
@@ -218,6 +227,8 @@ impl<B: DashboardBackend> AddonRegistry<B> {
             sections: Vec::new(),
             options: Vec::new(),
             keys: KeyBindings::new(),
+            engine_hooks: Vec::new(),
+            tab_badges: Vec::new(),
         }
     }
 
@@ -249,6 +260,89 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     #[inline]
     pub const fn with_keys(mut self, keys: KeyBindings) -> Self {
         self.keys = keys;
+        self
+    }
+
+    /// Shows a live badge beside the tab of the page registered at `page_index` while it is
+    /// active (see [`Page::with_tab_badge`]).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let pages = AddonRegistry::<App>::new()
+    ///     .with_page(0, "Logs", "F1", SectionLayoutMode::Auto)
+    ///     .with_tab_badge(0, |_app| "3 new".to_string())
+    ///     .assemble_pages();
+    /// assert_eq!(pages[0].tab_badge(&App), "3 new");
+    /// ```
+    #[must_use]
+    pub fn with_tab_badge<F>(mut self, page_index: usize, badge: F) -> Self
+    where
+        F: Fn(&B) -> String + 'static,
+    {
+        self.tab_badges.push((page_index, Box::new(badge)));
+        self
+    }
+
+    /// Binds a global `key` to an `action` (see [`DashboardEngine::bind_key`]).
+    #[must_use]
+    pub fn bind_key<F>(mut self, key: impl IntoKeyPress + 'static, action: F) -> Self
+    where
+        F: FnMut(&mut ModalContext<'_, B>) -> OptionOutcome<B> + 'static,
+    {
+        self.engine_hooks
+            .push(Box::new(move |engine| engine.bind_key(key, action)));
+        self
+    }
+
+    /// Binds a global `key` to a warning popup: `Enter` runs `on_confirm`, `q` / `Esc` cancels
+    /// (see [`DashboardEngine::bind_confirmed_key`]).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, KeyBindings};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let _engine = AddonRegistry::<App>::new()
+    ///     .with_keys(KeyBindings::default().quit("ctrl+q").confirm_quit(true))
+    ///     .bind_confirmed_key("ctrl+x", "Wipe", "Cannot be undone.", |_app: &mut App| {
+    ///         Ok("Wiped".to_string())
+    ///     })
+    ///     .build_engine(App);
+    /// ```
+    #[must_use]
+    pub fn bind_confirmed_key<F>(
+        mut self,
+        key: impl IntoKeyPress + 'static,
+        title: impl Into<String>,
+        warning: impl Into<String>,
+        on_confirm: F,
+    ) -> Self
+    where
+        F: Fn(&mut B) -> Result<String, String> + 'static,
+    {
+        let (title, warning) = (title.into(), warning.into());
+        self.engine_hooks.push(Box::new(move |engine| {
+            engine.bind_confirmed_key(key, title, warning, on_confirm)
+        }));
         self
     }
 
@@ -460,9 +554,11 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     /// assert_eq!(engine.pages().len(), 1);
     /// ```
     #[must_use]
-    pub fn build_engine(self, backend: B) -> DashboardEngine<B> {
+    pub fn build_engine(mut self, backend: B) -> DashboardEngine<B> {
         let keys = self.keys;
-        DashboardEngine::new(backend, self.assemble_pages()).with_keys(keys)
+        let hooks = core::mem::take(&mut self.engine_hooks);
+        let engine = DashboardEngine::new(backend, self.assemble_pages()).with_keys(keys);
+        hooks.into_iter().fold(engine, |engine, hook| hook(engine))
     }
 
     /// Assembles all registered pages, sections, and options into an ordered `Vec<Page<B>>`.
@@ -472,6 +568,7 @@ impl<B: DashboardBackend> AddonRegistry<B> {
         self.sections
             .sort_by_key(|s| (s.page_index, s.section_index));
 
+        let mut tab_badges = core::mem::take(&mut self.tab_badges);
         let mut built_pages: Vec<(usize, Page<B>)> = self
             .pages
             .into_iter()
@@ -500,6 +597,13 @@ impl<B: DashboardBackend> AddonRegistry<B> {
                 if let Some(sec) = page.sections_mut().get_mut(opt_entry.section_index) {
                     sec.push_option(opt_entry.option);
                 }
+            }
+        }
+
+        for (page_index, page) in &mut built_pages {
+            if let Some(pos) = tab_badges.iter().position(|(idx, _)| idx == page_index) {
+                let (_, badge) = tab_badges.swap_remove(pos);
+                page.set_tab_badge_boxed(badge);
             }
         }
 

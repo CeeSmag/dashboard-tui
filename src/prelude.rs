@@ -37,8 +37,8 @@ pub use crate::terminal::{
     restore_terminal_emergency,
 };
 pub use crate::universal::{
-    ColorThemeModal, ConfirmModal, EditModal, NoticeModal, SectionGapModal, TypedModal,
-    color_theme_option, section_gap_option,
+    ColorThemeModal, ConfirmModal, EditModal, LogEntry, LogLevel, LogViewSubView, NoticeModal,
+    SectionGapModal, TypedModal, color_theme_option, section_gap_option,
 };
 pub use crate::widgets::{
     ChoiceRow, Hyperlink, LabeledDivider, MenuItem, MenuList, SubCellScrollbar, TabPanel,

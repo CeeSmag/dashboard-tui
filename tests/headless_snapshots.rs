@@ -20,8 +20,9 @@ use tui_rs::core::{
     TerminalHeight, TerminalWidth, diff_buffers,
 };
 use tui_rs::dashboard::{
-    DashboardBackend, DashboardEngine, EngineAction, KeyBindings, KeyCode, KeyPress, ModalContext,
-    OptionOutcome, OptionSpec, Page, Section, SectionWidget, SpacingLayer, SubView, SubViewResult,
+    DashboardBackend, DashboardEngine, EngineAction, IntoKeyPress, KeyBindings, KeyCode, KeyPress,
+    ModalContext, OptionOutcome, OptionSpec, Page, Section, SectionWidget, SpacingLayer, SubView,
+    SubViewResult,
 };
 use tui_rs::universal::{ConfirmModal, EditModal, color_theme_option, section_gap_option};
 use tui_rs::widgets::{MenuItem, MenuList, TabPanel};
@@ -768,4 +769,187 @@ fn key_mapping_summary_and_ctrl_key_customization() {
         KeyPress::char('x').with_ctrl(true)
     );
     assert_eq!(custom_keys.quit_press().short_label().as_str(), "^X");
+}
+
+fn guarded_engine() -> DashboardEngine<MockVaultBackend> {
+    let mut storage_menu = Section::menu("Actions", "", Vec::new()).with_heights(5, 8);
+    storage_menu.push_option(
+        OptionSpec::new(
+            7,
+            "Open Storage",
+            |ctx: &mut ModalContext<'_, MockVaultBackend>| {
+                ctx.backend.saved_count += 1;
+                OptionOutcome::None
+            },
+        )
+        .with_shortkey('o'),
+    );
+    let mut page = Page::new("Main", "F1");
+    page.push_section(storage_menu);
+    DashboardEngine::new(MockVaultBackend::default(), vec![page])
+}
+
+#[test]
+fn option_shortkey_runs_option_and_keeps_its_number() {
+    let mut engine = guarded_engine();
+    assert_eq!(
+        engine.handle_key(KeyPress::char('o')),
+        EngineAction::Continue
+    );
+    assert_eq!(engine.backend().saved_count, 1);
+    assert_eq!(
+        engine.handle_key(KeyPress::char('7')),
+        EngineAction::Continue
+    );
+    assert_eq!(engine.backend().saved_count, 2);
+}
+
+#[test]
+fn bound_key_opens_warning_enter_confirms_and_q_cancels() {
+    let mut engine = guarded_engine().bind_confirmed_key(
+        "ctrl+x",
+        "Wipe",
+        "This cannot be undone.",
+        |backend: &mut MockVaultBackend| {
+            backend.saved_count = 100;
+            Ok("Wiped".to_string())
+        },
+    );
+    // q cancels: nothing happens
+    let _ = engine.handle_key("ctrl+x".into_key_press());
+    assert!(engine.has_modal());
+    let _ = engine.handle_key(KeyPress::char('q'));
+    assert!(!engine.has_modal());
+    assert_eq!(engine.backend().saved_count, 0);
+    // Enter confirms; the binding is reusable
+    let _ = engine.handle_key("ctrl+x".into_key_press());
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Enter));
+    assert!(!engine.has_modal());
+    assert_eq!(engine.backend().saved_count, 100);
+}
+
+#[test]
+fn confirm_quit_requires_enter_and_q_cancels() {
+    let mut engine =
+        guarded_engine().with_keys(KeyBindings::default().quit("ctrl+q").confirm_quit(true));
+    assert_eq!(
+        engine.handle_key(KeyPress::char('q').with_ctrl(true)),
+        EngineAction::Continue
+    );
+    assert!(engine.has_modal());
+    assert_eq!(
+        engine.handle_key(KeyPress::char('q')),
+        EngineAction::Continue
+    );
+    assert!(!engine.has_modal());
+    let _ = engine.handle_key(KeyPress::char('q').with_ctrl(true));
+    assert_eq!(
+        engine.handle_key(KeyPress::new(KeyCode::Enter)),
+        EngineAction::Quit
+    );
+    // Ctrl+C is never guarded: it leaves the UI at once (`Back`)
+    assert_eq!(
+        engine.handle_key(KeyPress::char('c').with_ctrl(true)),
+        EngineAction::Back
+    );
+}
+
+fn render_engine_grid(
+    engine: &mut DashboardEngine<MockVaultBackend>,
+    columns: u16,
+    rows: u16,
+) -> Result<String, tui_rs::error::TuiError> {
+    let mut test_backend = TestBackend::new(TerminalWidth::new(columns), TerminalHeight::new(rows));
+    let viewport = Rect::from_size(test_backend.dimensions().0, test_backend.dimensions().1);
+    let mut frame_buf = Buffer::empty(viewport);
+    engine.render(&mut frame_buf, viewport);
+    test_backend.draw_frame(diff_buffers(&Buffer::empty(Rect::ZERO), &frame_buf))?;
+    test_backend.flush()?;
+    Ok(test_backend.to_visual_grid())
+}
+
+#[test]
+fn unmapped_key_flashes_hint_and_question_mark_shows_help() {
+    let mut engine = guarded_engine();
+    assert_eq!(
+        engine.handle_key(KeyPress::char('z')),
+        EngineAction::Continue
+    );
+    let hint = engine.flash_message().unwrap_or_default().to_string();
+    assert!(hint.contains("No shortcut for 'z'"), "got: {hint}");
+
+    // Mapped keys never flash a hint
+    let mut engine = guarded_engine();
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Down));
+    assert_eq!(engine.flash_message(), None);
+
+    // `?` shows the help line
+    let _ = engine.handle_key(KeyPress::char('?'));
+    assert!(engine.flash_message().unwrap_or_default().contains("quit"));
+
+    // Hints can be disabled or customised
+    let mut silent = guarded_engine().with_invalid_key_hints(false);
+    let _ = silent.handle_key(KeyPress::char('z'));
+    assert_eq!(silent.flash_message(), None);
+    let mut custom = guarded_engine()
+        .with_invalid_key_hint(|key| Some(format!("nope {}", key.short_label().as_str())));
+    let _ = custom.handle_key(KeyPress::char('z'));
+    assert_eq!(custom.flash_message(), Some("nope z"));
+}
+
+#[test]
+fn active_page_tab_badge_is_rendered_in_header() -> Result<(), tui_rs::error::TuiError> {
+    let page = Page::<MockVaultBackend>::new("Monitor", "F1")
+        .with_tab_badge(|backend| format!("{} saved", backend.saved_count));
+    let mut engine = DashboardEngine::new(MockVaultBackend::default(), vec![page]);
+    let grid = render_engine_grid(&mut engine, 110, 12)?;
+    assert!(grid.contains("[F1:Monitor 0 saved]"), "{grid}");
+    Ok(())
+}
+
+#[test]
+fn log_viewer_lists_newest_first_scrolls_and_pops() -> Result<(), tui_rs::error::TuiError> {
+    use tui_rs::universal::{LogEntry, LogLevel, LogViewSubView};
+
+    fn mock_entries(_backend: &MockVaultBackend) -> &[LogEntry] {
+        static ENTRIES: std::sync::OnceLock<Vec<LogEntry>> = std::sync::OnceLock::new();
+        ENTRIES
+            .get_or_init(|| {
+                (0..30)
+                    .map(|n| {
+                        LogEntry::new(
+                            if n == 29 {
+                                LogLevel::Error
+                            } else {
+                                LogLevel::Info
+                            },
+                            "sync",
+                            format!("event number {n}"),
+                        )
+                    })
+                    .collect()
+            })
+            .as_slice()
+    }
+
+    let mut engine = guarded_engine();
+    engine.push_sub_view(Box::new(LogViewSubView::new("Live Logs", mock_entries)));
+
+    let grid = render_engine_grid(&mut engine, 80, 14)?;
+    assert!(grid.contains("Live Logs"));
+    assert!(grid.contains("30 lines"));
+    assert!(grid.contains("ERROR sync event number 29"), "{grid}");
+    assert!(!grid.contains("event number 0\n") && !grid.contains("event number 0 "));
+
+    // Jump to the oldest entry
+    let _ = engine.handle_key(KeyPress::new(KeyCode::End));
+    let grid = render_engine_grid(&mut engine, 80, 14)?;
+    assert!(grid.contains("event number 0"), "{grid}");
+    assert!(!grid.contains("event number 29"));
+
+    // Esc goes back
+    assert!(engine.has_sub_view());
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Esc));
+    assert!(!engine.has_sub_view());
+    Ok(())
 }
