@@ -16,6 +16,7 @@ pub mod notice_modal;
 pub mod section_gap_modal;
 pub mod settings_modal;
 pub mod status_panels;
+pub mod terminal_background_modal;
 pub mod typed_modal;
 
 pub use color_theme_modal::{ColorThemeModal, color_theme_option};
@@ -29,4 +30,5 @@ pub use status_panels::{
     PanelBadgeFn, SeriesFn, StatusDetailFn, StatusPanel, StatusRow, StatusValue, StatusValueFn,
     ThroughputPanel,
 };
+pub use terminal_background_modal::{TerminalBackgroundModal, terminal_background_option};
 pub use typed_modal::TypedModal;

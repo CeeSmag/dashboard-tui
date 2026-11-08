@@ -24,7 +24,7 @@ pub use self::grapheme::{
     truncate_with_ellipsis_parts, wrap_lines_iter,
 };
 pub use self::layout::{Constraint, Layout, LayoutDirection, split_equal_spans};
-pub use self::palette::{ColorPalette, GradientLut};
+pub use self::palette::{ColorPalette, GradientLut, TerminalBackground};
 pub use self::priority_strip::{
     KeyHint, PrioritySegment, fit_hint_indices, fit_segment_indices, render_fitted_hints,
     render_fitted_segments,

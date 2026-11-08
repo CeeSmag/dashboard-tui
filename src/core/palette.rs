@@ -206,7 +206,51 @@ pub struct ColorPalette {
     pub dim: Color,
     /// Selected row background highlight color.
     pub highlight_bg: Color,
+    /// Theme background used when [`TerminalBackground::Theme`] is active.
+    pub background: Color,
     lut: GradientLut,
+}
+
+/// How the dashboard treats the terminal's own background.
+///
+/// - [`TerminalBackground::Inherit`] (default): draw nothing behind the UI, so the terminal
+///   emulator's own background (and any transparency) shows through.
+/// - [`TerminalBackground::Theme`]: paint the active palette's [`ColorPalette::background`]
+///   behind every cell that has no explicit background, so the theme owns the whole screen.
+/// - [`TerminalBackground::Fixed`]: paint one hardcoded color regardless of theme.
+///
+/// # Examples
+///
+/// ```
+/// use tui_rs::core::{Color, ColorPalette, TerminalBackground};
+///
+/// let palette = ColorPalette::NORD;
+/// assert_eq!(TerminalBackground::Inherit.resolve(&palette), None);
+/// assert_eq!(TerminalBackground::Theme.resolve(&palette), Some(palette.background));
+/// assert_eq!(TerminalBackground::Fixed(Color::Black).resolve(&palette), Some(Color::Black));
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
+pub enum TerminalBackground {
+    /// Keep the terminal application's own background.
+    #[default]
+    Inherit,
+    /// Follow the active theme's background.
+    Theme,
+    /// Always use this color.
+    Fixed(Color),
+}
+
+impl TerminalBackground {
+    /// Returns the color to paint behind the UI, or `None` to leave the terminal alone.
+    #[must_use]
+    pub const fn resolve(self, palette: &ColorPalette) -> Option<Color> {
+        match self {
+            Self::Inherit => None,
+            Self::Theme => Some(palette.background),
+            Self::Fixed(color) => Some(color),
+        }
+    }
 }
 
 impl Default for ColorPalette {
@@ -234,6 +278,7 @@ impl ColorPalette {
         Color::Rgb(0x94, 0xA3, 0xB8),
         Color::Rgb(0x47, 0x55, 0x69),
         Color::Rgb(0x1E, 0x29, 0x3B),
+        Color::Rgb(0x0F, 0x17, 0x2A),
         [56, 189, 248],
         [34, 197, 94],
         [245, 158, 11],
@@ -257,6 +302,7 @@ impl ColorPalette {
         Color::Rgb(0x7F, 0x84, 0x9C),
         Color::Rgb(0x58, 0x5B, 0x70),
         Color::Rgb(0x31, 0x32, 0x44),
+        Color::Rgb(0x1E, 0x1E, 0x2E),
         [137, 220, 235],
         [166, 227, 161],
         [249, 226, 175],
@@ -280,6 +326,7 @@ impl ColorPalette {
         Color::Rgb(0x62, 0x72, 0xA4),
         Color::Rgb(0x44, 0x47, 0x5A),
         Color::Rgb(0x44, 0x47, 0x5A),
+        Color::Rgb(0x28, 0x2A, 0x36),
         [139, 233, 253],
         [80, 250, 123],
         [241, 250, 140],
@@ -303,6 +350,7 @@ impl ColorPalette {
         Color::Rgb(0x61, 0x6E, 0x88),
         Color::Rgb(0x43, 0x4C, 0x5E),
         Color::Rgb(0x3B, 0x42, 0x52),
+        Color::Rgb(0x2E, 0x34, 0x40),
         [136, 192, 208],
         [163, 190, 140],
         [235, 203, 139],
@@ -326,6 +374,7 @@ impl ColorPalette {
         Color::Rgb(0x58, 0x58, 0x58),
         Color::Rgb(0x9E, 0x9E, 0x9E),
         Color::Rgb(0xD0, 0xD0, 0xD0),
+        Color::Rgb(0xEF, 0xF1, 0xF5),
         [0, 135, 255],
         [0, 135, 95],
         [215, 135, 0],
@@ -349,6 +398,7 @@ impl ColorPalette {
         Color::Gray,
         Color::DarkGray,
         Color::Blue,
+        Color::Black,
         [0, 255, 255],
         [0, 255, 0],
         [255, 255, 0],
@@ -386,6 +436,7 @@ impl ColorPalette {
         muted: Color,
         dim: Color,
         highlight_bg: Color,
+        background: Color,
         grad_low: [u8; 3],
         grad_mid: [u8; 3],
         grad_warn: [u8; 3],
@@ -408,6 +459,7 @@ impl ColorPalette {
             muted,
             dim,
             highlight_bg,
+            background,
             lut,
         }
     }

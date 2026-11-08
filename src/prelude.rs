@@ -23,7 +23,7 @@ pub use crate::components::{
 pub use crate::core::{
     Buffer, Cell, Color, ColorDepth, ColorPalette, ColumnIndex, Constraint, GradientLut, KeyHint,
     Layout, LayoutDirection, Line, Modifiers, PrioritySegment, Rect, RowIndex, Spacing4D, Span,
-    StackStr, Style, TerminalHeight, TerminalWidth, TextAlignment,
+    StackStr, Style, TerminalBackground, TerminalHeight, TerminalWidth, TextAlignment,
 };
 pub use crate::dashboard::{
     AddonOptionEntry, AddonPageEntry, AddonRegistry, AddonSectionEntry, DashboardBackend,

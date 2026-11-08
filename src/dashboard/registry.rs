@@ -9,6 +9,7 @@
 use std::time::{Duration, Instant};
 
 use crate::backend::{Backend, CrosstermBackend};
+use crate::core::palette::TerminalBackground;
 use crate::dashboard::backend_trait::DashboardBackend;
 use crate::dashboard::engine::DashboardEngine;
 use crate::dashboard::key_router::{EngineAction, IntoKeyPress, KeyBindings, KeyPress};
@@ -193,6 +194,7 @@ pub struct AddonRegistry<B: DashboardBackend> {
     sections: Vec<AddonSectionEntry<B>>,
     options: Vec<AddonOptionEntry<B>>,
     keys: KeyBindings,
+    terminal_background: TerminalBackground,
     engine_hooks: Vec<EngineHook<B>>,
     tab_badges: Vec<(usize, TabBadgeFn<B>)>,
 }
@@ -206,6 +208,7 @@ impl<B: DashboardBackend> core::fmt::Debug for AddonRegistry<B> {
             .field("keys", &self.keys)
             .field("engine_hooks_len", &self.engine_hooks.len())
             .field("tab_badges_len", &self.tab_badges.len())
+            .field("terminal_background", &self.terminal_background)
             .finish()
     }
 }
@@ -227,6 +230,7 @@ impl<B: DashboardBackend> AddonRegistry<B> {
             sections: Vec::new(),
             options: Vec::new(),
             keys: KeyBindings::new(),
+            terminal_background: TerminalBackground::Inherit,
             engine_hooks: Vec::new(),
             tab_badges: Vec::new(),
         }
@@ -343,6 +347,34 @@ impl<B: DashboardBackend> AddonRegistry<B> {
         self.engine_hooks.push(Box::new(move |engine| {
             engine.bind_confirmed_key(key, title, warning, on_confirm)
         }));
+        self
+    }
+
+    /// Chooses whether the dashboard paints the terminal background (see
+    /// [`DashboardEngine::with_terminal_background`]).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment, TerminalBackground};
+    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let engine = AddonRegistry::<App>::new()
+    ///     .with_terminal_background(TerminalBackground::Theme)
+    ///     .build_engine(App);
+    /// assert_eq!(engine.terminal_background(), TerminalBackground::Theme);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn with_terminal_background(mut self, background: TerminalBackground) -> Self {
+        self.terminal_background = background;
         self
     }
 
@@ -557,7 +589,10 @@ impl<B: DashboardBackend> AddonRegistry<B> {
     pub fn build_engine(mut self, backend: B) -> DashboardEngine<B> {
         let keys = self.keys;
         let hooks = core::mem::take(&mut self.engine_hooks);
-        let engine = DashboardEngine::new(backend, self.assemble_pages()).with_keys(keys);
+        let background = self.terminal_background;
+        let engine = DashboardEngine::new(backend, self.assemble_pages())
+            .with_keys(keys)
+            .with_terminal_background(background);
         hooks.into_iter().fold(engine, |engine, hook| hook(engine))
     }
 

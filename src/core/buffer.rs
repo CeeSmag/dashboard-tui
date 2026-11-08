@@ -384,6 +384,48 @@ impl Buffer {
         }
     }
 
+    /// Gives every cell in `area` that has no background of its own the background `color`.
+    ///
+    /// Cells that already carry an explicit background (highlights, meters, selections) keep
+    /// it, so this only fills the gaps. Used to paint a theme behind the whole UI.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Buffer, Color, ColumnIndex, Rect, RowIndex, Style};
+    /// let rect = Rect::from_xywh(0, 0, 3, 1);
+    /// let mut buf = Buffer::empty(rect);
+    /// buf.set_style(Rect::from_xywh(0, 0, 1, 1), Style::new().bg(Color::Red));
+    /// buf.fill_missing_background(rect, Color::Blue);
+    /// let bg = |c: u16| buf.cell_at(ColumnIndex(c), RowIndex(0)).unwrap().style().background();
+    /// assert_eq!(bg(0), Some(Color::Red));
+    /// assert_eq!(bg(1), Some(Color::Blue));
+    /// ```
+    pub fn fill_missing_background(&mut self, area: Rect, color: crate::core::color::Color) {
+        let clipped = self.bounds.intersection(area);
+        if clipped.is_empty() {
+            return;
+        }
+        let fill = Style::new().bg(color);
+        let mut r = clipped.top().0;
+        while r < clipped.bottom().0 {
+            let mut c = clipped.left().0;
+            while c < clipped.right().0 {
+                if let Some(cell) = self.cell_at_mut(ColumnIndex(c), RowIndex(r)) {
+                    let needs_fill = matches!(
+                        cell.style().background(),
+                        None | Some(crate::core::color::Color::Reset)
+                    );
+                    if needs_fill {
+                        cell.set_style(fill);
+                    }
+                }
+                c = c.saturating_add(1);
+            }
+            r = r.saturating_add(1);
+        }
+    }
+
     /// Clears `area` to blank spaces with `style` (used before drawing modal overlays).
     ///
     /// # Examples

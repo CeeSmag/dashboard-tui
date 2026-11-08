@@ -734,6 +734,21 @@ LogBuffer::new(500)     // .info/.warn/.error(cat, msg); .as_slice() feeds LogVi
 - Custom `Modal`s can override `render_with_backend` to draw live backend values, and `SubView`s can override `on_key_with_context` to open modals or push deeper sub-views via `SubViewAction::Outcome(OptionOutcome)`. `ModalContext::keys` exposes the active `KeyBindings`.
 - A complete second dashboard for an unrelated app lives in `examples/webserver_dashboard.rs` (~120 lines of declarations); copy it as a starting point.
 
+#### Terminal background (on / off / hardcoded)
+
+```rust
+// Off (default): the terminal application's own background (and transparency) is untouched.
+// Theme: every cell without its own background gets the active theme's background.
+// Fixed: one hardcoded color, whatever the theme.
+registry.with_terminal_background(TerminalBackground::Theme)
+engine.set_terminal_background(TerminalBackground::Fixed(Color::Rgb(0x10, 0x10, 0x18)))   // at runtime
+
+// Let the END USER flip it in the app with a ready-made live-preview option:
+registry.with_option(1, 0, terminal_background_option(21))
+```
+
+Every built-in palette carries a `background`; custom code can read `palette.background`.
+
 - **`selectable` (`true` / `false`) Section Focus**: Cycle focus (`→ / ←`) **only** among sections on the current page that have `selectable = true` (configured via `.with_display_section(..., selectable)`, `.with_menu_section(..., selectable)`, or `Section::with_selectable(bool)`). Purely informative visual sections with `selectable = false` are never selected.
 - **`1`..`99` Numeric Direct Jump**:
   - If the page's highest option number is `<= 9`: pressing `1`..`9` **immediately** executes that option.

@@ -13,7 +13,7 @@ use std::time::{Duration, Instant};
 
 use crate::core::buffer::Buffer;
 use crate::core::coordinates::RowIndex;
-use crate::core::palette::ColorPalette;
+use crate::core::palette::{ColorPalette, TerminalBackground};
 use crate::core::priority_strip::KeyHint;
 use crate::core::rect::{Rect, TerminalHeight};
 use crate::dashboard::backend_trait::DashboardBackend;
@@ -61,6 +61,7 @@ pub struct DashboardEngine<B: DashboardBackend> {
     focused_sections: Vec<usize>,
     spacing: SpacingConfig,
     palette: ColorPalette,
+    terminal_background: TerminalBackground,
     theme_index: usize,
     tty_mode: bool,
     keys: KeyBindings,
@@ -115,6 +116,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
             focused_sections,
             spacing: SpacingConfig::default(),
             palette: ColorPalette::DEFAULT,
+            terminal_background: TerminalBackground::Inherit,
             theme_index: 0,
             tty_mode: false,
             keys: KeyBindings::new(),
@@ -225,6 +227,48 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                 move |backend: &mut B| confirm(backend),
             )))
         })
+    }
+
+    /// Chooses whether the dashboard paints the terminal background
+    /// ([`TerminalBackground::Inherit`] keeps the terminal's own, the default;
+    /// [`TerminalBackground::Theme`] follows the active theme;
+    /// [`TerminalBackground::Fixed`] always uses one color).
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, PrioritySegment, TerminalBackground};
+    /// use tui_rs::dashboard::{DashboardBackend, DashboardEngine};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let engine = DashboardEngine::new(App, Vec::new())
+    ///     .with_terminal_background(TerminalBackground::Theme);
+    /// assert_eq!(engine.terminal_background(), TerminalBackground::Theme);
+    /// ```
+    #[must_use]
+    #[inline]
+    pub const fn with_terminal_background(mut self, background: TerminalBackground) -> Self {
+        self.terminal_background = background;
+        self
+    }
+
+    /// Changes the terminal background mode at runtime (for example from a settings toggle).
+    #[inline]
+    pub const fn set_terminal_background(&mut self, background: TerminalBackground) {
+        self.terminal_background = background;
+    }
+
+    /// Returns the active terminal background mode.
+    #[must_use]
+    #[inline]
+    pub const fn terminal_background(&self) -> TerminalBackground {
+        self.terminal_background
     }
 
     /// Sets the initial 4-layer [`SpacingConfig`].
@@ -516,6 +560,13 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// Renders the complete dashboard frame (header bar, active page or sub-view,
     /// spliced modal overlay if open, and footer bar) into `area` inside `buffer`.
     pub fn render(&mut self, buffer: &mut Buffer, area: Rect) {
+        self.render_frame(buffer, area);
+        if let Some(background) = self.terminal_background.resolve(&self.palette) {
+            buffer.fill_missing_background(area, background);
+        }
+    }
+
+    fn render_frame(&mut self, buffer: &mut Buffer, area: Rect) {
         if area.is_empty() {
             return;
         }
@@ -651,6 +702,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                 spacing: &mut self.spacing,
                 palette: &mut self.palette,
                 theme_index: &mut self.theme_index,
+                terminal_background: &mut self.terminal_background,
                 tty_mode: self.tty_mode,
                 keys: &self.keys,
             };
@@ -680,6 +732,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                     spacing: &mut self.spacing,
                     palette: &mut self.palette,
                     theme_index: &mut self.theme_index,
+                    terminal_background: &mut self.terminal_background,
                     tty_mode: self.tty_mode,
                     keys: &self.keys,
                 };
@@ -752,6 +805,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                     spacing: &mut self.spacing,
                     palette: &mut self.palette,
                     theme_index: &mut self.theme_index,
+                    terminal_background: &mut self.terminal_background,
                     tty_mode: self.tty_mode,
                     keys: &self.keys,
                 };
@@ -916,6 +970,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                             spacing: &mut self.spacing,
                             palette: &mut self.palette,
                             theme_index: &mut self.theme_index,
+                            terminal_background: &mut self.terminal_background,
                             tty_mode: self.tty_mode,
                             keys: &self.keys,
                         };
@@ -965,6 +1020,7 @@ impl<B: DashboardBackend> DashboardEngine<B> {
                 spacing: &mut self.spacing,
                 palette: &mut self.palette,
                 theme_index: &mut self.theme_index,
+                terminal_background: &mut self.terminal_background,
                 tty_mode: self.tty_mode,
                 keys: &self.keys,
             };

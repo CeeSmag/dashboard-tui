@@ -1156,3 +1156,64 @@ fn settings_modal_previews_live_reverts_on_cancel_and_saves() -> Result<(), tui_
     assert_eq!(engine.flash_message(), Some("Settings saved"));
     Ok(())
 }
+
+fn background_of(buffer: &Buffer, column: u16, row: u16) -> Option<Color> {
+    buffer
+        .cell_at(ColumnIndex(column), RowIndex(row))
+        .and_then(|cell| cell.style().background())
+}
+
+#[test]
+fn terminal_background_inherit_theme_and_fixed_modes() {
+    use tui_rs::core::TerminalBackground;
+
+    let viewport = Rect::from_xywh(0, 0, 60, 12);
+    let render = |mode: TerminalBackground| {
+        let mut engine = guarded_engine().with_terminal_background(mode);
+        let mut buffer = Buffer::empty(viewport);
+        engine.render(&mut buffer, viewport);
+        buffer
+    };
+
+    // Inherit (default): nothing painted, the terminal's own background shows through
+    assert_eq!(
+        background_of(&render(TerminalBackground::Inherit), 58, 5),
+        None
+    );
+    // Theme: every gap gets the palette background
+    let theme_bg = ColorPalette::DEFAULT.background;
+    let themed = render(TerminalBackground::Theme);
+    assert_eq!(background_of(&themed, 58, 5), Some(theme_bg));
+    assert_eq!(background_of(&themed, 0, 0), Some(theme_bg));
+    // Fixed: one hardcoded color
+    let fixed = render(TerminalBackground::Fixed(Color::Rgb(1, 2, 3)));
+    assert_eq!(background_of(&fixed, 58, 5), Some(Color::Rgb(1, 2, 3)));
+}
+
+#[test]
+fn terminal_background_option_previews_applies_and_reverts() {
+    use tui_rs::core::TerminalBackground;
+    use tui_rs::universal::terminal_background_option;
+
+    let mut menu = Section::menu("Appearance", "", Vec::new()).with_heights(5, 8);
+    menu.push_option(terminal_background_option::<MockVaultBackend>(9));
+    let mut page = Page::new("Main", "F1");
+    page.push_section(menu);
+    let mut engine = DashboardEngine::new(MockVaultBackend::default(), vec![page]);
+    assert_eq!(engine.terminal_background(), TerminalBackground::Inherit);
+
+    // Down previews "Follow theme"; Esc reverts to the terminal default
+    let _ = engine.handle_key(KeyPress::char('9'));
+    assert!(engine.has_modal());
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Down));
+    assert_eq!(engine.terminal_background(), TerminalBackground::Theme);
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Esc));
+    assert_eq!(engine.terminal_background(), TerminalBackground::Inherit);
+
+    // Down + Enter keeps it
+    let _ = engine.handle_key(KeyPress::char('9'));
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Down));
+    let _ = engine.handle_key(KeyPress::new(KeyCode::Enter));
+    assert_eq!(engine.terminal_background(), TerminalBackground::Theme);
+    assert!(!engine.has_modal());
+}

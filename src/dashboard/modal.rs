@@ -9,6 +9,7 @@
 use crate::core::buffer::Buffer;
 use crate::core::color::Color;
 use crate::core::palette::ColorPalette;
+use crate::core::palette::TerminalBackground;
 use crate::core::rect::{Rect, TerminalHeight, TerminalWidth};
 use crate::core::style::Style;
 use crate::dashboard::backend_trait::DashboardBackend;
@@ -28,6 +29,8 @@ pub struct ModalContext<'a, B: DashboardBackend> {
     pub palette: &'a mut ColorPalette,
     /// Mutable reference to the active preset theme index.
     pub theme_index: &'a mut usize,
+    /// Mutable reference to the engine's terminal background mode.
+    pub terminal_background: &'a mut TerminalBackground,
     /// Whether Linux TTY safe glyph mode is active.
     pub tty_mode: bool,
     /// The engine's active global shortkeys, so custom modals and sub-views can honour
