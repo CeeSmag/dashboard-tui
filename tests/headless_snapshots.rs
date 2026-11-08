@@ -953,3 +953,59 @@ fn log_viewer_lists_newest_first_scrolls_and_pops() -> Result<(), tui_rs::error:
     assert!(!engine.has_sub_view());
     Ok(())
 }
+
+#[test]
+fn status_and_throughput_panels_render_live_backend_data() -> Result<(), tui_rs::error::TuiError> {
+    use tui_rs::universal::{StatusPanel, StatusRow, StatusValue, ThroughputPanel};
+
+    let system = StatusPanel::<MockVaultBackend>::new("Vault System")
+        .with_subtitle("vault.service")
+        .with_badge(|backend| {
+            if backend.mounted {
+                ("● ONLINE", Some(Color::Green))
+            } else {
+                ("● OFFLINE", Some(Color::Red))
+            }
+        })
+        .with_row(
+            StatusRow::new("CPU", |_| StatusValue::Meter(42.5)).with_detail(|_, out| {
+                let _ = core::fmt::Write::write_str(out, "(8 cores)");
+            }),
+        )
+        .with_row(StatusRow::new("Daemon", |backend| {
+            StatusValue::Text(backend.remote_name.as_str())
+        }))
+        .with_row(StatusRow::new("Net", |_| StatusValue::Rates {
+            up_bytes_per_sec: 2048.0,
+            down_bytes_per_sec: 3.0 * 1024.0 * 1024.0,
+        }));
+    let traffic = ThroughputPanel::<MockVaultBackend>::dual(
+        "Network Monitor",
+        "Up",
+        |backend| backend.up_history.as_slice(),
+        "Down",
+        |backend| backend.down_history.as_slice(),
+    )
+    .with_subtitle("traffic");
+
+    let mut page = Page::new("Monitor", "F1");
+    page.push_section(Section::display(Box::new(system)).with_heights(7, 7));
+    page.push_section(Section::display(Box::new(traffic)).with_heights(7, 9));
+    let mut engine = DashboardEngine::new(MockVaultBackend::default(), vec![page]);
+    let grid = render_engine_grid(&mut engine, 100, 24)?;
+
+    assert!(grid.contains("Vault System"), "{grid}");
+    assert!(grid.contains("● ONLINE"));
+    assert!(grid.contains("CPU"));
+    assert!(grid.contains(" 42.5% (8 cores)"), "{grid}");
+    assert!(grid.contains("gdrive-crypt:/vault"));
+    assert!(
+        grid.contains("▲ 2.0 KB/s") || grid.contains("▲ 2 KB/s"),
+        "{grid}"
+    );
+    assert!(grid.contains("Network Monitor"));
+    assert!(grid.contains("Up ") && grid.contains("Down "), "{grid}");
+    // Latest sample is 64_000 B/s up, 128_000 B/s down => badge ACTIVE
+    assert!(grid.contains("● ACTIVE"), "{grid}");
+    Ok(())
+}

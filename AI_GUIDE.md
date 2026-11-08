@@ -129,6 +129,7 @@ Use this table to jump directly to the exact file in `src/` for any task without
         ├── edit_modal.rs              # EditModal<B> (text input modal with validation callback)
         ├── confirm_modal.rs           # ConfirmModal<B> (Yes/No confirmation modal)
         ├── typed_modal.rs             # TypedModal<B> (destructive action modal requiring exact phrase match)
+        ├── status_panels.rs           # StatusPanel (meter/text/rate rows) + ThroughputPanel (live braille waveform)
         ├── log_view.rs                # LogViewSubView + LogEntry/LogLevel (scrollable, newest-first log page)
         └── notice_modal.rs            # NoticeModal (multi-line informational alert modal)
 ```
@@ -682,6 +683,29 @@ OptionOutcome::PushSubView(Box::new(LogViewSubView::new("Live Logs", |app: &App|
 engine.with_invalid_key_hint(|key| Some(format!("{} does nothing", key.short_label().as_str())))
 engine.with_invalid_key_hints(false)           // silence the default hint
 ```
+
+#### Ready-made telemetry panels (`StatusPanel`, `ThroughputPanel`)
+
+Zero-boilerplate `SectionWidget`s driven by plain `fn(&App) -> …` accessors (nothing is copied or allocated per frame):
+
+```rust
+// Labelled rows: gradient meters (+ optional detail), plain text, and ▲/▼ rates.
+let system = StatusPanel::<App>::new("CloudVault System")
+    .with_subtitle("cloudvault.service")
+    .with_badge(|app| if app.online { ("● ONLINE", Some(Color::Green)) } else { ("● OFFLINE", Some(Color::Red)) })
+    .with_row(StatusRow::new("CPU", |app| StatusValue::Meter(app.cpu_pct)))
+    .with_row(StatusRow::new("RAM", |app| StatusValue::Meter(app.mem_pct))
+        .with_detail(|app, out| { let _ = write!(out, "({:.1}G)", app.mem_total_gb); }))
+    .with_row(StatusRow::new("Daemon", |app| StatusValue::Text(app.daemon_state.as_str())))
+    .with_row(StatusRow::new("Net", |app| StatusValue::Rates { up_bytes_per_sec: app.tx, down_bytes_per_sec: app.rx }));
+
+// Live waveform with a rate header and an automatic ● ACTIVE / ● IDLE badge.
+let disk = ThroughputPanel::<App>::dual("Disk I/O", "Write", |a| a.write_hist.as_slice(), "Read", |a| a.read_hist.as_slice());
+let net  = ThroughputPanel::<App>::single("Network Monitor", "Traffic", |a| a.traffic_hist.as_slice());
+page.push_section(Section::display(Box::new(system)).with_heights(8, 10));
+```
+
+The host appends one sample per `DashboardBackend::on_tick` to its own `Vec<f64>`; the panels read the newest samples and pick a "nice" scale from the visible peak.
 
 - **`selectable` (`true` / `false`) Section Focus**: Cycle focus (`→ / ←`) **only** among sections on the current page that have `selectable = true` (configured via `.with_display_section(..., selectable)`, `.with_menu_section(..., selectable)`, or `Section::with_selectable(bool)`). Purely informative visual sections with `selectable = false` are never selected.
 - **`1`..`99` Numeric Direct Jump**:

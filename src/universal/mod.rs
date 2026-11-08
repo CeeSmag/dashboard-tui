@@ -14,6 +14,7 @@ pub mod edit_modal;
 pub mod log_view;
 pub mod notice_modal;
 pub mod section_gap_modal;
+pub mod status_panels;
 pub mod typed_modal;
 
 pub use color_theme_modal::{ColorThemeModal, color_theme_option};
@@ -22,4 +23,8 @@ pub use edit_modal::{EditModal, EditSubmitFn};
 pub use log_view::{LogEntriesFn, LogEntry, LogLevel, LogViewSubView};
 pub use notice_modal::NoticeModal;
 pub use section_gap_modal::{SectionGapModal, section_gap_option};
+pub use status_panels::{
+    PanelBadgeFn, SeriesFn, StatusDetailFn, StatusPanel, StatusRow, StatusValue, StatusValueFn,
+    ThroughputPanel,
+};
 pub use typed_modal::TypedModal;
