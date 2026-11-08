@@ -6,9 +6,32 @@
 
 use crate::backend::Backend;
 use crate::core::buffer::Buffer;
+use crate::core::coordinates::{ColumnIndex, RowIndex, TerminalHeight, TerminalWidth};
 use crate::core::diff::diff_buffers;
 use crate::core::rect::Rect;
 use crate::error::TuiError;
+
+/// Where the UI is drawn on the terminal.
+///
+/// # Examples
+///
+/// ```
+/// use tui_rs::terminal::{TerminalSessionConfig, Viewport};
+///
+/// let config = TerminalSessionConfig::new().with_viewport(Viewport::Inline(8));
+/// assert_eq!(config.viewport(), Viewport::Inline(8));
+/// assert!(!config.should_use_alternate_screen());
+/// ```
+#[derive(Debug, Clone, Copy, PartialEq, Eq, Hash, Default)]
+#[non_exhaustive]
+pub enum Viewport {
+    /// Take over the whole screen (the default).
+    #[default]
+    Fullscreen,
+    /// Draw in a fixed number of rows at the bottom of the terminal, leaving earlier output
+    /// (command history) visible above and untouched.
+    Inline(u16),
+}
 
 /// Configuration options for a managed terminal session.
 ///
@@ -28,6 +51,7 @@ pub struct TerminalSessionConfig {
     use_alternate_screen: bool,
     hide_cursor: bool,
     enable_alternate_scroll: bool,
+    viewport: Viewport,
 }
 
 impl Default for TerminalSessionConfig {
@@ -37,6 +61,7 @@ impl Default for TerminalSessionConfig {
             use_alternate_screen: true,
             hide_cursor: true,
             enable_alternate_scroll: true,
+            viewport: Viewport::Fullscreen,
         }
     }
 }
@@ -59,6 +84,7 @@ impl TerminalSessionConfig {
             use_alternate_screen: true,
             hide_cursor: true,
             enable_alternate_scroll: true,
+            viewport: Viewport::Fullscreen,
         }
     }
 
@@ -111,6 +137,25 @@ impl TerminalSessionConfig {
     pub const fn with_alternate_scroll(mut self, enabled: bool) -> Self {
         self.enable_alternate_scroll = enabled;
         self
+    }
+
+    /// Chooses where the UI is drawn. [`Viewport::Inline`] turns the alternate screen off, so
+    /// the UI lives in the last rows of the normal terminal and earlier output stays visible.
+    #[must_use]
+    #[inline]
+    pub const fn with_viewport(mut self, viewport: Viewport) -> Self {
+        if matches!(viewport, Viewport::Inline(_)) {
+            self.use_alternate_screen = false;
+        }
+        self.viewport = viewport;
+        self
+    }
+
+    /// Returns the configured [`Viewport`].
+    #[must_use]
+    #[inline]
+    pub const fn viewport(&self) -> Viewport {
+        self.viewport
     }
 
     /// Returns `true` if the session uses the alternate screen buffer.
@@ -224,7 +269,11 @@ impl<B: Backend> TerminalSessionGuard<B> {
             let _ = backend.hide_cursor();
         }
         let (width, height) = backend.dimensions();
-        let area = Rect::from_size(width, height);
+        if let Viewport::Inline(rows) = config.viewport {
+            // Push existing output up so the inline viewport has fresh rows to draw in.
+            let _ = backend.scroll_up(rows.min(height.get()));
+        }
+        let area = Self::viewport_area(config.viewport, width, height);
         Ok(Self {
             backend,
             config,
@@ -232,6 +281,21 @@ impl<B: Backend> TerminalSessionGuard<B> {
             previous_buffer: Buffer::empty(Rect::ZERO),
             needs_full_redraw: true,
         })
+    }
+
+    fn viewport_area(viewport: Viewport, width: TerminalWidth, height: TerminalHeight) -> Rect {
+        match viewport {
+            Viewport::Fullscreen => Rect::from_size(width, height),
+            Viewport::Inline(rows) => {
+                let shown = rows.clamp(1, height.get().max(1)).min(height.get());
+                Rect::new(
+                    ColumnIndex::new(0),
+                    RowIndex::new(height.get().saturating_sub(shown)),
+                    width,
+                    TerminalHeight::new(shown),
+                )
+            }
+        }
     }
 
     /// Returns a shared reference to the underlying backend.
@@ -319,8 +383,43 @@ impl<B: Backend> TerminalSessionGuard<B> {
     where
         F: FnOnce(&mut Buffer, Rect),
     {
+        self.draw_with_cursor(|buffer, area| {
+            render_fn(buffer, area);
+            None
+        })
+    }
+
+    /// Like [`TerminalSessionGuard::draw`], but the closure may return a cursor position.
+    ///
+    /// `Some((column, row))` shows the hardware cursor there (for text inputs); `None` hides it
+    /// again when the session hides the cursor. Coordinates are absolute screen cells.
+    ///
+    /// # Errors
+    ///
+    /// Returns [`TuiError`] if drawing, cursor control, or flushing fails.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::backend::TestBackend;
+    /// use tui_rs::core::{ColumnIndex, RowIndex, TerminalHeight, TerminalWidth};
+    /// use tui_rs::terminal::{TerminalSessionConfig, TerminalSessionGuard};
+    ///
+    /// let backend = TestBackend::new(TerminalWidth(20), TerminalHeight(4));
+    /// let mut session = TerminalSessionGuard::enter(backend, TerminalSessionConfig::default())?;
+    /// session.draw_with_cursor(|_buffer, _area| Some((ColumnIndex(5), RowIndex(2))))?;
+    /// assert!(session.backend().is_cursor_visible());
+    /// assert_eq!(session.backend().cursor_position(), (ColumnIndex(5), RowIndex(2)));
+    /// session.draw_with_cursor(|_buffer, _area| None)?;
+    /// assert!(!session.backend().is_cursor_visible());
+    /// # Ok::<(), tui_rs::error::TuiError>(())
+    /// ```
+    pub fn draw_with_cursor<F>(&mut self, render_fn: F) -> Result<Rect, TuiError>
+    where
+        F: FnOnce(&mut Buffer, Rect) -> Option<(ColumnIndex, RowIndex)>,
+    {
         let (width, height) = self.backend.dimensions();
-        let area = Rect::from_size(width, height);
+        let area = Self::viewport_area(self.config.viewport, width, height);
 
         if self.current_buffer.area() != area {
             self.current_buffer.resize(area);
@@ -328,18 +427,31 @@ impl<B: Backend> TerminalSessionGuard<B> {
         }
 
         if self.needs_full_redraw {
-            self.backend.clear_screen()?;
+            // An inline viewport must not wipe the scrollback above it; the forced diff below
+            // repaints every cell of the viewport anyway.
+            if self.config.viewport == Viewport::Fullscreen {
+                self.backend.clear_screen()?;
+            }
             // Setting previous_buffer to ZERO bounds causes diff_buffers to set force_all = true
             self.previous_buffer.resize(Rect::ZERO);
             self.needs_full_redraw = false;
         }
 
         self.current_buffer.reset();
-        render_fn(&mut self.current_buffer, area);
+        let cursor = render_fn(&mut self.current_buffer, area);
 
         {
             let diffs = diff_buffers(&self.previous_buffer, &self.current_buffer);
             self.backend.draw_frame(diffs)?;
+        }
+
+        match cursor {
+            Some((column, row)) => {
+                self.backend.set_cursor_position(column, row)?;
+                self.backend.show_cursor()?;
+            }
+            None if self.config.hide_cursor => self.backend.hide_cursor()?,
+            None => {}
         }
 
         self.backend.flush()?;
@@ -361,6 +473,15 @@ impl<B: Backend> Drop for TerminalSessionGuard<B> {
         }
         if self.config.use_alternate_screen {
             let _ = self.backend.leave_alternate_screen();
+        }
+        if matches!(self.config.viewport, Viewport::Inline(_)) {
+            // Leave the last frame in the scrollback and park the cursor on a fresh line below it.
+            let (_, height) = self.backend.dimensions();
+            let _ = self.backend.scroll_up(1);
+            let _ = self.backend.set_cursor_position(
+                ColumnIndex::new(0),
+                RowIndex::new(height.get().saturating_sub(1)),
+            );
         }
         let _ = self.backend.disable_raw_mode();
         let _ = self.backend.flush();

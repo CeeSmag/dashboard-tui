@@ -68,6 +68,22 @@ impl<'a> Span<'a> {
         }
     }
 
+    /// Returns the span with `style` layered on top of its current style.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::core::{Color, Span, Style};
+    ///
+    /// let span = Span::styled("ok", Style::new().bold()).patch_style(Style::new().fg(Color::Green));
+    /// assert_eq!(span.style(), Style::new().bold().fg(Color::Green));
+    /// ```
+    #[must_use]
+    pub fn patch_style(mut self, style: Style) -> Self {
+        self.style = self.style.patch(style);
+        self
+    }
+
     /// Creates a styled `Span` with the given [`Style`].
     ///
     /// # Examples

@@ -182,6 +182,13 @@ impl<W: Write> Backend for CrosstermBackend<W> {
         Ok(())
     }
 
+    fn scroll_up(&mut self, lines: u16) -> Result<(), TuiError> {
+        if lines > 0 {
+            write!(self.writer, "\x1b[{lines}S")?;
+        }
+        Ok(())
+    }
+
     fn clear_screen(&mut self) -> Result<(), TuiError> {
         self.writer.write_all(b"\x1b[0m\x1b[2J\x1b[H")?;
         Ok(())

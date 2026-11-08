@@ -194,6 +194,23 @@ impl TestBackend {
         self.cursor_visible
     }
 
+    /// Returns the hardware cursor position last set through the backend.
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// use tui_rs::backend::{Backend, TestBackend};
+    /// use tui_rs::core::{ColumnIndex, RowIndex, TerminalHeight, TerminalWidth};
+    ///
+    /// let mut backend = TestBackend::new(TerminalWidth(10), TerminalHeight(2));
+    /// backend.set_cursor_position(ColumnIndex(3), RowIndex(1)).unwrap();
+    /// assert_eq!(backend.cursor_position(), (ColumnIndex(3), RowIndex(1)));
+    /// ```
+    #[must_use]
+    pub const fn cursor_position(&self) -> (ColumnIndex, RowIndex) {
+        self.cursor_position
+    }
+
     /// Returns the last set window title.
     ///
     /// # Examples
@@ -274,6 +291,30 @@ impl Backend for TestBackend {
 
     fn set_cursor_position(&mut self, column: ColumnIndex, row: RowIndex) -> Result<(), TuiError> {
         self.cursor_position = (column, row);
+        Ok(())
+    }
+
+    fn scroll_up(&mut self, lines: u16) -> Result<(), TuiError> {
+        let rows = self.height.get();
+        let shift = lines.min(rows);
+        for row in 0..rows {
+            for column in 0..self.width.get() {
+                let source = row.saturating_add(shift);
+                let moved = if source < rows {
+                    self.screen_buffer
+                        .cell_at(ColumnIndex(column), RowIndex(source))
+                        .cloned()
+                } else {
+                    None
+                };
+                if let Some(cell) = self
+                    .screen_buffer
+                    .cell_at_mut(ColumnIndex(column), RowIndex(row))
+                {
+                    *cell = moved.unwrap_or_default();
+                }
+            }
+        }
         Ok(())
     }
 

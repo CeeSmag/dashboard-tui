@@ -682,13 +682,50 @@ impl<B: DashboardBackend> DashboardEngine<B> {
     /// # Ok::<(), tui_rs::TuiError>(())
     /// ```
     pub fn run_interactive(&mut self, tick_rate: Duration) -> Result<EngineAction, TuiError> {
+        self.run_interactive_with(TerminalSessionConfig::default(), tick_rate)
+    }
+
+    /// Like [`DashboardEngine::run_interactive`], with an explicit [`TerminalSessionConfig`]
+    /// (for example an inline viewport that leaves earlier terminal output visible).
+    ///
+    /// # Errors
+    ///
+    /// Returns [`TuiError`] if terminal initialization, event polling, or frame flushing fails.
+    ///
+    /// # Examples
+    ///
+    /// ```no_run
+    /// use std::time::Duration;
+    /// use tui_rs::core::{Color, PrioritySegment};
+    /// use tui_rs::dashboard::{AddonRegistry, DashboardBackend, SectionLayoutMode};
+    /// use tui_rs::terminal::{TerminalSessionConfig, Viewport};
+    ///
+    /// struct App;
+    /// impl DashboardBackend for App {
+    ///     fn app_title(&self) -> &str { "App" }
+    ///     fn status_badge(&self) -> (&str, Color) { ("OK", Color::Green) }
+    ///     fn header_segments(&self) -> Vec<PrioritySegment> { Vec::new() }
+    /// }
+    ///
+    /// let mut engine = AddonRegistry::<App>::new()
+    ///     .with_page(0, "Status", "F1", SectionLayoutMode::Auto)
+    ///     .build_engine(App);
+    /// let config = TerminalSessionConfig::new().with_viewport(Viewport::Inline(12));
+    /// engine.run_interactive_with(config, Duration::from_millis(250))?;
+    /// # Ok::<(), tui_rs::TuiError>(())
+    /// ```
+    pub fn run_interactive_with(
+        &mut self,
+        config: TerminalSessionConfig,
+        tick_rate: Duration,
+    ) -> Result<EngineAction, TuiError> {
         install_panic_restoration_hook();
         let backend = CrosstermBackend::with_writer(std::io::stdout());
         let is_tty = backend.capabilities().is_tty_console();
         if is_tty {
             self.set_tty_mode(true);
         }
-        let mut session = TerminalSessionGuard::enter(backend, TerminalSessionConfig::default())?;
+        let mut session = TerminalSessionGuard::enter(backend, config)?;
         let mut last_tick = Instant::now();
 
         loop {

@@ -1,6 +1,7 @@
 //! Core zero-dependency TUI primitives: coordinates, geometry, colors, styles, palettes,
 //! UAX #29 graphemes, double-buffered cell grids, and constraint layout solvers.
 
+pub mod border;
 pub mod buffer;
 pub mod cell;
 pub mod color;
@@ -12,9 +13,11 @@ pub mod palette;
 pub mod priority_strip;
 pub mod rect;
 pub mod style;
+pub mod stylize;
 pub mod text;
 pub mod widget;
 
+pub use self::border::merge_border_symbols;
 pub use self::buffer::{Buffer, StackStr};
 pub use self::cell::Cell;
 pub use self::color::{Color, ColorDepth, rgb_to_ansi16, rgb_to_ansi256};
@@ -32,5 +35,6 @@ pub use self::priority_strip::{
 };
 pub use self::rect::{Rect, Spacing4D};
 pub use self::style::{Modifiers, Style};
+pub use self::stylize::Stylize;
 pub use self::text::{Line, Span, Text, TextAlignment};
 pub use self::widget::{StatefulWidget, Widget};

@@ -123,6 +123,19 @@ pub trait Backend {
     /// Returns [`TuiError`] if writing to the terminal fails.
     fn set_cursor_position(&mut self, column: ColumnIndex, row: RowIndex) -> Result<(), TuiError>;
 
+    /// Scrolls the screen contents up by `lines` rows, leaving blank rows at the bottom.
+    ///
+    /// Used to reserve room for an inline viewport. The default does nothing, so existing
+    /// backends keep working (an inline viewport then draws over existing content).
+    ///
+    /// # Errors
+    ///
+    /// Returns [`TuiError`] if writing to the terminal fails.
+    fn scroll_up(&mut self, lines: u16) -> Result<(), TuiError> {
+        let _ = lines;
+        Ok(())
+    }
+
     /// Clears the entire terminal screen and resets SGR attributes.
     ///
     /// # Errors
