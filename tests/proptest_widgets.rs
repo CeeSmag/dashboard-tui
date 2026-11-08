@@ -6,8 +6,9 @@
 use proptest::prelude::*;
 use tui_rs::core::{Buffer, Constraint, Line, Rect, StatefulWidget, Style, TextAlignment, Widget};
 use tui_rs::widgets::{
-    Bar, BarChart, Gauge, LineGauge, List, ListState, Paragraph, Row, Sparkline, Table, TableState,
-    Tabs, WrapMode,
+    Axis, Bar, BarChart, Calendar, Canvas, Chart, Clear, Dataset, Gauge, GraphType, LineGauge,
+    List, ListState, Marker, Paragraph, Row, Shape, Sparkline, Table, TableState, Tabs, WeekStart,
+    WrapMode,
 };
 
 proptest! {
@@ -109,5 +110,55 @@ proptest! {
             .show_values(true);
         if let Some(limit) = max { chart = chart.max(limit); }
         chart.render(area, &mut buffer);
+    }
+
+    #[test]
+    fn canvas_chart_calendar_and_clear_never_panic(
+        x in 0..=300u16, y in 0..=300u16, w in 0..=120u16, h in 0..=40u16,
+        buf_w in 0..=200u16, buf_h in 0..=80u16,
+        coords in prop::collection::vec((prop::num::f64::ANY, prop::num::f64::ANY), 0..=40),
+        bounds_a in prop::num::f64::ANY, bounds_b in prop::num::f64::ANY,
+        radius in prop::num::f64::ANY,
+        marker_pick in 0..4u8,
+        line_type in any::<bool>(),
+        year in -5000..=5000i32, month in 0..=20u8, day in 0..=40u8, sunday in any::<bool>(),
+        labels in prop::collection::vec("[a-z0-9]{0,6}", 0..=8),
+    ) {
+        let area = Rect::from_xywh(x, y, w, h);
+        let mut buffer = Buffer::empty(Rect::from_xywh(0, 0, buf_w, buf_h));
+        let marker = match marker_pick {
+            0 => Marker::Braille,
+            1 => Marker::HalfBlock,
+            2 => Marker::Block,
+            _ => Marker::Ascii,
+        };
+
+        let bounds = [bounds_a, bounds_b];
+        Canvas::new(bounds, bounds)
+            .marker(marker)
+            .shape(Shape::Points { coords: &coords, style: Style::DEFAULT })
+            .shape(Shape::Line {
+                from: coords.first().copied().unwrap_or((0.0, 0.0)),
+                to: coords.last().copied().unwrap_or((1.0, 1.0)),
+                style: Style::DEFAULT,
+            })
+            .shape(Shape::Rectangle { x: bounds_a, y: bounds_b, width: radius, height: radius, style: Style::DEFAULT })
+            .shape(Shape::Circle { x: bounds_a, y: bounds_b, radius, style: Style::DEFAULT })
+            .render(area, &mut buffer);
+
+        let label_refs: Vec<&str> = labels.iter().map(String::as_str).collect();
+        Chart::new([Dataset::new("a", &coords)
+            .graph_type(if line_type { GraphType::Line } else { GraphType::Scatter })
+            .marker(marker)])
+        .x_axis(Axis::new(bounds).labels(label_refs.iter().copied()).title("x"))
+        .y_axis(Axis::new(bounds).labels(label_refs.iter().copied()).title("y"))
+        .render(area, &mut buffer);
+
+        Calendar::new(year, month)
+            .selected(Some(day))
+            .mark(day, Style::new().bold())
+            .week_start(if sunday { WeekStart::Sunday } else { WeekStart::Monday })
+            .render(area, &mut buffer);
+        Clear.render(area, &mut buffer);
     }
 }

@@ -2,7 +2,11 @@
 //! `WeightedTable`, `MenuList`, `ChoiceRow`, `TextInput`, `Hyperlink`).
 
 pub mod bar_chart;
+pub mod calendar;
+pub mod canvas;
+pub mod chart;
 pub mod choice_row;
+pub mod clear;
 pub mod divider;
 pub mod gauge;
 pub mod hyperlink;
@@ -10,6 +14,7 @@ pub mod list;
 pub mod menu_list;
 pub mod panel;
 pub mod paragraph;
+pub mod plot;
 pub mod scrollbar;
 pub mod sparkline;
 pub mod table;
@@ -18,7 +23,11 @@ pub mod text_input;
 pub mod weighted_table;
 
 pub use bar_chart::{Bar, BarChart};
+pub use calendar::{Calendar, WeekStart, days_in_month, first_weekday_of_month, is_leap_year};
+pub use canvas::{Canvas, Shape};
+pub use chart::{Axis, Chart, Dataset, GraphType};
 pub use choice_row::ChoiceRow;
+pub use clear::Clear;
 pub use divider::LabeledDivider;
 pub use gauge::{Gauge, LineGauge};
 pub use hyperlink::Hyperlink;
@@ -26,6 +35,7 @@ pub use list::{List, ListItem, ListState};
 pub use menu_list::{MenuItem, MenuList};
 pub use panel::{TabPanel, format_superscript_number};
 pub use paragraph::{Paragraph, WrapMode};
+pub use plot::{DotPlotter, Marker};
 pub use scrollbar::{SubCellScrollbar, VerticalScrollState};
 pub use sparkline::Sparkline;
 pub use table::{Row, Table, TableState};

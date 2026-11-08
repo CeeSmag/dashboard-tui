@@ -43,8 +43,8 @@ pub use crate::universal::{
     ThroughputPanel, TypedModal, color_theme_option, section_gap_option,
 };
 pub use crate::widgets::{
-    Bar, BarChart, ChoiceRow, Gauge, Hyperlink, LabeledDivider, LineGauge, List, ListItem,
-    ListState, MenuItem, MenuList, Paragraph, Row, Sparkline, SubCellScrollbar, TabPanel, Table,
-    TableColumn, TableState, Tabs, TextInput, TextInputState, VerticalScrollState, WeightedTable,
-    WrapMode,
+    Axis, Bar, BarChart, Calendar, Canvas, Chart, ChoiceRow, Clear, Dataset, Gauge, GraphType,
+    Hyperlink, LabeledDivider, LineGauge, List, ListItem, ListState, Marker, MenuItem, MenuList,
+    Paragraph, Row, Shape, Sparkline, SubCellScrollbar, TabPanel, Table, TableColumn, TableState,
+    Tabs, TextInput, TextInputState, VerticalScrollState, WeekStart, WeightedTable, WrapMode,
 };
