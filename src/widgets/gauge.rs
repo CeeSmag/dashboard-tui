@@ -41,7 +41,7 @@ pub struct Gauge<'a> {
 }
 
 impl<'a> Gauge<'a> {
-    /// Sets the progress as a fraction in `0.0..=1.0` (clamped; NaN counts as 0).
+    /// Sets the progress as a fraction in `0.0..=1.0` (clamped; `NaN` counts as 0).
     #[must_use]
     pub const fn ratio(mut self, ratio: f64) -> Self {
         self.ratio = if ratio.is_nan() {
@@ -180,7 +180,7 @@ pub struct LineGauge<'a> {
 }
 
 impl<'a> LineGauge<'a> {
-    /// Sets the progress as a fraction in `0.0..=1.0` (clamped; NaN counts as 0).
+    /// Sets the progress as a fraction in `0.0..=1.0` (clamped; `NaN` counts as 0).
     #[must_use]
     pub const fn ratio(mut self, ratio: f64) -> Self {
         self.ratio = if ratio.is_nan() {

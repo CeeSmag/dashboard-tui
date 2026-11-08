@@ -209,7 +209,7 @@ fn round_dot(value: f64) -> i64 {
     }
 }
 
-/// Rounds a dot-grid coordinate to an integer (clamped, NaN → 0).
+/// Rounds a dot-grid coordinate to an integer (clamped, `NaN` → 0).
 pub(crate) fn round_to_i64(value: f64) -> i64 {
     round_dot(value)
 }

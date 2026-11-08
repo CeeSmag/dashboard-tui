@@ -43,7 +43,7 @@ pub use tabs::Tabs;
 pub use text_input::{TextInput, TextInputState};
 pub use weighted_table::{MAX_TABLE_COLUMNS, TableColumn, WeightedTable};
 
-/// Converts a non-negative `f64` (clamped to `0.0..=65535.0`, NaN → 0) to `u16`, rounding down.
+/// Converts a non-negative `f64` (clamped to `0.0..=65535.0`, `NaN` → 0) to `u16`, rounding down.
 #[expect(
     clippy::cast_possible_truncation,
     clippy::cast_sign_loss,

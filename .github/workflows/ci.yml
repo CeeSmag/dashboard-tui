@@ -21,6 +21,16 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require a raised version and changelog entry (RULES.md section 8)
+        run: |
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            scripts/check-version-bump.sh "origin/${{ github.base_ref }}"
+          else
+            scripts/check-version-bump.sh "${{ github.event.before }}"
+          fi
 
       - name: Install Rust stable toolchain
         uses: dtolnay/rust-toolchain@stable

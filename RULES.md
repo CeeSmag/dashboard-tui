@@ -501,3 +501,21 @@ pub use self::table::{
     widget::{Row, Table},
 };
 ```
+
+---
+
+## 8. Release & Versioning Law (`REL`)
+
+### 8.1 Every Push Raises the Version (`REL-1`)
+- Every push to `origin` that changes any file **MUST** raise `version` in `Cargo.toml`. Two pushes never share a version number, so a version always identifies exactly one state of the code.
+- Follow SemVer: breaking public API change → major (minor while `0.x`); new backward-compatible feature → minor (patch while `0.x`); fix, docs or internal change → patch.
+- `Cargo.lock` **MUST** be updated in the same commit.
+
+### 8.2 Changelog Entry (`REL-2`)
+- The commit that raises the version **MUST** add a `## [X.Y.Z] - YYYY-MM-DD` section to `CHANGELOG.md` describing what changed. A version without an entry is invalid.
+
+### 8.3 Tag Every Version (`REL-3`)
+- After the push, the version **MUST** be tagged `vX.Y.Z` (`git tag vX.Y.Z && git push --tags`) so consumers can pin `tag = "vX.Y.Z"`. Tags are never moved or deleted.
+
+### 8.4 Mechanical Enforcement (`REL-4`)
+- `scripts/check-version-bump.sh` verifies `REL-1` and `REL-2` against the previous state of the branch; CI runs it on every push and pull request. Run it locally before pushing: `scripts/check-version-bump.sh origin/main`.
